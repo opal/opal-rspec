@@ -30,6 +30,7 @@ class TestEvalContext
 
   # expect syntax
   should_fail { expect(100).to eq(200) }
+  should_fail { expect(100).to_not eq(100) }
 
   # == (operator)
   should_fail { 1.should == 10 }
