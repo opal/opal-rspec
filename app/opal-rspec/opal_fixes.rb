@@ -26,8 +26,48 @@ class Module
     }
   end
 
-  def dup
-    raise "duped module #{self}"
+  def <(other)
+    %x{
+      var working = self;
+
+      while (working) {
+        if (working === other) {
+          return true;
+        }
+
+        working = working.__parent;
+      }
+
+      return false;
+    }
+  end
+end
+
+# Needed in Hooks#find_hook. We should double check that this is right..
+class Array
+  alias === ==
+end
+
+class Class
+  def self.new(sup = Object, &block)
+    %x{
+      function AnonClass(){};
+      var klass   = Opal.boot(sup, AnonClass)
+      klass._name = nil;
+      klass._scope = sup._scope;
+      klass.__parent = sup;
+
+      sup.$inherited(klass);
+
+      if (block !== nil) {
+        var block_self = block._s;
+        block._s = null;
+        block.call(klass);
+        block._s = block_self;
+      }
+
+      return klass;
+    }
   end
 end
 

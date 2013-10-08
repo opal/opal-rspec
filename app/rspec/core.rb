@@ -163,6 +163,9 @@ WARNING
     # it.
     class Time
       class << self
+        def now
+          ::Time.now
+        end
         #define_method(:now, &::Time.method(:now))
       end
     end

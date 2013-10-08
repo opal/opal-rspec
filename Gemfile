@@ -2,7 +2,8 @@ source 'https://rubygems.org'
 
 gem 'rake'
 
-gem 'opal', :github => 'opal/opal'
+#gem 'opal', :github => 'opal/opal'
+gem 'opal', :path => '../opal'
 gem 'opal-sprockets'
 
 # As we monkey patch a lot, work of a specific commit on github

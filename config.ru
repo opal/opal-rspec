@@ -2,7 +2,7 @@ require 'bundler'
 Bundler.require
 
 Opal::Processor.source_map_enabled = false
-Opal::Processor.const_missing_enabled = false
+# Opal::Processor.const_missing_enabled = false
 Opal::Processor.dynamic_require_severity = :warning
 
 Opal.append_path 'app' # load first so stub files come before real rspec files
