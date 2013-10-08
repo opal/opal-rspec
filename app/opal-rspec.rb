@@ -15,12 +15,6 @@ module RSpec::Expectations
   end
 end
 
-# enable_should uses module_exec which does not donate methods to bridged classes
-module Kernel
-  alias should should
-  alias should_not should_not
-end
-
 # Opal does not support mutable strings
 module RSpec::Matchers::Pretty
   def underscore(camel_cased_word)

@@ -10,35 +10,14 @@ module RSpec::Matchers
   alias_method :expect, :expect
 end
 
-rspec_config = RSpec.configuration
-
-# mock frameworks currently broken, so skip for now
-# UPDATE: is this fixed by module.new fix?
-def rspec_config.configure_mock_framework
-  nil
+# enable_should uses module_exec which does not donate methods to bridged classes
+module Kernel
+  alias should should
+  alias should_not should_not
 end
 
 # Module#include should also include constants (as should class subclassing)
 RSpec::Core::ExampleGroup::AllHookMemoizedHash = RSpec::Core::MemoizedHelpers::AllHookMemoizedHash
-
-# Rspec makes examples thread safe....
-class Thread
-  def self.current
-    @current ||= self.new
-  end
-
-  def initialize
-    @hash = {}
-  end
-
-  def [](key)
-    @hash[key]
-  end
-
-  def []=(key, val)
-    @hash[key] = val
-  end
-end
 
 # bad.. something is going wrong inside hooks - so set hooks to empty, for now
 # or is it a problem with Array.public_instance_methods(false) adding all array
@@ -55,7 +34,15 @@ class RSpec::Core::Hooks::AroundHookCollection
   end
 end
 
-# something wrong with mocks?
+rspec_config = RSpec.configuration
+
+# mock frameworks currently broken, so skip for now
+# UPDATE: is this fixed by module.new fix?
+def rspec_config.configure_mock_framework
+  nil
+end
+
+# something wrong with mocks? (to do with the above? probably...)
 class RSpec::Core::ExampleGroup
   def teardown_mocks_for_rspec
     nil
@@ -96,7 +83,7 @@ class OpalRSpecRunner
     # @configuration.load_spec_files
     # @world.announce_filters
 
-    puts @world.example_count
+    puts "Examples to run: #{@world.example_count}"
     begin
       @configuration.run_hook(:before, :suite)
       @world.example_groups.map {|g| g.run(reporter) }.all? ? 0 : @configuration.failure_exit_code

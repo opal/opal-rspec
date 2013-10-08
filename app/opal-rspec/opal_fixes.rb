@@ -135,3 +135,22 @@ class Regexp
   end
 end
 
+# Rspec makes examples thread safe....
+class Thread
+  def self.current
+    @current ||= self.new
+  end
+
+  def initialize
+    @hash = {}
+  end
+
+  def [](key)
+    @hash[key]
+  end
+
+  def []=(key, val)
+    @hash[key] = val
+  end
+end
+
