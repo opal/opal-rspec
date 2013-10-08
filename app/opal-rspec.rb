@@ -13,9 +13,6 @@ module RSpec::Expectations
   end
 end
 
-# on master, should isnt enabled by default (we should leave this turned off?)
-RSpec::Expectations::Syntax.enable_should
-
 # enable_should uses module_exec which does not donate methods to bridged classes
 module Kernel
   alias should should

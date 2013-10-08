@@ -1,37 +1,64 @@
 require 'opal'
 require 'opal-rspec'
 
-class TestEvalContext
-  include RSpec::Matchers
+RSpec::Expectations::Syntax.enable_should
+RSpec::Expectations::Syntax.enable_expect
+
+# opal doesnt yet support module_exec for defining methods in modules properly
+module RSpec::Matchers
+  alias_method :expect, :expect
 end
 
-failing = [
+class TestEvalContext
+  include RSpec::Matchers
+
+  def self.fails
+    @fails ||= []
+  end
+
+  def self.pass
+    @pass ||= []
+  end
+
+  def self.should_fail(&block)
+    fails << block
+  end
+
+  def self.should_pass(&block)
+    pass << block
+  end
+
+  # expect syntax
+  should_fail { expect(100).to eq(200) }
+
   # == (operator)
-  -> { 1.should == 10 },
-  -> { Object.new.should == self },
-  -> { [1, 2, 3, 4].should == [1, 2, 3] },
-  -> { "wow".should_not == "wow" },
+  should_fail { 1.should == 10 }
+  should_fail { Object.new.should == self }
+  should_fail { [1, 2, 3, 4].should == [1, 2, 3] }
+  should_fail { "wow".should_not == "wow" }
 
   # be
-  -> { 100.should be_nil },
-  -> { false.should be_truthy },   # !!value - this breaks in opal parser (new Boolean(false) !== false)
-  -> { true.should be_falsey },
+  should_fail { 100.should be_nil }
+  should_fail { false.should be_truthy }   # !!value - this breaks in opal parser (new Boolean(false) !== false)
+  should_fail { true.should be_falsey }
 
   # be_kind_of
-  -> { Object.new.should be_a_kind_of(Array) },
+  should_fail { Object.new.should be_a_kind_of(Array) }
 
   # eq
-  -> { Object.new.should eq(100) },
-  -> { self.should_not eq(self) },
+  should_fail { Object.new.should eq(100) }
+  should_fail { self.should_not eq(self) }
 
   # include
-  -> { [1, 2, 3, 4].should include(5) },
-  -> { { a: 200 }.should_not include(:a) }
-]
+  should_fail { [1, 2, 3, 4].should include(5) }
+  should_fail { { a: 200 }.should_not include(:a) }
+end
 
-puts "These #{failing.size} should all fail:\n"
+# Run them:
 
-failing.each_with_index do |test, idx|
+puts "These #{TestEvalContext.fails.size} should all fail:\n"
+
+TestEvalContext.fails.each_with_index do |test, idx|
   begin
     TestEvalContext.new.instance_eval(&test)
   rescue => err
