@@ -1,4 +1,6 @@
 require 'opal-rspec/opal_fixes'
+require 'rspec/core'
+require 'rspec/mocks'
 require 'rspec-expectations'
 
 # String#<< is not supported by Opal
