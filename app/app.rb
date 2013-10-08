@@ -82,7 +82,7 @@ describe "Benjamin" do
 end
 
 class OpalRSpecRunner
-  def initialize(options = {}, configuration = RSpec::configuration, world = RSpec::world)
+  def initialize(options={}, configuration=RSpec::configuration, world=RSpec::world)
     @options        = options
     @configuration  = configuration
     @world          = world
@@ -97,16 +97,12 @@ class OpalRSpecRunner
     # @world.announce_filters
 
     puts @world.example_count
-    # @configuration.reporter.report(@world.example_count) do |reporter|
-      begin
-        # @configuration.run_hook(:before, :suite)
-        # @world.ordered_example_groups.map {|g| g.run(reporter) }.all? ? 0 : @configuration.failure_exit_code
-        @world.example_groups.map { |g| g.run(reporter) }
-
-      ensure
-        #@configuration.run_hook(:after, :suite)
-      end
-    # end
+    begin
+      @configuration.run_hook(:before, :suite)
+      @world.example_groups.map {|g| g.run(reporter) }.all? ? 0 : @configuration.failure_exit_code
+    ensure
+      @configuration.run_hook(:after, :suite)
+    end
   end
 
   def reporter
@@ -115,15 +111,19 @@ class OpalRSpecRunner
     @reporter = BasicObject.new
     def @reporter.method_missing(*args); Kernel.p args; end
     def @reporter.example_failed(example)
-      Kernel.p([:example_failed])
+      Kernel.puts "FAILED: #{example.description}"
       #Kernel.puts example.inspect
       exception = example.metadata[:execution_result][:exception]
-      Kernel.puts exception
-      `console.log(exception.stack)`
+      Kernel.puts "#{exception.class.name}: #{exception.message}"
+      # `console.log(exception.stack)`
     end
 
     def @reporter.example_started(example)
       Kernel.puts "starting: #{example.description}"
+    end
+
+    def @reporter.example_passed(example)
+      Kernel.puts "PASSED: #{example.description}"
     end
 
     @reporter

@@ -43,11 +43,6 @@ class Module
   end
 end
 
-# Needed in Hooks#find_hook. We should double check that this is right..
-class Array
-  alias === ==
-end
-
 class Class
   def self.new(sup = Object, &block)
     %x{
@@ -92,6 +87,8 @@ class Hash
   end
 
   alias_method :dup, :clone
+
+  alias_method :store, :[]=
 end
 
 module Kernel
@@ -100,9 +97,7 @@ module Kernel
   def caller
     []
   end
-end
 
-module Kernel
   def instance_variables
     %x{
       var result = [];
@@ -116,6 +111,8 @@ module Kernel
       return result;
     }
   end
+
+  alias_method :srand, :rand
 end
 
 class File
@@ -132,46 +129,9 @@ class Dir
   end
 end
 
-class Hash
-  def store(key, val)
-    self[key] = val
-  end
-end
-
 class Regexp
   def self.union(*parts)
     `new RegExp(parts.join(''))`
   end
 end
 
-module Kernel
-  alias_method :srand, :rand
-end
-
-%x{
-  Opal.donate = function(klass, defined, indirect) {
-    var methods = klass._methods, included_in = klass.__dep__;
-
-    if (!methods) { return; }
-
-    // if (!indirect) {
-      klass._methods = methods.concat(defined);
-    // }
-
-    if (included_in) {
-      for (var i = 0, length = included_in.length; i < length; i++) {
-        var includee = included_in[i];
-        var dest = includee._proto;
-
-        for (var j = 0, jj = defined.length; j < jj; j++) {
-          var method = defined[j];
-          dest[method] = klass._proto[method];
-        }
-
-        if (includee.__dep__) {
-          Opal.donate(includee, defined, true);
-        }
-      }
-    }
-  };
-}
