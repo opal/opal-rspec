@@ -50,6 +50,12 @@ describe "Benjamin" do
   end
 end
 
+class OpalRSpecFormatter < BasicObject
+  def method_missing(*args)
+    Kernel.p args
+  end
+end
+
 class OpalRSpecRunner
   def initialize(options={}, configuration=RSpec::configuration, world=RSpec::world)
     @options        = options
@@ -63,11 +69,14 @@ class OpalRSpecRunner
     @configuration.output_stream ||= out
 
     puts "Examples to run: #{@world.example_count}"
-    begin
-      @configuration.run_hook(:before, :suite)
-      @world.example_groups.map {|g| g.run(reporter) }.all? ? 0 : @configuration.failure_exit_code
-    ensure
-      @configuration.run_hook(:after, :suite)
+    @configuration.formatter = OpalRSpecFormatter
+    @configuration.reporter.report(@world.example_count) do |reporter|
+      begin
+        @configuration.run_hook(:before, :suite)
+        @world.example_groups.map {|g| g.run(reporter) }.all? ? 0 : @configuration.failure_exit_code
+      ensure
+        @configuration.run_hook(:after, :suite)
+      end
     end
   end
 
