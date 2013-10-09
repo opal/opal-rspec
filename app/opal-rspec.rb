@@ -1,7 +1,14 @@
-require 'opal-rspec/opal_fixes'
+require 'file'
+require 'dir'
+require 'thread'
+
 require 'rspec/core'
 require 'rspec/mocks'
 require 'rspec-expectations'
+
+# For now, we don't support mocking. This placeholder in rspec-core allows that.
+# use any mocking. win.
+require 'rspec/core/mocking/with_absolutely_nothing'
 
 # String#<< is not supported by Opal
 module RSpec::Expectations
