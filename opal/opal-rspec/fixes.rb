@@ -49,37 +49,3 @@ class RSpec::Core::Hooks::HookCollection
   `def.$__send__ = Opal.Kernel.$__send__`
   `def.$class = Opal.Kernel.$class`
 end
-
-class Array
-  def flatten(level = undefined)
-    %x{
-      var result = [];
-
-      for (var i = 0, length = #{self}.length, item; i < length; i++) {
-        item = #{self}[i];
-
-        if (!item._isArray && #{`item`.respond_to?(:to_ary)}) {
-          item = item.$to_ary();
-        }
-
-        if (item._isArray) {
-          if (level == null) {
-            result = result.concat(#{`item`.flatten});
-          }
-          else if (level === 0) {
-            result.push(item);
-          }
-          else {
-            result = result.concat(#{`item`.flatten(`level - 1`)});
-          }
-        }
-        else {
-          result.push(item);
-        }
-      }
-
-      return result;
-    }
-  end
-end
-

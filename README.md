@@ -16,7 +16,10 @@ Visit the page in any browser and view the console:
 
     $ open http://localhost:9292
 
-## TODO
+## Things to fix
+
+`opal/opal-rspec/fixes.rb` contains a few bug fixes that need to be merged upstream
+to opal itself.
 
 In app/rspec we have to stub various rspec files (8 currently). This is why,
 and what is needed to fix them:
