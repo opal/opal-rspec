@@ -40,18 +40,60 @@ end
 # Module#include should also include constants (as should class subclassing)
 RSpec::Core::ExampleGroup::AllHookMemoizedHash = RSpec::Core::MemoizedHelpers::AllHookMemoizedHash
 
-# bad.. something is going wrong inside hooks - so set hooks to empty, for now
-# or is it a problem with Array.public_instance_methods(false) adding all array
-# methods to this class and thus breaking things like `self.class.new`
+# These two methods break because of instance_variables(). That method should ignore
+# private variables added by opal. This breaks as we copy ._klass which makes these 
+# collections think they are arrays as we copy the _klass property from an array
 class RSpec::Core::Hooks::HookCollection
-  def for(a)
-    RSpec::Core::Hooks::HookCollection.new.with(a)
+  def for(example_or_group)
+    RSpec::Core::Hooks::HookCollection.
+            new(hooks.select {|hook| hook.options_apply?(example_or_group)}).
+            with(example_or_group)
   end
 end
 
 class RSpec::Core::Hooks::AroundHookCollection
-  def for(a)
-    RSpec::Core::Hooks::AroundHookCollection.new.with(a)
+  def for(example, initial_procsy=nil)
+    RSpec::Core::Hooks::AroundHookCollection.new(hooks.select {|hook| hook.options_apply?(example)}).
+            with(example, initial_procsy)
+  end
+end
+
+class RSpec::Core::Hooks::HookCollection
+  `def.$send = Opal.Kernel.$send`
+  `def.$__send__ = Opal.Kernel.$__send__`
+  `def.$class = Opal.Kernel.$class`
+end
+
+class Array
+  def flatten(level = undefined)
+    %x{
+      var result = [];
+
+      for (var i = 0, length = #{self}.length, item; i < length; i++) {
+        item = #{self}[i];
+
+        if (!item._isArray && #{`item`.respond_to?(:to_ary)}) {
+          item = item.$to_ary();
+        }
+
+        if (item._isArray) {
+          if (level == null) {
+            result = result.concat(#{`item`.flatten});
+          }
+          else if (level === 0) {
+            result.push(item);
+          }
+          else {
+            result = result.concat(#{`item`.flatten(`level - 1`)});
+          }
+        }
+        else {
+          result.push(item);
+        }
+      }
+
+      return result;
+    }
   end
 end
 

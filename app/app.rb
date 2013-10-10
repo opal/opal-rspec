@@ -2,8 +2,14 @@ require 'opal'
 require 'opal-rspec'
 
 describe "Adam" do
+  before do
+    puts "a"
+    @bar = 200
+  end
+
   it "should eat" do
     1.should == 1
+    @bar.should == 201
   end
 end
 
