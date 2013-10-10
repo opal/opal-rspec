@@ -9,7 +9,11 @@ describe "Adam" do
 
   it "should eat" do
     1.should == 1
-    @bar.should == 201
+    @bar.should == 200
+  end
+
+  after do
+    @bar.class
   end
 end
 
@@ -35,10 +39,6 @@ describe "Normal errors" do
   it "should still work" do
     raise "wtf son"
   end
-end
-
-RSpec.configure do |config|
-  config.formatter = OpalRSpec::TextFormatter
 end
 
 OpalRSpec::Runner.new.run

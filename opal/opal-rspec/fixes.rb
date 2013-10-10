@@ -22,10 +22,6 @@ module RSpec::Matchers::Pretty
   end
 end
 
-# make sure should and expect syntax are both loaded
-RSpec::Expectations::Syntax.enable_should
-RSpec::Expectations::Syntax.enable_expect
-
 # opal doesnt yet support module_exec for defining methods in modules properly
 module RSpec::Matchers
   alias_method :expect, :expect
@@ -43,21 +39,11 @@ RSpec::Core::ExampleGroup::AllHookMemoizedHash = RSpec::Core::MemoizedHelpers::A
 # These two methods break because of instance_variables(). That method should ignore
 # private variables added by opal. This breaks as we copy ._klass which makes these 
 # collections think they are arrays as we copy the _klass property from an array
-class RSpec::Core::Hooks::HookCollection
-  def for(example_or_group)
-    RSpec::Core::Hooks::HookCollection.
-            new(hooks.select {|hook| hook.options_apply?(example_or_group)}).
-            with(example_or_group)
-  end
-end
-
-class RSpec::Core::Hooks::AroundHookCollection
-  def for(example, initial_procsy=nil)
-    RSpec::Core::Hooks::AroundHookCollection.new(hooks.select {|hook| hook.options_apply?(example)}).
-            with(example, initial_procsy)
-  end
-end
-
+# 
+# OR:
+#
+# it breaks because we copy all methods from array, and dont have our real send,
+# __send__ and class methods. This is more likely
 class RSpec::Core::Hooks::HookCollection
   `def.$send = Opal.Kernel.$send`
   `def.$__send__ = Opal.Kernel.$__send__`

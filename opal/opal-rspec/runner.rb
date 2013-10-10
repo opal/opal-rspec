@@ -7,7 +7,6 @@ module OpalRSpec
     end
 
     def run(err=$stdout, out=$stdout)
-      # load specs by the time this runs!
       @configuration.error_stream = err
       @configuration.output_stream ||= out
 
@@ -19,10 +18,6 @@ module OpalRSpec
           @configuration.run_hook(:after, :suite)
         end
       end
-    end
-
-    def reporter
-      RSpec.configuration.formatter
     end
   end
 end
