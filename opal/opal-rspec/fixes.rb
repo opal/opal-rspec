@@ -22,7 +22,8 @@ module RSpec::Matchers::Pretty
   end
 end
 
-# enable_should uses module_exec which does not donate methods to bridged classes
+# methods donated to basicobject (using module_exec) do not get
+# carried over to bridged classes (string, array, etc)
 module Kernel
   alias should should
   alias should_not should_not
