@@ -22,11 +22,6 @@ module RSpec::Matchers::Pretty
   end
 end
 
-# opal doesnt yet support module_exec for defining methods in modules properly
-module RSpec::Matchers
-  alias_method :expect, :expect
-end
-
 # enable_should uses module_exec which does not donate methods to bridged classes
 module Kernel
   alias should should
