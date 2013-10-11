@@ -3,7 +3,6 @@ require 'opal-rspec'
 
 describe "Adam" do
   before do
-    puts "a"
     @bar = 200
   end
 

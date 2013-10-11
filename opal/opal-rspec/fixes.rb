@@ -22,13 +22,6 @@ module RSpec::Matchers::Pretty
   end
 end
 
-# methods donated to basicobject (using module_exec) do not get
-# carried over to bridged classes (string, array, etc)
-module Kernel
-  alias should should
-  alias should_not should_not
-end
-
 # Module#include should also include constants (as should class subclassing)
 RSpec::Core::ExampleGroup::AllHookMemoizedHash = RSpec::Core::MemoizedHelpers::AllHookMemoizedHash
 
