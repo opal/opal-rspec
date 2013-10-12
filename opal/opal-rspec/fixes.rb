@@ -22,13 +22,10 @@ module RSpec::Matchers::Pretty
   end
 end
 
-# Module#include should also include constants (as should class subclassing)
-RSpec::Core::ExampleGroup::AllHookMemoizedHash = RSpec::Core::MemoizedHelpers::AllHookMemoizedHash
-
 # These two methods break because of instance_variables(). That method should ignore
 # private variables added by opal. This breaks as we copy ._klass which makes these 
 # collections think they are arrays as we copy the _klass property from an array
-# 
+#
 # OR:
 #
 # it breaks because we copy all methods from array, and dont have our real send,
