@@ -17,8 +17,8 @@ task :build do
 
   puts "\nDev: #{code.size}, min: #{min.size}"
 
-  File.open('opal/opal-rspec/rspec.js', 'w+') do |out|
-    out << min
+  File.open('opal/opal/rspec/rspec.js', 'w+') do |out|
+    out << code
   end
 end
 
