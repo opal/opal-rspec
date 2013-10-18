@@ -40,4 +40,5 @@ describe "Normal errors" do
   end
 end
 
-OpalRSpec::Runner.new.run
+OpalRSpec::Runner.autorun
+
