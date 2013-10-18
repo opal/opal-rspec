@@ -1,6 +1,9 @@
 require 'bundler'
 Bundler.require
 
+require 'opal/rspec/rake_task'
+Opal::RSpec::RakeTask.new(:default)
+
 desc "Build opal-rspec/rspec.js"
 task :build do
   Opal::Processor.dynamic_require_severity = :warning

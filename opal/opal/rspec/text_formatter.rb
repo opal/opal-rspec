@@ -83,6 +83,23 @@ module OpalRSpec
 
       puts "\nFinished\n"
       puts "#{example_count} examples, #{failure_count} failures (time taken: #{duration})"
+
+      if failure_count == 0
+        finish_with_code(0)
+      else
+        finish_with_code(1)
+      end
+    end
+
+    def finish_with_code(code)
+      %x{
+        if (typeof(phantom) !== "undefined") {
+          phantom.exit(code);
+        }
+        else {
+          Opal.global.OPAL_SPEC_CODE = code;
+        }
+      }
     end
   end
 end

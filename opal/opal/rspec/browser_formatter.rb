@@ -1,4 +1,4 @@
-require 'opal-rspec/text_formatter'
+require 'opal/rspec/text_formatter'
 
 module OpalRSpec
   class BrowserFormatter < TextFormatter
