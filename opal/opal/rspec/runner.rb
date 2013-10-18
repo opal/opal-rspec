@@ -1,4 +1,4 @@
-module OpalRSpec
+module Opal; module RSpec
   class Runner
 
     class << self
@@ -27,7 +27,7 @@ module OpalRSpec
       end
     end
 
-    def initialize(options={}, configuration=RSpec::configuration, world=RSpec::world)
+    def initialize(options={}, configuration=::RSpec::configuration, world=::RSpec::world)
       @options = options
       @configuration = configuration
       @world = world
@@ -47,5 +47,4 @@ module OpalRSpec
       end
     end
   end
-end
-
+end; end

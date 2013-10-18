@@ -1,4 +1,4 @@
-module OpalRSpec
+module Opal; module RSpec
   class TextFormatter
     attr_accessor :example_group
     attr_reader :duration, :examples, :output
@@ -102,5 +102,4 @@ module OpalRSpec
       }
     end
   end
-end
-
+end; end

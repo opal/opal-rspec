@@ -1,6 +1,6 @@
 require 'opal/rspec/text_formatter'
 
-module OpalRSpec
+module Opal; module RSpec
   class BrowserFormatter < TextFormatter
 
     def start(example_count)
@@ -186,5 +186,4 @@ module OpalRSpec
       }
     CSS
   end
-end
-
+end; end

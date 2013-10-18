@@ -12,12 +12,12 @@ require 'opal/rspec/text_formatter'
 require 'opal/rspec/browser_formatter'
 require 'opal/rspec/runner'
 
-
 RSpec.configure do |config|
   # For now, always use our custom formatter for results
-  config.formatter = OpalRSpec::Runner.default_formatter
+  config.formatter = Opal::RSpec::Runner.default_formatter
 
   # Always support expect() and .should syntax (we should not do this really..)
-  config.expect_with(:rspec) { |c| c.syntax = [:should, :expect] }
+  config.expect_with :rspec do |c|
+    c.syntax = [:should, :expect]
+  end
 end
-
