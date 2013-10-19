@@ -43,7 +43,6 @@ describe "let" do
   let(:count) { $count += 1 }
 
   it "memoizes the value" do
-    `console.dir(self)`
     count.should eq(1)
     count.should eq(1)
   end
