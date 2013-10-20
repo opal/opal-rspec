@@ -20,7 +20,7 @@ module Opal
         super
 
         @example_group_failed = false
-        @group_element = Element.new(:li)
+        @group_element = Element.new(:li, class_name: 'group passed')
 
         description = Element.new(:span, class_name: 'group_description', text: example_group.description)
         @group_element << description
@@ -36,8 +36,6 @@ module Opal
 
         if @example_group_failed
           @group_element.class_name = 'group failed'
-        else
-          @group_element.class_name = 'group passed'
         end
       end
 

@@ -58,11 +58,43 @@ describe "helper methods" do
   end
 end
 
+describe "nested describes" do
+  it "works in multiple places" do
+    1.should eq(1)
+  end
+
+  describe "nested" do
+    it "and here" do
+      1.should_not eq(2)
+    end
+  end
+end
+
 describe "subject" do
   subject { [1, 2, 3] }
 
   it "a new instance should be the subject" do
     subject.should be_kind_of(Array)
+  end
+
+  describe "nested subjects" do
+    before { subject << 4 }
+
+    it "should work with before and example" do
+      subject.should == [1, 2, 3, 4]
+    end
+  end
+end
+
+describe Hash do
+  it "should create a new instance of subject for classes" do
+    subject.should == {}
+  end
+end
+
+describe [1, 2, 3] do
+  it "should use a given object as the subject" do
+    subject.should eq([1, 2, 3])
   end
 end
 
