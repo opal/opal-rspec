@@ -1,39 +1,29 @@
-describe "Adam" do
-  before do
-    @bar = 200
-  end
-
-  it "should eat" do
-    1.should == 1
-    @bar.should == 200
-  end
-
-  after do
-    @bar.class
+module SomeHelpers
+  def opal_rspec_helper
+    let(:defined_opal_helper) { :it_works }
   end
 end
 
-describe "Benjamin" do
-  it "likes cream in his tea" do
-    1.should == 3
-  end
-
-  it "should eat bacon" do
-    "bacon".should be_a_kind_of(String)
+module SomeMoreHelpers
+  def opal_rspec_include_helper
+    42
   end
 end
 
-describe "Some let tests" do
-  let(:adam) { 100 }
-
-  it "should eat pieee" do
-    adam.should == 200
-  end
+RSpec.configure do |c|
+  c.extend SomeHelpers
+  c.include SomeMoreHelpers
 end
 
-describe "Normal errors" do
-  it "should still work" do
-    raise "wtf son"
+describe "RSpec include and extend" do
+  opal_rspec_helper
+
+  it "works for extend" do
+    defined_opal_helper.should == :it_works
+  end
+
+  it "works for include" do
+    opal_rspec_include_helper.should == 42
   end
 end
 
@@ -49,5 +39,35 @@ describe "let" do
 
   it "is not cached across examples" do
     count.should eq(2)
+  end
+end
+
+describe "Simple expectations" do
+  before do
+    @bar = 200
+  end
+
+  it "should eat" do
+    @bar.should == 200
+  end
+
+  after do
+    @bar.class
+  end
+end
+
+describe "should syntax" do
+  it "should work for positive" do
+    [1, 2, 3].should == [1, 2, 3]
+  end
+
+  it "should work for negative" do
+    [1, 2, 3].should_not == [4, 5, 6]
+  end
+end
+
+describe "Normal errors" do
+  it "should still work" do
+    lambda { raise "wtf son" }.should raise_error(Exception)
   end
 end
