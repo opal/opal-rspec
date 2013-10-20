@@ -19,10 +19,12 @@ Visit the page in any browser and view the console:
 ## Things to fix
 
 `opal/opal-rspec/fixes.rb` contains a few bug fixes that need to be merged upstream
-to opal itself.
+to opal itself. In app/rspec we have to stub various rspec files.
 
-In app/rspec we have to stub various rspec files (8 currently). This is why,
-and what is needed to fix them:
+### Immutable strings
+
+`opal/opal/rspec/fixes.rb` contains two stub methods as those core rspec methods
+try to use mutable strings, which are not supported in opal.
 
 ### HEREDOCS
 

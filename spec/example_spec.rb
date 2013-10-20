@@ -122,6 +122,16 @@ describe "should syntax" do
   end
 end
 
+describe "expect syntax" do
+  it "positive expectation" do
+    expect(100).to eq(100)
+  end
+
+  it "negative expectation" do
+    expect(100).to_not eq(300)
+  end
+end
+
 describe "Normal errors" do
   it "should still work" do
     lambda { raise "wtf son" }.should raise_error(Exception)
