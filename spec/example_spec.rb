@@ -137,3 +137,13 @@ describe "Normal errors" do
     lambda { raise "wtf son" }.should raise_error(Exception)
   end
 end
+
+describe "let on an inner scope" do
+  describe "inner context" do
+    let(:foo) { :bar }
+
+    it "should still work" do
+      foo.should eq(:bar)
+    end
+  end
+end
