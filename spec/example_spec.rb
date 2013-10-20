@@ -42,6 +42,30 @@ describe "let" do
   end
 end
 
+describe "helper methods" do
+  def some_helper
+    :present
+  end
+
+  it "should be available" do
+    some_helper.should eq(:present)
+  end
+
+  describe "nested group" do
+    it "should work in nested groups" do
+      some_helper.should eq(:present)
+    end
+  end
+end
+
+describe "subject" do
+  subject { [1, 2, 3] }
+
+  it "a new instance should be the subject" do
+    subject.should be_kind_of(Array)
+  end
+end
+
 describe "Simple expectations" do
   before do
     @bar = 200

@@ -32,7 +32,7 @@ module Opal
         @failure_count = failure_count
         @pending_count = pending_count
 
-        msg = "\n\n#{example_count} examples, #{failure_count} failures (time taken: #{duration})"
+        msg = "\n#{example_count} examples, #{failure_count} failures (time taken: #{duration})"
 
         if failure_count == 0
           green msg
