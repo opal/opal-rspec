@@ -8,6 +8,22 @@ Install required gems at required versions:
 
     $ bundle install
 
+opal-rspec uses a prebuilt version of rspec to fix the areas where
+opal cannot handle certain features of rspec. To build that file,
+which is needed to run specs, use:
+
+    $ bundle exec rake build
+
+This should build `opal/opal/rspec/rspec.js` ready to use.
+
+### Run on command line
+
+A simple rake task should run the example specs in `spec/`:
+
+    $ bundle exec rake
+
+### Run in the browser
+
 Run attached rack app to handle building:
 
     $ bundle exec rackup
