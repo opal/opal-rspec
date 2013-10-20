@@ -4,7 +4,7 @@ Bundler.require
 require 'opal/rspec/rake_task'
 Opal::RSpec::RakeTask.new(:default)
 
-desc "Build opal-rspec/rspec.js"
+desc "Build opal/opal/rspec/rspec.js"
 task :build do
   Opal::Processor.dynamic_require_severity = :warning
   Opal.append_path 'app'
@@ -15,7 +15,7 @@ task :build do
   code = Opal.process('rspec-builder')
   min  = uglify code
 
-  puts "\nDev: #{code.size}, min: #{min.size}"
+  puts "\ndevelopment: #{code.size}, minified: #{min.size}"
 
   File.open('opal/opal/rspec/rspec.js', 'w+') do |out|
     out << code
@@ -32,4 +32,3 @@ rescue Errno::ENOENT
   $stderr.puts '"uglifyjs" command not found (install with: "npm install -g uglify-js")'
   nil
 end
-

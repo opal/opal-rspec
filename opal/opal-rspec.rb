@@ -1,2 +1,1 @@
 require 'opal/rspec'
-

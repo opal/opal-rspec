@@ -21,17 +21,3 @@ module RSpec::Matchers::Pretty
     word
   end
 end
-
-# These two methods break because of instance_variables(). That method should ignore
-# private variables added by opal. This breaks as we copy ._klass which makes these 
-# collections think they are arrays as we copy the _klass property from an array
-#
-# OR:
-#
-# it breaks because we copy all methods from array, and dont have our real send,
-# __send__ and class methods. This is more likely
-class RSpec::Core::Hooks::HookCollection
-  `def.$send = Opal.Kernel.$send`
-  `def.$__send__ = Opal.Kernel.$__send__`
-  `def.$class = Opal.Kernel.$class`
-end

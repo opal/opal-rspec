@@ -3,12 +3,14 @@ module Opal
     class TextFormatter < ::RSpec::Core::Formatters::BaseFormatter
 
       def dump_failures
-        return if failed_examples.empty?
-        puts "\n"
-        puts "Failures:"
-        failed_examples.each_with_index do |example, index|
-          puts "\n"
-          dump_failure(example, index)
+        if failed_examples.empty?
+          puts "\nFinished"
+        else
+          puts "\nFailures:"
+          failed_examples.each_with_index do |example, index|
+            puts "\n"
+            dump_failure(example, index)
+          end
         end
       end
 
@@ -20,16 +22,8 @@ module Opal
       def dump_failure_info(example)
         exception = example.execution_result[:exception]
         exception_class_name = exception.class.name.to_s
-        puts "#{long_padding}#{exception_class_name}:"
-        exception.message.to_s.split("\n").each { |line| puts "#{long_padding}  #{line}" }
-      end
-
-      def short_padding
-        '  '
-      end
-
-      def long_padding
-        '     '
+        red "#{long_padding}#{exception_class_name}:"
+        exception.message.to_s.split("\n").each { |line| red "#{long_padding}  #{line}" }
       end
 
       def dump_summary(duration, example_count, failure_count, pending_count)
@@ -38,12 +32,13 @@ module Opal
         @failure_count = failure_count
         @pending_count = pending_count
 
-        puts "\nFinished\n"
-        puts "#{example_count} examples, #{failure_count} failures (time taken: #{duration})"
+        msg = "\n\n#{example_count} examples, #{failure_count} failures (time taken: #{duration})"
 
         if failure_count == 0
+          green msg
           finish_with_code(0)
         else
+          red msg
           finish_with_code(1)
         end
       end
@@ -57,6 +52,22 @@ module Opal
             Opal.global.OPAL_SPEC_CODE = code;
           }
         }
+      end
+
+      def green(str)
+        `console.log('\\033[32m' + str + '\\033[0m')`
+      end
+
+      def red(str)
+        `console.log('\\033[31m' + str + '\\033[0m')`
+      end
+
+      def short_padding
+        '  '
+      end
+
+      def long_padding
+        '     '
       end
     end
   end

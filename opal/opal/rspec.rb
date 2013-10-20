@@ -2,10 +2,8 @@ require 'file'
 require 'dir'
 require 'thread'
 
-# production
+# vendor a pre-built rspec
 require 'opal/rspec/rspec'
-# development
-# require 'rspec-builder'
 
 require 'opal/rspec/fixes'
 require 'opal/rspec/text_formatter'
