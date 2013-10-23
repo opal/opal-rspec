@@ -3,8 +3,8 @@ gemspec
 
 gem 'rake'
 
-gem 'opal', :github => 'opal/opal'
-gem 'opal-sprockets'
+gem 'opal',           :github => 'opal/opal'
+gem 'opal-sprockets', :github => 'opal/opal-sprockets'
 
 # As we monkey patch a lot, work of a specific commit on github
 gem 'rspec-expectations', :github => 'rspec/rspec-expectations', :ref => '4c47e4c43e'

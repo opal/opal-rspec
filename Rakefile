@@ -6,20 +6,27 @@ Opal::RSpec::RakeTask.new(:default)
 
 desc "Build opal/opal/rspec/rspec.js"
 task :build do
+  File.open('opal/opal/rspec/rspec.js', 'w+') do |out|
+    out << build_rspec
+  end
+end
+
+desc "Show dev/min sizes"
+task :sizes do
+  code = build_rspec
+  min  = uglify code
+
+  puts "\ndevelopment: #{code.size}, minified: #{min.size}"
+end
+
+def build_rspec
   Opal::Processor.dynamic_require_severity = :warning
   Opal.append_path 'app'
 
   Opal.use_gem 'rspec'
   Opal.use_gem 'rspec-expectations'
 
-  code = Opal.process('rspec-builder')
-  min  = uglify code
-
-  puts "\ndevelopment: #{code.size}, minified: #{min.size}"
-
-  File.open('opal/opal/rspec/rspec.js', 'w+') do |out|
-    out << code
-  end
+  Opal.process('rspec-builder')
 end
 
 def uglify(str)
