@@ -1,3 +1,4 @@
+require 'rspec/support'
 require 'rspec/core'
 require 'rspec/mocks'
 require 'rspec-expectations'

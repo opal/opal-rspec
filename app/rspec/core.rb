@@ -1,17 +1,21 @@
 require_rspec = if defined?(require_relative)
   lambda do |path|
-    # require_relative path
+    require_relative path
   end
 else # for 1.8.7
   lambda do |path|
-    # require "rspec/#{path}"
+    require "rspec/#{path}"
   end
 end
 
 require 'set'
 require 'time'
 require 'rbconfig'
-require 'rspec/core/caller_filter'
+
+require 'rspec/core/version'
+
+require 'rspec/support/caller_filter'
+
 require 'rspec/core/flat_map'
 require 'rspec/core/filter_manager'
 require 'rspec/core/dsl'
@@ -35,7 +39,6 @@ require 'rspec/core/example'
 require 'rspec/core/shared_example_group/collection'
 require 'rspec/core/shared_example_group'
 require 'rspec/core/example_group'
-require 'rspec/core/version'
 
 module RSpec
   autoload :SharedContext, 'rspec/core/shared_context'
@@ -85,10 +88,12 @@ module RSpec
       RSpec.warn_deprecation <<-WARNING
 
 *****************************************************************
+DEPRECATION WARN
 
 * RSpec.configuration with a block is deprecated and has no effect.
 * please use RSpec.configure with a block instead.
 
+Called from
 *****************************************************************
 
 WARNING
@@ -163,10 +168,7 @@ WARNING
     # it.
     class Time
       class << self
-        def now
-          ::Time.now
-        end
-        #define_method(:now, &::Time.method(:now))
+        def now; ::Time.now; end #define_method(:now, &::Time.method(:now))
       end
     end
 

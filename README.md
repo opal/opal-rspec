@@ -37,30 +37,42 @@ Visit the page in any browser and view the console:
 `opal/opal-rspec/fixes.rb` contains a few bug fixes that need to be merged upstream
 to opal itself. In app/rspec we have to stub various rspec files.
 
-### Immutable strings
+### rspec/core.rb
 
-`opal/opal/rspec/fixes.rb` contains two stub methods as those core rspec methods
-try to use mutable strings, which are not supported in opal.
+* **line 1**: `require_rspec` to fake require_relative doesnt work at runtime.
+opal has to include all dependencies into build.
 
-### HEREDOCS
+* **line 90**: heredoc fails to parse in opal as EOS is used within heredoc
 
-Parsing heredocs causes problems
+* **line 171**: `&::Time.method(:now)` doesnt work so wrong method is set
 
-* rspec/core/shared_example_group/collection.rb
-* rspec/core/example_group.rb
-* rspec/core/project_initializer.rb
-* rspec/core/shared_example_group.rb
-* rspec/matchers/built_in/change.rb
+### rspec/core/configuration.rb
 
-### require
+* **line ?**: something in that file is causing opal to generate bad javascript.
+This is possible a require statement used as an expression which generates empty
+code.
 
-When used as expression generating empty code (syntax error)
+### rspec/core/example_group.rb
 
-* rspec/core/configuration.rb
+* **line 434**: cannot parse heredoc as it uses EOS inline before string ends
 
-### Bad autoload/missing file
+* **line 547**: opal cannot use mutable strings (see opal/rspec/fixes.rb)
 
-An autoload exists, but the file referenced doesnt actually exist, so we
-have to stub it
+* **line 564**: opal cannot use mutable strings (see opal/rspec/fixes.rb)
 
-* rspec/matchers/built_in/have.rb
+### rspec/core/project_initializer.rb
+
+* **line 1**: opal cannot parse these heredocs (EOS used before last line of string)
+
+### rspec/core/shared_example_group.rb
+
+* **line 112**: opal cannot parse this heredoc
+
+### rspec/core/shared_example_group/collection.rb
+
+* **line 17**: opal cannot parse command call inside aref
+
+### rspec/matchers/built_in/have.rb
+
+* **line 1**: this is an error in rspec. This autoload does not exist so we must
+stub the file.

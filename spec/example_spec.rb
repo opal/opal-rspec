@@ -92,12 +92,6 @@ describe Hash do
   end
 end
 
-describe [1, 2, 3] do
-  it "should use a given object as the subject" do
-    subject.should eq([1, 2, 3])
-  end
-end
-
 describe "Simple expectations" do
   before do
     @bar = 200

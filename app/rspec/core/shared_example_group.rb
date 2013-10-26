@@ -111,6 +111,10 @@ module RSpec
 
           RSpec.warn_with <<-WARNING
             WARN: Shared example group '#{key}' has been previously defined at:
+            WARN
+            WARN
+            WARN
+            WARN
           WARNING
         end
 

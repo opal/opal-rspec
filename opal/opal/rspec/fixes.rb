@@ -29,3 +29,34 @@ class RSpec::Matchers::BuiltIn::BePredicate
     return $~[1], $~[3]
   end
 end
+
+module RSpec::ExampleGroups
+  def self.base_name_for(group)
+    return "Anonymous" if group.description.empty?
+
+    # convert to CamelCase
+    name = ' ' + group.description
+    name = name.gsub(/[^0-9a-zA-Z]+([0-9a-zA-Z])/) { |m| m[1].upcase }
+
+    name = name.lstrip         # Remove leading whitespace
+    name = name.gsub(/\W/, '') # JRuby, RBX and others don't like non-ascii in const names
+
+    # Ruby requires first const letter to be A-Z. Use `Nested`
+    # as necessary to enforce that.
+    name = name.gsub(/\A([^A-Z]|\z)/, 'Nested$1')
+
+    name
+  end
+
+  def self.disambiguate(name, const_scope)
+    return name unless const_scope.const_defined?(name)
+
+    # Add a trailing number if needed to disambiguate from an existing constant.
+    name = name + "_2"
+    while const_scope.const_defined?(name)
+      name = name.next
+    end
+
+    name
+  end
+end
