@@ -26,6 +26,11 @@ def build_rspec
   Opal.use_gem 'rspec'
   Opal.use_gem 'rspec-expectations'
 
+  %w[fileutils test/unit/assertions coderay optparse shellwords socket uri
+     drb/drb diff/lcs diff/lcs/hunk].each do |asset|
+    Opal::Processor.stub_file asset
+  end
+
   Opal.process('rspec-builder')
 end
 
