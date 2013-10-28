@@ -129,3 +129,53 @@ describe "include" do
     }.to raise_error(Exception)
   end
 end
+
+describe "respond_to" do
+  it "matches if actual responds to sym" do
+    expect("foo").to respond_to(:upcase)
+  end
+
+  it "does not match if actual does not respond to sym" do
+    expect(Object.new).to_not respond_to(:upcase)
+  end
+
+  it "fails if actual does not respond to sym" do
+    expect {
+      expect(Object.new).to respond_to(:upcase)
+    }.to raise_error(Exception)
+  end
+end
+
+describe "match" do
+  it "matches if actual matches expected" do
+    expect("foobar").to match(/ar/)
+    expect("foobar").to match("oob")
+  end
+
+  it "does not match if actual does not match expected" do
+    expect("foobar").to_not match(/baz/)
+    expect("foobar").to_not match("woosh")
+  end
+
+  it "fails unless matcher matches" do
+    expect {
+      exprct("hello").to match(/world/)
+    }.to raise_error(Exception)
+  end
+end
+
+describe "operator ==" do
+  it "matches if actual == expected" do
+    "hello".should == "hello"
+  end
+
+  it "does not match when actual does not == expected" do
+    "hello".should_not == "world"
+  end
+
+  it "fails unless matcher matches" do
+    expect {
+      "hello".should == "world"
+    }.to raise_error(Exception)
+  end
+end
