@@ -10,7 +10,9 @@ Gem::Specification.new do |s|
   s.summary      = 'RSpec for Opal'
   s.description  = 'Opal compatible rspec library'
 
-  s.files          = `git ls-files`.split("\n")
+  s.files = `git ls-files`.split("\n")
+  s.files << 'opal/opal/rspec/rspec.js'
+
   s.require_paths  = ['lib']
 
   s.add_dependency 'opal', '~> 0.4.4'
