@@ -58,7 +58,8 @@ code.
 
 * **line 547**: opal cannot use mutable strings (see opal/rspec/fixes.rb)
 
-* **line 564**: opal cannot use mutable strings (see opal/rspec/fixes.rb)
+* **line 564**: opal cannot use mutable strings (see opal/rspec/fixes.rb). Also, opal
+does not support 2 regexp special characters yet (`\A` and `\z`).
 
 ### rspec/core/project_initializer.rb
 

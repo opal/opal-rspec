@@ -43,7 +43,7 @@ module RSpec::ExampleGroups
 
     # Ruby requires first const letter to be A-Z. Use `Nested`
     # as necessary to enforce that.
-    name = name.gsub(/\A([^A-Z]|\z)/, 'Nested$1')
+    name = name.gsub(/^([^A-Z]|$)/, 'Nested$1')
 
     name
   end
