@@ -90,6 +90,16 @@ describe Hash do
   it "should create a new instance of subject for classes" do
     subject.should == {}
   end
+
+  it "provides the subject as the described_class" do
+    expect(described_class).to eq(Hash)
+  end
+end
+
+describe [1, 2, 3] do
+  it "can use an object instance as a subject" do
+    expect(subject).to eq([1, 2, 3])
+  end
 end
 
 describe "Simple expectations" do
