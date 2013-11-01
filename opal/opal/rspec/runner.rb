@@ -28,24 +28,41 @@ module Opal
         end
       end
 
-      def initialize(options={}, configuration=::RSpec::configuration, world=::RSpec::world)
+      def initialize(options = {})
         @options = options
-        @configuration = configuration
-        @world = world
+        @world = ::RSpec.world
+        @configuration = ::RSpec.configuration
       end
 
       def run(err=$stdout, out=$stdout)
         @configuration.error_stream = err
         @configuration.output_stream ||= out
 
-        @configuration.reporter.report(@world.example_count) do |reporter|
-          begin
-            @configuration.run_hook(:before, :suite)
-            @world.example_groups.map {|g| g.run(reporter) }.all? ? 0 : @configuration.failure_exit_code
-          ensure
-            @configuration.run_hook(:after, :suite)
-          end
+        self.start
+        run_examples
+
+        run_async_examples do
+          self.finish
         end
+      end
+
+      def run_examples
+        @world.example_groups.map { |g| g.run(@reporter) }.all?
+      end
+
+      def run_async_examples(&block)
+        AsyncRunner.new(self, @reporter, block).run
+      end
+
+      def start
+        @reporter = @configuration.reporter
+        @reporter.start(@world.example_count)
+        @configuration.run_hook(:before, :suite)
+      end
+
+      def finish
+        @configuration.run_hook(:after, :suite)
+        @reporter.finish
       end
     end
   end
