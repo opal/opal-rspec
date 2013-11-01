@@ -1,6 +1,5 @@
 require 'rspec/support'
 require 'rspec/core'
-require 'rspec/mocks'
 require 'rspec-expectations'
 
 # we want access to BaseFormatter
