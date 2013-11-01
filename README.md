@@ -48,8 +48,6 @@ opal has to include all dependencies into build.
 
 ### rspec/core/example_group.rb
 
-* **line 434**: cannot parse heredoc as it uses EOS inline before string ends
-
 * **line 547**: opal cannot use mutable strings (see opal/rspec/fixes.rb)
 
 * **line 564**: opal cannot use mutable strings (see opal/rspec/fixes.rb). Also, opal
