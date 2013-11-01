@@ -26,4 +26,14 @@ describe "Asynchronous helpers" do
       run_async { obj.should == [1, 2, 3, 4] }
     end
   end
+
+  async "should make example fail before async block reached" do
+    expect {
+      expect(:foo).to eq(:baz)
+    }.to raise_error(Exception)
+
+    set_timeout(0) do
+      run_async { expect(42).to eq(42) }
+    end
+  end
 end
