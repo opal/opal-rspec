@@ -59,10 +59,6 @@ does not support 2 regexp special characters yet (`\A` and `\z`).
 
 * **line 1**: opal cannot parse these heredocs (EOS used before last line of string)
 
-### rspec/core/shared_example_group.rb
-
-* **line 112**: opal cannot parse this heredoc
-
 ### rspec/core/shared_example_group/collection.rb
 
 * **line 17**: opal cannot parse command call inside aref
