@@ -46,12 +46,6 @@ opal has to include all dependencies into build.
 
 * **line 171**: `&::Time.method(:now)` doesnt work so wrong method is set
 
-### rspec/core/configuration.rb
-
-* **line ?**: something in that file is causing opal to generate bad javascript.
-This is possible a require statement used as an expression which generates empty
-code.
-
 ### rspec/core/example_group.rb
 
 * **line 434**: cannot parse heredoc as it uses EOS inline before string ends
