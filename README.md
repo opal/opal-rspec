@@ -55,10 +55,6 @@ opal has to include all dependencies into build.
 * **line 564**: opal cannot use mutable strings (see opal/rspec/fixes.rb). Also, opal
 does not support 2 regexp special characters yet (`\A` and `\z`).
 
-### rspec/core/project_initializer.rb
-
-* **line 1**: opal cannot parse these heredocs (EOS used before last line of string)
-
 ### rspec/core/shared_example_group/collection.rb
 
 * **line 17**: opal cannot parse command call inside aref
