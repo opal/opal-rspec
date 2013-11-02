@@ -31,6 +31,9 @@ def build_rspec
     Opal::Processor.stub_file asset
   end
 
+  # bug in rspec? this autoload doesnt exist so we must stub it
+  Opal::Processor.stub_file 'rspec/matchers/built_in/have'
+
   Opal.process('rspec-builder')
 end
 

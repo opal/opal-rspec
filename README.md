@@ -46,18 +46,6 @@ opal has to include all dependencies into build.
 
 * **line 171**: `&::Time.method(:now)` doesnt work so wrong method is set
 
-### rspec/core/example_group.rb
-
-* **line 547**: opal cannot use mutable strings (see opal/rspec/fixes.rb)
-
-* **line 564**: opal cannot use mutable strings (see opal/rspec/fixes.rb). Also, opal
-does not support 2 regexp special characters yet (`\A` and `\z`).
-
-### rspec/matchers/built_in/have.rb
-
-* **line 1**: this is an error in rspec. This autoload does not exist so we must
-stub the file.
-
 ## License
 
 (The MIT License)

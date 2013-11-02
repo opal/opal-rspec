@@ -31,6 +31,7 @@ class RSpec::Matchers::BuiltIn::BePredicate
 end
 
 module RSpec::ExampleGroups
+  # opal cannot use mutable strings AND opal doesnt support `\A` or `\z` anchors
   def self.base_name_for(group)
     return "Anonymous" if group.description.empty?
 
@@ -48,6 +49,7 @@ module RSpec::ExampleGroups
     name
   end
 
+  # opal cannot use mutable strings
   def self.disambiguate(name, const_scope)
     return name unless const_scope.const_defined?(name)
 
