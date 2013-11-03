@@ -88,7 +88,7 @@ module RSpec
       RSpec.warn_deprecation <<-WARNING
 
 *****************************************************************
-DEPRECATION WARN
+DEPRECATION WARNING
 
 * RSpec.configuration with a block is deprecated and has no effect.
 * please use RSpec.configure with a block instead.

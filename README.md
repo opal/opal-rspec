@@ -42,8 +42,6 @@ to opal itself. In app/rspec we have to stub various rspec files.
 * **line 1**: `require_rspec` to fake require_relative doesnt work at runtime.
 opal has to include all dependencies into build.
 
-* **line 90**: heredoc fails to parse in opal as EOS is used within heredoc
-
 ## License
 
 (The MIT License)
