@@ -35,12 +35,7 @@ Visit the page in any browser and view the console:
 ## Things to fix
 
 `opal/opal-rspec/fixes.rb` contains a few bug fixes that need to be merged upstream
-to opal itself. In app/rspec we have to stub various rspec files.
-
-### rspec/core.rb
-
-* **line 1**: `require_rspec` to fake require_relative doesnt work at runtime.
-opal has to include all dependencies into build.
+to opal itself.
 
 ## License
 
