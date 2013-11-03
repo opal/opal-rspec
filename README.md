@@ -44,8 +44,6 @@ opal has to include all dependencies into build.
 
 * **line 90**: heredoc fails to parse in opal as EOS is used within heredoc
 
-* **line 171**: `&::Time.method(:now)` doesnt work so wrong method is set
-
 ## License
 
 (The MIT License)
