@@ -35,7 +35,9 @@ Visit the page in any browser and view the console:
 ## Things to fix
 
 `opal/opal-rspec/fixes.rb` contains a few bug fixes that need to be merged upstream
-to opal itself.
+to opal itself. `app/rspec-builder.rb` is used to precompile rspec ready to be used
+in `opal-rspec`. All requires from `core.rb` have been inlined as opal cannot require
+dynamically at runtime.
 
 ## License
 
