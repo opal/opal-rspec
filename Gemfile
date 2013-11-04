@@ -3,9 +3,6 @@ gemspec
 
 gem 'rake'
 
-gem 'opal',           :github => 'opal/opal'
-gem 'opal-sprockets', :github => 'opal/opal-sprockets'
-
 # As we monkey patch a lot, work of a specific commit on github
 gem 'rspec-support',      :github => 'rspec/rspec-support',      :ref => 'f235ccb129'
 gem 'rspec-expectations', :github => 'rspec/rspec-expectations', :ref => 'd3277fd42e'
