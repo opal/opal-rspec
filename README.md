@@ -4,6 +4,49 @@ An attempt at a compatibility layer of rspec for opal.
 
 ## Usage
 
+Add `opal-rspec` to your Gemfile:
+
+```ruby
+gem 'opal-rspec'
+```
+
+### Run specs in phantomjs
+
+To run specs, a rake task can be added which will load all spec files from
+`spec/`:
+
+```ruby
+require 'opal/rspec/rake_task'
+Opal::RSpec::RakeTask.new(:default)
+```
+
+Then, to run your specs inside phantomjs, just run the rake task:
+
+```
+bundle exec rake
+```
+
+### Run specs in a browser
+
+`opal-rspec` can use sprockets to build and serve specs over a simple rack
+server. Add the following to a `config.ru` file:
+
+```ruby
+require 'bundler'
+Bundler.require
+
+run Opal::Server.new { |s|
+  s.main = 'opal/rspec/sprockets_runner'
+  s.append_path 'spec'
+  s.debug = false
+}
+```
+
+Then run the rack server `bundle exec rackup` and visit `http://localhost:9292`
+in any web browser.
+
+## Contributing
+
 Install required gems at required versions:
 
     $ bundle install
