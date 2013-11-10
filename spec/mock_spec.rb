@@ -13,6 +13,21 @@ describe "RSpec mocks" do
         obj.bar.should == 42
       }.to raise_error(Exception)
     end
+
+    it "allow" do
+      obj = Object.new
+      allow(obj).to receive(:name) { "Adam B" }
+      allow(obj).to receive(:job).and_return("Eating Fruit Gums")
+
+      expect(obj.name).to eq("Adam B")
+      expect(obj.job).to eq("Eating Fruit Gums")
+    end
+
+    it "expecting arguments" do
+      person = double("person")
+      expect(person).to receive(:foo).with(4, 5, 6)
+      person.foo(4, 5, 6)
+    end
   end
 
   describe "doubles" do
@@ -31,7 +46,7 @@ describe "RSpec mocks" do
       person = double("person")
       expect(person).to receive(:name).twice
       person.name
-      person.name
+      person.name.should
     end
   end
 end
