@@ -1,0 +1,8 @@
+require 'bundler'
+Bundler.require
+
+# Add our opal/ directory to the load path
+Opal.append_path File.expand_path('../opal', __FILE__)
+
+require 'opal/rspec/rake_task'
+Opal::RSpec::RakeTask.new(:default)
