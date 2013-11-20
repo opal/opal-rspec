@@ -1,3 +1,12 @@
+# Opal defines enumerable#flat_map, but doesnt implement it
+module RSpec::Core::FlatMap
+  def flat_map(array)
+    array.map { |item| yield item }.flatten
+  end
+
+  module_function :flat_map
+end
+
 # String#<< is not supported by Opal
 module RSpec::Expectations
   def self.fail_with(message, expected = nil, actual = nil)
