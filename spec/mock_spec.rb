@@ -49,4 +49,9 @@ describe "RSpec mocks" do
       person.name.should
     end
   end
+
+  it "can mock existing methods on objects" do
+    expect(Time).to receive(:now).once.and_call_original
+    Time.now.should be_kind_of(Time)
+  end
 end
