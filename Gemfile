@@ -1,6 +1,9 @@
 source 'https://rubygems.org'
 gemspec
 
+gem 'opal',           :github => 'opal/opal'
+gem 'opal-sprockets', :github => 'opal/opal-sprockets'
+
 gem 'rake'
 
 gem 'rspec',              '3.0.0.beta1'
