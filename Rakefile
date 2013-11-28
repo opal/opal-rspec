@@ -6,15 +6,35 @@ Opal::RSpec::RakeTask.new(:default)
 
 desc "Build opal/opal/rspec/rspec.js"
 task :build do
-  Opal::RSpec.build_rspec_js true
+  File.open('opal/opal/rspec/rspec.js', 'w+') do |out|
+    out << build_rspec
+  end
 end
 
-desc 'Show dev/min sizes'
+desc "Show dev/min sizes"
 task :sizes do
-  code = Opal::RSpec.build_rspec
+  code = build_rspec
   min  = uglify code
 
   puts "\ndevelopment: #{code.size}, minified: #{min.size}"
+end
+
+def build_rspec
+  Opal::Processor.dynamic_require_severity = :warning
+  Opal.append_path 'app'
+
+  Opal.use_gem 'rspec'
+  Opal.use_gem 'rspec-expectations'
+
+  %w[time fileutils test/unit/assertions coderay optparse shellwords socket uri
+     drb/drb diff/lcs diff/lcs/hunk].each do |asset|
+    Opal::Processor.stub_file asset
+  end
+
+  # bug in rspec? this autoload doesnt exist so we must stub it
+  Opal::Processor.stub_file 'rspec/matchers/built_in/have'
+
+  Opal.process('rspec-builder')
 end
 
 def uglify(str)
