@@ -11,8 +11,10 @@ module Opal
       URL = "http://localhost:9999/"
 
       def initialize(name = 'opal:rspec', &block)
+        Opal::RSpec.build_rspec_js
+
         desc "Run opal specs in phantomjs"
-        task name do
+        task name => 'opal:rspec:build' do
           require 'rack'
           require 'webrick'
 
@@ -37,6 +39,12 @@ module Opal
 
           exit 1 unless success
         end
+
+        desc 'Build opal/opal/rspec/rspec.js'
+        task 'opal:rspec:build' do
+          Opal::RSpec.build_rspec_js
+        end
+
       end
     end
   end

@@ -18,6 +18,12 @@ Gem::Specification.new do |s|
   s.add_dependency 'opal', '~> 0.6.0'
   s.add_dependency 'opal-sprockets', '~> 0.4.0'
 
+  s.add_dependency 'rspec',              '3.0.0.beta1'
+  s.add_dependency 'rspec-support',      '3.0.0.beta1'
+  s.add_dependency 'rspec-core',         '3.0.0.beta1'
+  s.add_dependency 'rspec-mocks',        '3.0.0.beta1'
+  s.add_dependency 'rspec-expectations', '3.0.0.beta1'
+
   s.add_development_dependency 'rake'
 end
 
