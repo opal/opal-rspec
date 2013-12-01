@@ -1,5 +1,4 @@
 require 'opal/rspec'
-require 'opal-sprockets'
 
 module Opal
   module RSpec
