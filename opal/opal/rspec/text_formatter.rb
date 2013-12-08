@@ -55,11 +55,11 @@ module Opal
       end
 
       def green(str)
-        `console.log('\\033[32m' + str + '\\033[0m')`
+        `console.log('\033[32m' + str + '\033[0m')`
       end
 
       def red(str)
-        `console.log('\\033[31m' + str + '\\033[0m')`
+        `console.log('\033[31m' + str + '\033[0m')`
       end
 
       def short_padding
