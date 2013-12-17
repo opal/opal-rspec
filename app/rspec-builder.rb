@@ -38,6 +38,7 @@ require 'rspec/mocks'
 
 # we want access to BaseFormatter
 require 'rspec/core/formatters/base_formatter'
+require 'rspec/core/formatters/html_printer'
 
 # For now, we don't support mocking. This placeholder in rspec-core allows that.
 require 'rspec/core/mocking/with_rspec'

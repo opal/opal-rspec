@@ -1,18 +1,20 @@
+require 'erb'
+
 module Opal
   module RSpec
     class BrowserFormatter < ::RSpec::Core::Formatters::BaseFormatter
+      include ERB::Util
+
+      CSS_STYLES = ::RSpec::Core::Formatters::HtmlPrinter::GLOBAL_STYLES
 
       def start(example_count)
         super
-
-        @summary_element = Element.new(:p, class_name: 'summary', text: 'Runner...')
-        @groups_element = Element.new(:ul, class_name: 'example_groups')
-
         target = Element.new(`document.body`)
-        target << @summary_element
-        target << @groups_element
+        target << Element.new(:div, html: REPORT_TEMPLATE)
+        @rspec_results = Element.id('rspec-results')
 
-        styles = Element.new(:style, type: 'text/css', css_text: CSS_STYLES)
+        css_text = CSS_STYLES + "\n body { padding: 0; margin: 0 }"
+        styles = Element.new(:style, type: 'text/css', css_text: css_text)
         styles.append_to_head
       end
 
@@ -20,62 +22,74 @@ module Opal
         super
 
         @example_group_failed = false
-        @group_element = Element.new(:li, class_name: 'group passed')
+        parents = example_group.parent_groups.size
 
-        description = Element.new(:span, class_name: 'group_description', text: example_group.description)
-        @group_element << description
+        @rspec_group  = Element.new(:div, class_name: "example_group passed")
+        @rspec_dl     = Element.new(:dl)
+        @rspec_dt     = Element.new(:dt, class_name: "passed", text: example_group.description)
+        @rspec_group << @rspec_dl
+        @rspec_dl << @rspec_dt
 
-        @example_list = Element.new(:ul, class_name: 'examples')
-        @group_element << @example_list
+        @rspec_dl.style 'margin-left', "#{(parents - 2) * 15}px"
 
-        @groups_element << @group_element
+        @rspec_results << @rspec_group
       end
 
       def example_group_finished(example_group)
         super
 
         if @example_group_failed
-          @group_element.class_name = 'group failed'
+          @rspec_group.class_name = "example_group failed"
+          @rspec_dt.class_name = "failed"
+          Element.id('rspec-header').class_name = 'failed'
         end
       end
 
       def example_failed(example)
         super
-
-        @example_group_failed = true
+        duration = sprintf("%0.5f", example.execution_result[:run_time])
 
         error = example.execution_result[:exception]
         error_name = error.class.name.to_s
         output = "#{short_padding}#{error_name}:\n"
         error.message.to_s.split("\n").each { |line| output += "#{long_padding}  #{line}\n" }
 
-        wrapper = Element.new(:li, class_name: 'example failed')
+        @example_group_failed = true
 
-        description = Element.new(:span, class_name: 'example_description', text: example.description)
-        wrapper << description
-
-        exception = Element.new(:pre, class_name: 'exception', text: output)
-        wrapper << exception
-
-        @example_list << wrapper
-        @example_list.style :display, 'list-item'
+        @rspec_dl << Element.new(:dd, class_name: "example failed", html: <<-HTML)
+          <span class="failed_spec_name">#{h example.description}</span>
+          <span class="duration">#{duration}</span>
+          <div class="failure">
+            <div class="message"><pre>#{h output}</pre></div>
+          </div>
+        HTML
       end
 
       def example_passed(example)
         super
+        duration = sprintf("%0.5f", example.execution_result[:run_time])
 
-        wrapper = Element.new(:li, class_name: 'example passed')
-        description = Element.new(:span, class_name: 'example_description', text: example.description)
-
-        wrapper << description
-        @example_list << wrapper
+        @rspec_dl << Element.new(:dd, class_name: "example passed", html: <<-HTML)
+          <span class="passed_spec_name">#{h example.description}</span>
+          <span class="duration">#{duration}</span>
+        HTML
       end
 
       def dump_summary(duration, example_count, failure_count, pending_count)
         super
 
-        summary = "\n#{example_count} examples, #{failure_count} failures (time taken: #{duration})"
-        @summary_element.text = summary
+        totals = "#{example_count} examples, #{failure_count} failures"
+        Element.id('totals').html = totals
+
+        duration = "Finished in <strong>#{sprintf("%.5f", duration)} seconds</strong>"
+        Element.id('duration').html = duration
+
+        add_scripts
+      end
+
+      def add_scripts
+        content = ::RSpec::Core::Formatters::HtmlPrinter::GLOBAL_SCRIPTS
+        `window.eval(#{content})`
       end
 
       def short_padding
@@ -88,6 +102,10 @@ module Opal
 
       class Element
         attr_reader :native
+
+        def self.id(id)
+          new(`document.getElementById(id)`)
+        end
 
         def initialize(el, attrs={})
           if String === el
@@ -141,53 +159,29 @@ module Opal
         end
       end
 
-      CSS_STYLES = <<-EOF
-body {
-  font-size: 14px;
-  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
-}
+      REPORT_TEMPLATE = <<-EOF
+<div class="rspec-report">
 
-pre {
-  font-family: "Bitstream Vera Sans Mono", Monaco, "Lucida Console", monospace;
-  font-size: 12px;
-  color: #444444;
-  white-space: pre;
-  padding: 3px 0px 3px 12px;
-  margin: 0px 0px 8px;
+  <div id="rspec-header">
+    <div id="label">
+      <h1>RSpec Code Examples</h1>
+    </div>
 
-  background: #FAFAFA;
-  -webkit-box-shadow: rgba(0,0,0,0.07) 0 1px 2px inset;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  border: 1px solid #DDDDDD;
-}
+    <div id="display-filters">
+      <input id="passed_checkbox"  name="passed_checkbox"  type="checkbox" checked="checked" onchange="apply_filters()" value="1" /> <label for="passed_checkbox">Passed</label>
+      <input id="failed_checkbox"  name="failed_checkbox"  type="checkbox" checked="checked" onchange="apply_filters()" value="2" /> <label for="failed_checkbox">Failed</label>
+      <input id="pending_checkbox" name="pending_checkbox" type="checkbox" checked="checked" onchange="apply_filters()" value="3" /> <label for="pending_checkbox">Pending</label>
+    </div>
 
-ul.example_groups {
-  list-style-type: none;
-}
+    <div id="summary">
+      <p id="totals">&#160;</p>
+      <p id="duration">&#160;</p>
+    </div>
+  </div>
 
-li.group.passed .group_description {
-  color: #597800;
-  font-weight: bold;
-}
-
-li.group.failed .group_description {
-  color: #FF000E;
-  font-weight: bold;
-}
-
-li.example.passed {
-  color: #597800;
-}
-
-li.example.failed {
-  color: #FF000E;
-}
-
-.examples {
-  list-style-type: none;
-}
+  <div id="rspec-results" class="results">
+  </div>
+</div>
 EOF
     end
   end

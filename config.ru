@@ -1,8 +1,6 @@
 require 'bundler'
 Bundler.require
 
-require 'opal-sprockets'
-
 Opal::Processor.source_map_enabled = false
 
 run Opal::Server.new { |s|
