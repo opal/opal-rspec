@@ -58,7 +58,7 @@ module Opal
 
         @rspec_dl << Element.new(:dd, class_name: "example failed", html: <<-HTML)
           <span class="failed_spec_name">#{h example.description}</span>
-          <span class="duration">#{duration}</span>
+          <span class="duration">#{duration}s</span>
           <div class="failure">
             <div class="message"><pre>#{h output}</pre></div>
           </div>
@@ -71,7 +71,7 @@ module Opal
 
         @rspec_dl << Element.new(:dd, class_name: "example passed", html: <<-HTML)
           <span class="passed_spec_name">#{h example.description}</span>
-          <span class="duration">#{duration}</span>
+          <span class="duration">#{duration}s</span>
         HTML
       end
 

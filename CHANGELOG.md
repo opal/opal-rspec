@@ -6,4 +6,6 @@
 
 *   Remove opal-sprockets dependency - build tools now part of opal.
 
+*   Replaced browser formatter to use html printer from rspec
+
 ## 0.2.1 2013-11-24
