@@ -28,7 +28,7 @@ module Opal
               :Logger => WEBrick::Log.new("/dev/null"))
           end
 
-          # phantomjs tries to hit page before opalserver on my linux CI server
+          # phantomjs tries to hit page before OpalServer starts on my linux CI server
           sleep 1 if RUBY_PLATFORM =~ /linux/
 
           system "phantomjs #{RUNNER} \"#{URL}\""
