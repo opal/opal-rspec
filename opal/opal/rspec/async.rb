@@ -8,14 +8,18 @@ module Opal
     end
 
     module AsyncHelpers
-      def run_async(&block)
-        ::RSpec.current_example.continue_async(block)
+      def async(&block)
+        @example.continue_async(block)
       end
 
-      def set_timeout(duration, &block)
-        `setTimeout(block, duration)`
+      alias run_async async
+
+      def delay(duration, &block)
+        `setTimeout(block, duration * 1000)`
         self
       end
+
+      alias set_timeout delay
     end
 
     class AsyncRunner
@@ -70,14 +74,18 @@ module Opal
         @examples ||= []
       end
 
+      include AsyncHelpers
+
       def run(example_group_instance, reporter, &after_run_block)
         @example_group_instance = example_group_instance
-        @reporter = reporter
-        @after_run_block = after_run_block
+        @reporter               = reporter
+        @after_run_block        = after_run_block
+        @finished               = false
 
         should_wait = true
 
         ::RSpec.current_example = self
+        example_group_instance.instance_variable_set :@example, self
 
         start(reporter)
 
@@ -89,10 +97,21 @@ module Opal
           should_wait = false
         end
 
-        async_example_finished unless should_wait
+        if should_wait
+          delay options[:timeout] || 10 do
+            next if finished?
+
+            set_exception RuntimeError.new("timeout")
+            async_example_finished
+          end
+        else
+          async_example_finished
+        end
       end
 
       def continue_async(block)
+        return if finished?
+
         begin
           block.call
         rescue Exception => e
@@ -102,7 +121,13 @@ module Opal
         async_example_finished
       end
 
+      def finished?
+        @finished
+      end
+
       def async_example_finished
+        @finished = true
+
         begin
           run_after_each
         rescue Exception => e

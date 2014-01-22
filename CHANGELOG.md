@@ -8,4 +8,6 @@
 
 *   Replaced browser formatter to use html printer from rspec
 
+*   Add timeout support to asynchronous specs
+
 ## 0.2.1 2013-11-24
