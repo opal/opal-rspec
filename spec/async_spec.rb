@@ -22,7 +22,7 @@ describe "Asynchronous helpers" do
   async "can finish running after a long delay" do
     obj = [1, 2, 3, 4]
 
-    set_timeout 100 do
+    delay(1) do
       run_async { obj.should == [1, 2, 3, 4] }
     end
   end
@@ -32,7 +32,7 @@ describe "Asynchronous helpers" do
       expect(:foo).to eq(:baz)
     }.to raise_error(Exception)
 
-    set_timeout(0) do
+    delay(0) do
       run_async { expect(42).to eq(42) }
     end
   end
