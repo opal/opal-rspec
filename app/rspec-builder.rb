@@ -18,22 +18,24 @@ require 'rspec/core/hooks'
 require 'rspec/core/memoized_helpers'
 require 'rspec/core/metadata'
 require 'rspec/core/pending'
+
 require 'rspec/core/formatters'
+require 'rspec/core/formatters/helpers'
+require 'rspec/core/formatters/base_formatter'
+require 'rspec/core/formatters/base_text_formatter'
 require 'rspec/core/ordering'
 
 require 'rspec/core/world'
 require 'rspec/core/configuration'
 require 'rspec/core/option_parser'
 require 'rspec/core/configuration_options'
-require 'rspec/core/command_line'
 require 'rspec/core/runner'
 require 'rspec/core/example'
-require 'rspec/core/shared_example_group/collection'
 require 'rspec/core/shared_example_group'
 require 'rspec/core/example_group'
 
 require 'rspec/core'
-require 'rspec-expectations'
+require 'rspec/expectations'
 require 'rspec/mocks'
 
 # we want access to BaseFormatter
