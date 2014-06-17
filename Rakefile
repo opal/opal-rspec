@@ -40,6 +40,34 @@ end
 
 def build_rspec
   Opal::Processor.dynamic_require_severity = :warning
+
+  code = []
+  gems = %w(rspec rspec-core rspec-support rspec-expectations rspec-mocks)
+
+  gems.each do |gem_name|
+    spec = Gem::Specification.find_by_name gem_name
+    gem_dir = File.join spec.gem_dir, 'lib'
+    prefix = gem_dir + '/'
+
+    Dir.glob(File.join(gem_dir, '**/*.rb')).each do |source|
+      requirable = source.sub(prefix, '').sub(/\.rb$/, '')
+
+      compiler = Opal::Compiler.new File.read(source),
+        requirable: true, file: requirable, dynamic_require_severity: :warning
+
+      code << compiler.compile
+    end
+  end
+
+  stubs = %w(shellwords fileutils optparse)
+
+  stubs.each do |stub|
+    compiler = Opal::Compiler.new '', requirable: true, file: stub
+    code << compiler.compile
+  end
+
+  return code.join "\n"
+
   Opal.append_path 'app'
 
   Opal.use_gem 'rspec'
