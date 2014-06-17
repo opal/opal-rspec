@@ -66,22 +66,7 @@ def build_rspec
     code << compiler.compile
   end
 
-  return code.join "\n"
-
-  Opal.append_path 'app'
-
-  Opal.use_gem 'rspec'
-  Opal.use_gem 'rspec-expectations'
-
-  %w[time fileutils test/unit/assertions coderay optparse shellwords socket uri
-     drb/drb diff/lcs diff/lcs/hunk minitest minitest/assertions minitest/unit].each do |asset|
-    Opal::Processor.stub_file asset
-  end
-
-  # bug in rspec? this autoload doesnt exist so we must stub it
-  Opal::Processor.stub_file 'rspec/matchers/built_in/have'
-
-  Opal.process('rspec-builder')
+  code.join "\n"
 end
 
 def uglify(str)
