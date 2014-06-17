@@ -19,25 +19,6 @@ task :sizes do
   puts "\ndevelopment: #{code.size}, minified: #{min.size}"
 end
 
-module Opal
-  module Nodes
-    class OpAsgn1Node
-      def compile_and
-        with_temp do |a| # args
-          with_temp do |r| # recv
-            aref = s(:call, s(:js_tmp, r), :[], s(:arglist, s(:js_tmp, a)))
-            aset = s(:call, s(:js_tmp, r), :[]=, s(:arglist, s(:js_tmp, a), rhs))
-            andop = s(:and, aref, aset)
-
-            push "(#{a} = ", expr(first_arg), ", #{r} = ", expr(lhs)
-            push ", ", expr(andop), ")"
-          end
-        end
-      end
-    end
-  end
-end
-
 def build_rspec
   Opal::Processor.dynamic_require_severity = :warning
 
