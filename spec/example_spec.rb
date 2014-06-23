@@ -86,6 +86,14 @@ describe "subject" do
   end
 end
 
+describe "named subject" do
+  subject(:array) { [1, 2, 3] }
+
+  it "should be the subject" do
+    subject.should be_kind_of(Array)
+  end
+end
+
 describe Hash do
   it "should create a new instance of subject for classes" do
     subject.should == {}
