@@ -11,6 +11,7 @@ task :dist do
     out << build_rspec
   end
 end
+task :build => :dist
 
 desc "Show dev/min sizes"
 task :sizes do
