@@ -1,11 +1,12 @@
 require 'bundler'
 Bundler.require
+Bundler::GemHelper.install_tasks
 
 require 'opal/rspec/rake_task'
 Opal::RSpec::RakeTask.new(:default)
 
 desc "Build opal/opal/rspec/rspec.js"
-task :build do
+task :dist do
   File.open('opal/opal/rspec/rspec.js', 'w+') do |out|
     out << build_rspec
   end
