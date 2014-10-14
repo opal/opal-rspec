@@ -1,7 +1,8 @@
 source 'https://rubygems.org'
 gemspec
 
-gem 'opal', :github => 'opal/opal'
+gem 'opal', github: 'opal/opal'
+# gem 'opal', path: '../opal'
 
 gem 'rspec',              '3.0.0.beta1'
 gem 'rspec-support',      '3.0.0.beta1'
