@@ -1,9 +1,6 @@
 require 'bundler'
 Bundler.require
-Bundler::GemHelper.install_tasks
 
-require 'opal/rspec/rake_task'
-Opal::RSpec::RakeTask.new(:default)
 
 desc "Build opal/opal/rspec/rspec.js"
 task :dist do
@@ -11,7 +8,16 @@ task :dist do
     out << build_rspec
   end
 end
+
+
+Bundler::GemHelper.install_tasks
 task :build => :dist
+
+
+require 'opal/rspec/rake_task'
+Opal::RSpec::RakeTask.new(:default)
+task :default => :dist
+
 
 desc "Show dev/min sizes"
 task :sizes do
@@ -20,6 +26,9 @@ task :sizes do
 
   puts "\ndevelopment: #{code.size}, minified: #{min.size}"
 end
+
+
+
 
 def build_rspec
   Opal::Processor.dynamic_require_severity = :warning
