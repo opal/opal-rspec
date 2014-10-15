@@ -8,3 +8,6 @@ rvm:
 
 before_install:
   - git submodule update --init
+
+notifications:
+  irc: "irc.freenode.org#opal"
