@@ -11,7 +11,12 @@ Gem::Specification.new do |s|
   s.description  = 'Opal compatible rspec library'
 
   s.files = `git ls-files`.split("\n")
-  s.files << 'opal/opal/rspec/rspec.js'
+
+  %w[rspec rspec-core rspec-expectations rspec-mocks rspec-support].each do |gem|
+    s.files += Dir["#{gem}/lib/**/*.rb"]
+  end
+
+  p s.files
 
   s.require_paths  = ['lib']
 
