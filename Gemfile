@@ -4,8 +4,8 @@ gemspec
 gem 'opal', github: 'opal/opal'
 # gem 'opal', path: '../opal'
 
-gem 'rspec',              '3.0.0.beta1'
-gem 'rspec-support',      '3.0.0.beta1'
-gem 'rspec-core',         '3.0.0.beta1'
-gem 'rspec-mocks',        '3.0.0.beta1'
-gem 'rspec-expectations', '3.0.0.beta1'
+gem 'rspec',              :path => 'rspec'
+gem 'rspec-support',      :path => 'rspec-support'
+gem 'rspec-core',         :path => 'rspec-core'
+gem 'rspec-mocks',        :path => 'rspec-mocks'
+gem 'rspec-expectations', :path => 'rspec-expectations'
