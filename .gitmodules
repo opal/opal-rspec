@@ -1,0 +1,15 @@
+[submodule "rspec"]
+	path = rspec
+	url = https://github.com/rspec/rspec.git
+[submodule "rspec-support"]
+	path = rspec-support
+	url = https://github.com/rspec/rspec-support.git
+[submodule "rspec-core"]
+	path = rspec-core
+	url = https://github.com/rspec/rspec-core.git
+[submodule "rspec-mocks"]
+	path = rspec-mocks
+	url = https://github.com/rspec/rspec-mocks.git
+[submodule "rspec-expectations"]
+	path = rspec-expectations
+	url = https://github.com/rspec/rspec-expectations.git
