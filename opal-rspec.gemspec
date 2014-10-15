@@ -16,8 +16,6 @@ Gem::Specification.new do |s|
     s.files += Dir["#{gem}/lib/**/*.rb"]
   end
 
-  p s.files
-
   s.require_paths  = ['lib']
 
   s.add_dependency 'opal', '~> 0.7.0.beta1'
