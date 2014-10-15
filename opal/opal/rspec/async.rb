@@ -1,13 +1,17 @@
 module Opal
   module RSpec
-    module AsyncDefinitions
-      def async(desc, *args, &block)
-        options = ::RSpec::Core::Metadata.build_hash_from(args)
-        Opal::RSpec::AsyncExample.register(self, desc, options, block)
-      end
-    end
-
     module AsyncHelpers
+      module ClassMethods
+        def async(desc, *args, &block)
+          options = ::RSpec::Core::Metadata.build_hash_from(args)
+          Opal::RSpec::AsyncExample.register(self, desc, options, block)
+        end
+      end
+
+      def self.included(base)
+        base.extend ClassMethods
+      end
+
       def async(&block)
         @example.continue_async(block)
       end

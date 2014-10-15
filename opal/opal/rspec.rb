@@ -17,7 +17,6 @@ RSpec.configure do |config|
 
   # Async helpers for specs
   config.include Opal::RSpec::AsyncHelpers
-  config.extend Opal::RSpec::AsyncDefinitions
 
   # Always support expect() and .should syntax (we should not do this really..)
   config.expect_with :rspec do |c|
