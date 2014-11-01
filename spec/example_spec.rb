@@ -136,6 +136,20 @@ describe "expect syntax" do
   end
 end
 
+describe "one-liner syntax" do
+  subject { 42 }
+
+  describe "is_expected" do
+    it { is_expected.to eq(42) }
+    it { is_expected.to_not eq(43) }
+  end
+
+  describe "should" do
+    it { should == 42 }
+    it { should_not == 43 }
+  end
+end
+
 describe "Normal errors" do
   it "should still work" do
     lambda { raise "wtf son" }.should raise_error(Exception)
