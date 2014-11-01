@@ -12,10 +12,6 @@ Gem::Specification.new do |s|
 
   s.files = `git ls-files`.split("\n")
 
-  %w[rspec rspec-core rspec-expectations rspec-mocks rspec-support].each do |gem|
-    s.files += Dir["#{gem}/lib/**/*.rb"]
-  end
-
   s.require_paths  = ['lib']
 
   s.add_dependency 'opal', '~> 0.7.0.beta1'
