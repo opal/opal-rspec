@@ -96,3 +96,13 @@ class RSpec::Mocks::MethodDouble
     @original_method ||= @method_stasher.original_method
   end
 end
+
+module RSpec
+  module Core
+    module MemoizedHelpers
+      def is_expected
+        expect(subject)
+      end
+    end
+  end
+end
