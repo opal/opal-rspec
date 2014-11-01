@@ -6,23 +6,21 @@ Bundler::GemHelper.install_tasks
 require 'opal/rspec/rake_task'
 Opal::RSpec::RakeTask.new(:default)
 
-desc "Build rspec.js"
-task :build_rspec do
+
+require 'fileutils'
+desc "Copy RSpec sources"
+task :copy_rspec do
   gems = %w(rspec rspec-core rspec-expectations rspec-mocks rspec-support)
 
-  File.open('opal/opal/rspec/rspec.js', 'w+') do |out|
-    gems.each do |gem|
-      spec = Gem::Specification.find_by_name gem
-      lib  = File.join spec.gem_dir, 'lib'
+  gems.each do |gem|
+    spec = Gem::Specification.find_by_name gem
+    lib  = File.join spec.gem_dir, 'lib'
 
-      Dir["#{lib}/**/*.rb"].each do |file|
-        asset = file.sub(/^#{lib}\//, '').sub(/\.rb$/, '')
-        puts "#{file} => #{asset}"
-        js = Opal.compile(File.read(file), requirable: true, file: asset,
-                          dynamic_require_severity: :warning)
+    Dir["#{lib}/**/*.rb"].each do |file|
+      out = file.sub(/^#{lib}\//, 'opal/')
 
-        out.puts js
-      end
+      FileUtils.mkdir_p File.dirname(out)
+      FileUtils.cp file, out
     end
   end
 end
