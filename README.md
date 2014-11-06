@@ -2,6 +2,8 @@
 
 An attempt at a compatibility layer of rspec for opal.
 
+[See the website for documentation](http://opalrb.org/docs/rspec/).
+
 ## Usage
 
 Add `opal-rspec` to your Gemfile:
@@ -44,42 +46,6 @@ run Opal::Server.new { |s|
 
 Then run the rack server `bundle exec rackup` and visit `http://localhost:9292`
 in any web browser.
-
-## Async examples
-
-`opal-rspec` adds support for async specs to rspec. These specs are defined using
-`#async` instead of `#it`:
-
-```ruby
-describe MyClass do
-  # normal example
-  it 'does something' do
-    expect(:foo).to eq(:foo)
-  end
-
-  # async example
-  async 'does something else, too' do
-    # ...
-  end
-end
-```
-
-This just marks the example as running async. To actually handle the async result,
-you also need to use a `run_async` call inside some future handler:
-
-```ruby
-async 'HTTP requests should work' do
-  HTTP.get('/users/1.json') do |res|
-    run_async {
-      expect(res).to be_ok
-    }
-  end
-end
-```
-
-The block passed to `run_async` informs the runner that this spec is finished
-so it can move on. Any failures/expectations run inside this block will be run
-in the context of the example.
 
 ## Contributing
 
