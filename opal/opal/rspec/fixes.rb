@@ -89,6 +89,7 @@ class RSpec::Mocks::MethodDouble
   end
 end
 
+# Missing on vendored rspec version
 module RSpec
   module Core
     module MemoizedHelpers
