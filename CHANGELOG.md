@@ -1,5 +1,7 @@
 ## edge
 
+*   Remove predicate matcher fixes as Opal supports $1..$9 special gvars.
+
 *   Update Opal dependency for ~> 0.6.0.
 
 *   Remove double-escaping in inline x-strings (from Opal bug fix).

@@ -179,3 +179,23 @@ describe "operator ==" do
     }.to raise_error(Exception)
   end
 end
+
+class PredicateTest
+  def foo?
+    true
+  end
+
+  def bar?
+    false
+  end
+end
+
+describe "predicate matchers" do
+  it "works with positive expectations" do
+    expect(PredicateTest.new).to be_foo
+  end
+
+  it "work with negative expectations" do
+    expect(PredicateTest.new).to_not be_bar
+  end
+end

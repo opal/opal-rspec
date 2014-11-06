@@ -42,14 +42,6 @@ module RSpec
   end
 end
 
-# Opal does not yet support $1..$9 backrefs
-class RSpec::Matchers::BuiltIn::BePredicate
-  def prefix_and_expected(symbol)
-    symbol.to_s =~ /^(be_(an?_)?)(.*)/
-    return $~[1], $~[3]
-  end
-end
-
 module RSpec::ExampleGroups
   # opal cannot use mutable strings AND opal doesnt support `\A` or `\z` anchors
   def self.base_name_for(group)
