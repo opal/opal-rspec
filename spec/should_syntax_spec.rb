@@ -10,4 +10,8 @@ describe "One-liner should syntax" do
     it { is_expected.to eq(42) }
     it { is_expected.to_not eq(43) }
   end
+
+  describe "expect" do
+    it { expect(42).to eq(42) }
+  end
 end
