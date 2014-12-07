@@ -1,3 +1,10 @@
+# IO.closed? missing - BaseFormatter uses it for sync impl
+class IO
+  def closed?
+    false
+  end
+end
+
 # Opal defines enumerable#flat_map, but doesnt implement it
 module RSpec::Core::FlatMap
   def flat_map(array)
