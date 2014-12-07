@@ -12,4 +12,4 @@
 
 *   Add timeout support to asynchronous specs
 
-## 0.2.1 2013-11-24
+## 0.2.1  November 24, 2013
