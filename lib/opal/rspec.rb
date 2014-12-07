@@ -3,6 +3,7 @@ require 'opal/rspec/version'
 
 # Just register our opal code path with opal build tools
 Opal.append_path File.expand_path('../../../opal', __FILE__)
+Opal.append_path File.expand_path('../../../vendor_lib', __FILE__)
 
 Opal::Processor.dynamic_require_severity = :warning
 
