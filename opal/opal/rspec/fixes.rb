@@ -10,9 +10,9 @@ module RSpec
   module Matchers
     module Pretty
       def underscore(camel_cased_word)
-        word = camel_cased_word.to_s.dup
-        word = word.gsub(/([A-Z]+)([A-Z][a-z])/,'$1_$2')
-        word = word.gsub(/([a-z\d])([A-Z])/,'$1_$2')
+        word = camel_cased_word.to_s
+        word = word.gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2')
+        word = word.gsub(/([a-z\d])([A-Z])/,'\1_\2')
         word = word.tr("-", "_")
         word = word.downcase
         word
@@ -35,7 +35,7 @@ module RSpec::ExampleGroups
 
     # Ruby requires first const letter to be A-Z. Use `Nested`
     # as necessary to enforce that.
-    name = name.gsub(/^([^A-Z]|$)/, 'Nested$1')
+    name = name.gsub(/^([^A-Z]|$)/, 'Nested\1')
 
     name
   end
