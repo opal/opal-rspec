@@ -151,3 +151,13 @@ describe "let on an inner scope" do
     end
   end
 end
+
+describe "#context" do
+  context "inner context" do
+    let(:foo) { :bar }
+
+    it "should still work" do
+      foo.should eq(:bar)
+    end
+  end
+end
