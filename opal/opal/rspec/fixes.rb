@@ -5,15 +5,6 @@ class IO
   end
 end
 
-# Opal defines enumerable#flat_map, but doesnt implement it
-module RSpec::Core::FlatMap
-  def flat_map(array)
-    array.map { |item| yield item }.flatten
-  end
-
-  module_function :flat_map
-end
-
 # This breaks on 2.0.0, so it is here ready for when opal bumps to 2.0.0
 class RSpec::CallerFilter
   def self.first_non_rspec_line
