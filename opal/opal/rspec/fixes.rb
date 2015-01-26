@@ -5,18 +5,6 @@ class RSpec::CallerFilter
   end
 end
 
-# String#<< is not supported by Opal
-module RSpec::Expectations
-  def self.fail_with(message, expected = nil, actual = nil)
-    if !message
-      raise ArgumentError, "Failure message is nil. Does your matcher define the " +
-                           "appropriate failure_message_for_* method to return a string?"
-    end
-
-    raise RSpec::Expectations::ExpectationNotMetError.new(message)
-  end
-end
-
 # Opal does not support mutable strings
 module RSpec
   module Matchers
