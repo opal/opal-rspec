@@ -1,5 +1,7 @@
 # opal-rspec
 
+[![Build Status](http://img.shields.io/travis/opal/opal-rspec/master.svg?style=flat)](http://travis-ci.org/opal/opal-rspec)
+
 An attempt at a compatibility layer of rspec for opal.
 
 [See the website for documentation](http://opalrb.org/docs/rspec/).
