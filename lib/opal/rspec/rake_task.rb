@@ -15,7 +15,7 @@ module Opal
           require 'rack'
           require 'webrick'
 
-          server = fork do
+          server = Thread.new do
             app = Opal::Server.new { |s|
               s.main = 'opal/rspec/sprockets_runner'
               s.append_path 'spec'
@@ -28,13 +28,14 @@ module Opal
               :Logger => WEBrick::Log.new("/dev/null"))
           end
 
-          system "phantomjs #{RUNNER} \"#{URL}\""
-          success = $?.success?
+          begin
+            system %Q{phantomjs #{RUNNER} "#{URL}"}
+            success = $?.success?
 
-          Process.kill(:SIGINT, server)
-          Process.wait
-
-          exit 1 unless success
+            exit 1 unless success
+          ensure
+            server.kill
+          end
         end
       end
     end
