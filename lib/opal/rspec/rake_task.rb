@@ -28,6 +28,17 @@ module Opal
               :Logger => WEBrick::Log.new("/dev/null"))
           end
 
+          if `phantomjs -v`.strip.to_i >= 2
+            warn <<-WARN.gsub(/^              /,'')
+              Only PhantomJS v1 is currently supported,
+              if you're using homebrew on OSX you can switch version with:
+
+                brew switch phantomjs 1.9.8
+
+            WARN
+            exit 1
+          end
+
           begin
             system %Q{phantomjs #{RUNNER} "#{URL}"}
             success = $?.success?
