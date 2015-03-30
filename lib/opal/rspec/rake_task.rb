@@ -15,19 +15,22 @@ module Opal
           require 'rack'
           require 'webrick'
 
+          app = Opal::Server.new { |s|
+            s.main = 'opal/rspec/sprockets_runner'
+            s.append_path 'spec'
+            s.debug = false
+
+            block.call s if block
+          }
+
           server = Thread.new do
             Thread.current.abort_on_exception = true
-
-            app = Opal::Server.new { |s|
-              s.main = 'opal/rspec/sprockets_runner'
-              s.append_path 'spec'
-              s.debug = false
-
-              block.call s if block
-            }
-
-            Rack::Server.start(:app => app, :Port => PORT, :AccessLog => [],
-              :Logger => WEBrick::Log.new("/dev/null"))
+            Rack::Server.start(
+              :app => app,
+              :Port => PORT,
+              :AccessLog => [],
+              :Logger => WEBrick::Log.new("/dev/null"),
+            )
           end
 
           if `phantomjs -v`.strip.to_i >= 2
