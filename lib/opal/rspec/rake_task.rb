@@ -16,6 +16,8 @@ module Opal
           require 'webrick'
 
           server = Thread.new do
+            Thread.current.abort_on_exception = true
+
             app = Opal::Server.new { |s|
               s.main = 'opal/rspec/sprockets_runner'
               s.append_path 'spec'
