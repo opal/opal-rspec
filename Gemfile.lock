@@ -1,8 +1,17 @@
+GIT
+  remote: https://github.com/wied03/opal.git
+  revision: 91aed7cd76c20ecfba041bebc86d0e49b309de9f
+  specs:
+    opal (0.8.0.beta1)
+      hike (~> 1.2)
+      sourcemap (~> 0.1.0)
+      sprockets (>= 2.2.3, < 4.0.0)
+      tilt (~> 1.4)
+
 PATH
   remote: .
   specs:
     opal-rspec (0.4.2)
-      opal (= 0.8.0.beta1)
 
 PATH
   remote: rspec
@@ -41,11 +50,6 @@ GEM
   specs:
     diff-lcs (1.2.5)
     hike (1.2.3)
-    opal (0.8.0.beta1)
-      hike (~> 1.2)
-      sourcemap (~> 0.1.0)
-      sprockets (>= 2.2.3, < 4.0.0)
-      tilt (~> 1.4)
     rack (1.6.1)
     rake (10.4.2)
     sourcemap (0.1.1)
@@ -58,6 +62,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  opal!
   opal-rspec!
   rake
   rspec!
