@@ -54,4 +54,10 @@ describe "RSpec mocks" do
     expect(Time).to receive(:now).once.and_call_original
     Time.now.should be_kind_of(Time)
   end
+
+  describe 'stubs' do
+    it 'works and displays deprecation' do
+      Object.new.stub :foo
+    end
+  end
 end

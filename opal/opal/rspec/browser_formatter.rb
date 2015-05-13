@@ -4,6 +4,8 @@ module Opal
   module RSpec
     class BrowserFormatter < ::RSpec::Core::Formatters::BaseFormatter
       include ERB::Util
+      
+      ::RSpec::Core::Formatters.register self, :dump_summary, :example_group_finished, :example_failed, :example_passed, :example_pending
 
       CSS_STYLES = ::RSpec::Core::Formatters::HtmlPrinter::GLOBAL_STYLES
 
@@ -18,11 +20,11 @@ module Opal
         styles.append_to_head
       end
 
-      def example_group_started(example_group)
+      def example_group_started(notification)
         super
 
         @example_group_failed = false
-        parents = example_group.parent_groups.size
+        parents = @example_group.parent_groups.size
 
         @rspec_group  = Element.new(:div, class_name: "example_group passed")
         @rspec_dl     = Element.new(:dl)
@@ -35,24 +37,42 @@ module Opal
         @rspec_results << @rspec_group
       end
 
-      def example_group_finished(example_group)
-        super
-
+      def example_group_finished(_notification)
         if @example_group_failed
           @rspec_group.class_name = "example_group failed"
           @rspec_dt.class_name = "failed"
           Element.id('rspec-header').class_name = 'failed'
         end
+        
+        if @example_group_pending
+          @rspec_group.class_name = "example_group not_implemented"
+          @rspec_dt.class_name = "pending"
+          Element.id('rspec-header').class_name = 'not_implemented'
+        end
+      end
+      
+      def example_pending(notification)
+        example = notification.example
+        duration = sprintf("%0.5f", example.execution_result.run_time)
+        
+        pending_message = example.execution_result.pending_message
+
+        @example_group_pending = true
+
+        @rspec_dl << Element.new(:dd, class_name: "example not_implemented", html: <<-HTML)
+          <span class="not_implemented_spec_name">#{h example.description} (PENDING: #{h(pending_message)})</span>          
+        HTML
       end
 
-      def example_failed(example)
-        super
-        duration = sprintf("%0.5f", example.execution_result[:run_time])
+      def example_failed(notification)
+        example = notification.example
+        duration = sprintf("%0.5f", example.execution_result.run_time)
 
-        error = example.execution_result[:exception]
+        error = example.execution_result.exception
         error_name = error.class.name.to_s
         output = "#{short_padding}#{error_name}:\n"
         error.message.to_s.split("\n").each { |line| output += "#{long_padding}  #{line}\n" }
+        error.backtrace.each {|trace| output += "#{long_padding}  #{trace}\n"}
 
         @example_group_failed = true
 
@@ -65,23 +85,21 @@ module Opal
         HTML
       end
 
-      def example_passed(example)
-        super
-        duration = sprintf("%0.5f", example.execution_result[:run_time])
+      def example_passed(notification)
+        example = notification.example      
+        duration = sprintf("%0.5f", example.execution_result.run_time)
 
         @rspec_dl << Element.new(:dd, class_name: "example passed", html: <<-HTML)
           <span class="passed_spec_name">#{h example.description}</span>
           <span class="duration">#{duration}s</span>
         HTML
-      end
+      end     
 
-      def dump_summary(duration, example_count, failure_count, pending_count)
-        super
-
-        totals = "#{example_count} examples, #{failure_count} failures"
+      def dump_summary(notification)
+        totals = "#{notification.example_count} examples, #{notification.failure_count} failures, #{notification.pending_count} pending"
         Element.id('totals').html = totals
 
-        duration = "Finished in <strong>#{sprintf("%.5f", duration)} seconds</strong>"
+        duration = "Finished in <strong>#{sprintf("%.5f", notification.duration)} seconds</strong>"
         Element.id('duration').html = duration
 
         add_scripts
