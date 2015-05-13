@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.require_paths  = ['lib']
 
   # hard coding this for now since 0.8 wouldn't match the ['>= 0.7.0', '< 0.9'] version restriction in the gemspec
-  s.add_dependency 'opal', '0.8.0.beta1'
+  #s.add_dependency 'opal', '0.8.0.beta1'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'yard'
 end
