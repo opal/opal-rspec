@@ -3,7 +3,7 @@ require 'json'
 # Opal will not have the built-in RNG
 Object.send(:remove_const, :Random)
 
-REQUIRES = %w{rspec rspec/mocks rspec/expectations}
+REQUIRES = %w{rspec rspec/mocks rspec/expectations rspec/core rspec/core/formatters/base_text_formatter}
 
 # Should not need to edit below this
 
@@ -36,5 +36,5 @@ end
 REQUIRES.each {|r| require r }
 
 File.open 'opal/opal/rspec/requires.rb', 'w' do |file|
-  file << JSON.dump(RequireCreation::PATHS)
+  file << JSON.dump(RequireCreation::PATHS.uniq)
 end
