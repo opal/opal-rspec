@@ -3,7 +3,8 @@ require 'json'
 # Opal will not have the built-in RNG
 Object.send(:remove_const, :Random)
 
-REQUIRES = %w{rspec rspec/mocks rspec/expectations rspec/core rspec/core/formatters/base_text_formatter}
+FORMATTERS = %w{base_text_formatter html_printer progress_formatter}
+REQUIRES = %w{rspec rspec/mocks rspec/expectations rspec/core} + FORMATTERS.map {|f| "rspec/core/formatters/#{f}"}
 
 # Should not need to edit below this
 
