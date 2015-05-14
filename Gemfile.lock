@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/wied03/opal.git
-  revision: 91aed7cd76c20ecfba041bebc86d0e49b309de9f
+  revision: 8493b01a10f015a9070daf4ed264ccc77fe3d14a
   specs:
     opal (0.8.0.beta1)
       hike (~> 1.2)
