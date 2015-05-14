@@ -1,5 +1,12 @@
 require 'json'
 
+# Opal will not have the built-in RNG
+Object.send(:remove_const, :Random)
+
+REQUIRES = %w{rspec rspec/mocks rspec/expectations}
+
+# Should not need to edit below this
+
 alias :orig_require :require
 
 module RequireCreation
@@ -26,11 +33,7 @@ def require_relative s
   RequireCreation::PATHS << use
 end
 
-# Opal will not have the built-in RNG
-Object.send(:remove_const, :Random)
-require 'rspec'
-require 'rspec/mocks'
-require 'rspec/expectations'
+REQUIRES.each {|r| require r }
 
 File.open 'opal/opal/rspec/requires.rb', 'w' do |file|
   file << JSON.dump(RequireCreation::PATHS)
