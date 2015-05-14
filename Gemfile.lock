@@ -50,11 +50,16 @@ GEM
   specs:
     diff-lcs (1.2.5)
     hike (1.2.3)
+    libv8 (3.16.14.7)
     rack (1.6.1)
     rake (10.4.2)
+    ref (1.0.5)
     sourcemap (0.1.1)
     sprockets (3.1.0)
       rack (~> 1.0)
+    therubyracer (0.12.2)
+      libv8 (~> 3.16.14.0)
+      ref
     tilt (1.4.1)
     yard (0.8.7.6)
 
@@ -70,4 +75,5 @@ DEPENDENCIES
   rspec-expectations!
   rspec-mocks!
   rspec-support!
+  therubyracer
   yard
