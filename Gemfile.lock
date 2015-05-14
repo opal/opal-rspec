@@ -1,6 +1,7 @@
 GIT
   remote: https://github.com/wied03/opal.git
-  revision: 8493b01a10f015a9070daf4ed264ccc77fe3d14a
+  revision: 5493e330a7b2e25ed8bd6980e120b74359b8fb8e
+  branch: features/set_add_and_define_method
   specs:
     opal (0.8.0.beta1)
       hike (~> 1.2)
