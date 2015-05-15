@@ -4,7 +4,7 @@ require 'json'
 Object.send(:remove_const, :Random)
 
 FORMATTERS = %w{base_text_formatter html_printer progress_formatter}
-REQUIRES = %w{rspec rspec/mocks rspec/expectations rspec/core} + FORMATTERS.map {|f| "rspec/core/formatters/#{f}"}
+REQUIRES = %w{rspec rspec/mocks rspec/expectations rspec/core rspec/core/mocking_adapters/rspec} + FORMATTERS.map {|f| "rspec/core/formatters/#{f}"}
 
 # Should not need to edit below this
 
