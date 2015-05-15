@@ -4,6 +4,9 @@ module Opal
   module RSpec
     class BrowserFormatter < ::RSpec::Core::Formatters::BaseFormatter
       include ERB::Util
+      
+      ::RSpec::Core::Formatters.register self,
+                          :message, :dump_summary, :dump_failures, :dump_pending, :seed
 
       CSS_STYLES = ::RSpec::Core::Formatters::HtmlPrinter::GLOBAL_STYLES
 

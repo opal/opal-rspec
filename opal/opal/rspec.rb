@@ -14,7 +14,7 @@ require 'opal/rspec/async'
 
 RSpec.configure do |config|
   # For now, always use our custom formatter for results
-  config.formatter = Opal::RSpec::Runner.default_formatter
+  config.default_formatter = Opal::RSpec::Runner.default_formatter
 
   # Async helpers for specs
   config.include Opal::RSpec::AsyncHelpers

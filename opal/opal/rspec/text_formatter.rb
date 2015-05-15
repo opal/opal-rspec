@@ -2,6 +2,9 @@ module Opal
   module RSpec
     class TextFormatter < ::RSpec::Core::Formatters::BaseFormatter
 
+      ::RSpec::Core::Formatters.register self,
+                          :message, :dump_summary, :dump_failures, :dump_pending, :seed
+
       def dump_failures
         if failed_examples.empty?
           puts "\nFinished"
