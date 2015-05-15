@@ -33,7 +33,7 @@ end
 as_tree = sort_by_hierarchy corrected_paths
 
 File.open REQ_FILE, 'w' do |file|
-  file << "# Generated automatically, do not edit\n"
+  file << "# Generated automatically by util/normalize_requires.rb, triggered by Rake task :generate_requires, do not edit\n"
   as_tree.each do |p|        
     file << "require '#{p}'\n"
   end

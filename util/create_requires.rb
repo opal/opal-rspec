@@ -1,8 +1,9 @@
 require 'json'
 
-# Opal will not have the built-in RNG
+# Opal will not have the built-in RNG, which affects the required outcome
 Object.send(:remove_const, :Random)
 
+# These scripts allow a leaner top level spec (like noted here)
 FORMATTERS = %w{base_text_formatter html_printer progress_formatter}
 REQUIRES = %w{rspec rspec/mocks rspec/expectations rspec/core rspec/core/mocking_adapters/rspec} + FORMATTERS.map {|f| "rspec/core/formatters/#{f}"}
 
