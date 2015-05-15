@@ -57,6 +57,11 @@ module Opal
         @configuration.hooks.run(hook_when, :suite, hook_context)
       end
 
+      def config_hook(hook_when)
+        hook_context = ::RSpec::Core::SuiteHookContext.new
+        @configuration.hooks.run(hook_when, :suite, hook_context)
+      end
+
       def start
         @reporter = @configuration.reporter
         @reporter.start(@world.example_count)
