@@ -127,3 +127,6 @@ class RSpec::Core::Reporter
     true
   end
 end
+
+# Thread usage in core.rb
+require 'thread'
