@@ -144,17 +144,24 @@ module Kernel
     }
     stack = `err.stack`
     caller_lines = stack.split("\n")[4..-1]
-    caller_lines.map do |line|
-      includes_method = /\s* at (.*) \((\S+):(\d+):\d+/.match(line)
-      if includes_method
-        method, filename, line = includes_method.captures
+    caller_lines.reject! {|l| l.strip.empty? }
+    caller_lines.map do |raw_line|
+      if match = /\s*at (.*) \((\S+):(\d+):\d+/.match(raw_line)
+        method, filename, line = match.captures
         "#{filename}:#{line} in `#{method}'"
-      elsif without_method = /\s* at (\S+):(\d+):\d+/.match(line)
-        filename, line = without_method.captures
+      elsif match = /\s*at (\S+):(\d+):\d+/.match(raw_line)
+        filename, line = match.captures
+        "#{filename}:#{line} in `(unknown method)'"
+      # catch phantom/no 2nd line/col #
+      elsif match = /\s*at (.*) \((\S+):(\d+)/.match(raw_line)
+        method, filename, line = match.captures
+        "#{filename}:#{line} in `#{method}'"
+      elsif match = /\s*at (.*):(\d+)/.match(raw_line)
+        filename, line = match.captures
         "#{filename}:#{line} in `(unknown method)'"
       else
-        raise "Don't know how to parse #{line}!"
+        raise "Don't know how to parse #{raw_line}!"
       end
-    end   
+    end
   end
 end
