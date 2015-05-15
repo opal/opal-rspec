@@ -1,4 +1,4 @@
-# Generated automatically, do not edit
+# Generated automatically by util/normalize_requires.rb, triggered by Rake task :generate_requires, do not edit
 require 'erb'
 require 'rspec'
 require 'diff/lcs'
