@@ -114,3 +114,16 @@ def (RSpec::Expectations).fail_with(message, expected=nil, actual=nil)
 
   raise(RSpec::Expectations::ExpectationNotMetError.new(message))
 end
+
+class RSpec::Core::Reporter
+  # https://github.com/opal/opal/issues/858
+  # The problem is not directly related to the Reporter class (it has more to do with Formatter's call in add using a splat in the args list and right now, Opal does not run a to_a on a splat before calling)
+  def register_listener(listener, *notifications)
+    # Unpack the splat
+    notifications = notifications[0].to_a if notifications[0].is_a? Set
+    notifications.each do |notification|
+      @listeners[notification.to_sym] << listener
+    end
+    true
+  end
+end
