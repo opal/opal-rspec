@@ -21,11 +21,11 @@ module Opal
         styles.append_to_head
       end
 
-      def example_group_started(example_group)
+      def example_group_started(notification)
         super
 
         @example_group_failed = false
-        parents = example_group.parent_groups.size
+        parents = @example_group.parent_groups.size
 
         @rspec_group  = Element.new(:div, class_name: "example_group passed")
         @rspec_dl     = Element.new(:dl)
@@ -76,6 +76,13 @@ module Opal
           <span class="passed_spec_name">#{h example.description}</span>
           <span class="duration">#{duration}s</span>
         HTML
+      end
+
+      def dump_pending(notification)
+        return if notification.pending_examples.empty?
+        
+        puts "#{notification} is this"       
+        #output.puts notification.fully_formatted_pending_examples
       end
 
       def dump_summary(duration, example_count, failure_count, pending_count)
