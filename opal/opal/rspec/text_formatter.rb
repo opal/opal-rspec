@@ -2,10 +2,10 @@ module Opal
   module RSpec
     class TextFormatter < ::RSpec::Core::Formatters::BaseFormatter
 
-      ::RSpec::Core::Formatters.register self,
-                          :message, :dump_summary, :dump_failures, :dump_pending, :seed
+      ::RSpec::Core::Formatters.register self, :dump_summary, :dump_failures
 
-      def dump_failures
+      def dump_failures(notification)
+        failed_examples = notification.failed_examples
         if failed_examples.empty?
           puts "\nFinished"
         else
@@ -29,15 +29,15 @@ module Opal
         exception.message.to_s.split("\n").each { |line| red "#{long_padding}  #{line}" }
       end
 
-      def dump_summary(duration, example_count, failure_count, pending_count)
-        @duration = duration
-        @example_count = example_count
-        @failure_count = failure_count
-        @pending_count = pending_count
+      def dump_summary(notification)
+        @duration = notification.duration
+        @example_count = notification.example_count
+        @failure_count = notification.failure_count
+        @pending_count = notification.pending_count
 
-        msg = "\n#{example_count} examples, #{failure_count} failures (time taken: #{duration})"
+        msg = "\n#{@example_count} examples, #{@failure_count} failures (time taken: #{@duration})"
 
-        if failure_count == 0
+        if @failure_count == 0
           green msg
           finish_with_code(0)
         else
