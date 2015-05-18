@@ -5,7 +5,8 @@ Object.send(:remove_const, :Random)
 
 # These scripts allow a leaner top level spec (like noted here)
 FORMATTERS = %w{base_formatter html_printer}
-REQUIRES = %w{rspec rspec/mocks rspec/expectations rspec/core rspec/core/mocking_adapters/rspec rspec/mocks/matchers/expectation_customization} + FORMATTERS.map {|f| "rspec/core/formatters/#{f}"}
+MOCK_STUFF = %w{matchers/expectation_customization any_instance}
+REQUIRES = %w{rspec rspec/mocks rspec/expectations rspec/core rspec/core/mocking_adapters/rspec} + FORMATTERS.map {|f| "rspec/core/formatters/#{f}"} + MOCK_STUFF.map { |f| "rspec/mocks/#{f}" }
 
 # Should not need to edit below this
 
