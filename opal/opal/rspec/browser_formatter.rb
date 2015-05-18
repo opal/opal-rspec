@@ -77,13 +77,13 @@ module Opal
         HTML
       end     
 
-      def dump_summary(duration, example_count, failure_count, pending_count)
+      def dump_summary(notification)
         super
 
-        totals = "#{example_count} examples, #{failure_count} failures"
+        totals = "#{notification.example_count} examples, #{notification.failure_count} failures"
         Element.id('totals').html = totals
 
-        duration = "Finished in <strong>#{sprintf("%.5f", duration)} seconds</strong>"
+        duration = "Finished in <strong>#{sprintf("%.5f", notification.duration)} seconds</strong>"
         Element.id('duration').html = duration
 
         add_scripts
