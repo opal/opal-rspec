@@ -214,9 +214,23 @@ class RSpec::Core::Formatters::DeprecationFormatter
   end
 end
 
-# Fix unnecessary deprecation warnings
-# Hash.public_instance_methods - Object.public_instance_methods, which is a part of HashImitatable (included by ExecutionResult), returns the initialize method, which gets marked as deprecated (and that should not happen). Therefore we need to override the define_method that HashImitatable puts into place
-class RSpec::Core::Example::ExecutionResult
-  # There is no real constructor in example.rb's ExecutionResult class, so nothing needs to go here
-  def initialize; end
+class RSpec::Core::Example
+  # more mutable strings
+  def assign_generated_description
+    if metadata[:description].empty? && (description = RSpec::Matchers.generated_description)
+      metadata[:description] = description
+      metadata[:full_description] = metadata[:full_description] + description # mutable string fix
+    end
+  rescue Exception => e
+    set_exception(e, "while assigning the example description")
+  ensure
+    RSpec::Matchers.clear_generated_description
+  end
+  
+  # Fix unnecessary deprecation warnings
+  # Hash.public_instance_methods - Object.public_instance_methods, which is a part of HashImitatable (included by ExecutionResult), returns the initialize method, which gets marked as deprecated (and that should not happen). Therefore we need to override the define_method that HashImitatable puts into place
+  class ExecutionResult
+    # There is no real constructor in example.rb's ExecutionResult class, so nothing needs to go here
+    def initialize; end
+  end  
 end
