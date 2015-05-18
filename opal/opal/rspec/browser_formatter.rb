@@ -5,7 +5,7 @@ module Opal
     class BrowserFormatter < ::RSpec::Core::Formatters::BaseFormatter
       include ERB::Util
       
-      ::RSpec::Core::Formatters.register self, :dump_summary
+      ::RSpec::Core::Formatters.register self, :dump_summary, :example_group_finished, :example_failed, :example_passed
 
       CSS_STYLES = ::RSpec::Core::Formatters::HtmlPrinter::GLOBAL_STYLES
 
@@ -37,9 +37,7 @@ module Opal
         @rspec_results << @rspec_group
       end
 
-      def example_group_finished(example_group)
-        super
-
+      def example_group_finished(_notification)
         if @example_group_failed
           @rspec_group.class_name = "example_group failed"
           @rspec_dt.class_name = "failed"
@@ -47,8 +45,8 @@ module Opal
         end
       end
 
-      def example_failed(example)
-        super
+      def example_failed(notification)
+        example = notification.example
         duration = sprintf("%0.5f", example.execution_result.run_time)
 
         error = example.execution_result.exception
@@ -67,8 +65,8 @@ module Opal
         HTML
       end
 
-      def example_passed(example)
-        super
+      def example_passed(notification)
+        example = notification.example      
         duration = sprintf("%0.5f", example.execution_result.run_time)
 
         @rspec_dl << Element.new(:dd, class_name: "example passed", html: <<-HTML)
