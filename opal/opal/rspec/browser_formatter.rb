@@ -78,8 +78,6 @@ module Opal
       end     
 
       def dump_summary(notification)
-        super
-
         totals = "#{notification.example_count} examples, #{notification.failure_count} failures"
         Element.id('totals').html = totals
 
