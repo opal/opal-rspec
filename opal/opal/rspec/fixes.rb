@@ -213,3 +213,10 @@ class RSpec::Core::Formatters::DeprecationFormatter
     end
   end
 end
+
+# Fix unnecessary deprecation warnings
+# Hash.public_instance_methods - Object.public_instance_methods, which is a part of HashImitatable (included by ExecutionResult), returns the initialize method, which gets marked as deprecated (and that should not happen). Therefore we need to override the define_method that HashImitatable puts into place
+class RSpec::Core::Example::ExecutionResult
+  # There is no real constructor in example.rb's ExecutionResult class, so nothing needs to go here
+  def initialize; end
+end

@@ -23,7 +23,7 @@ module Opal
       end
 
       def dump_failure_info(example)
-        exception = example.execution_result[:exception]
+        exception = example.execution_result.exception
         exception_class_name = exception.class.name.to_s
         red "#{long_padding}#{exception_class_name}:"
         exception.message.to_s.split("\n").each { |line| red "#{long_padding}  #{line}" }

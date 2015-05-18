@@ -49,9 +49,9 @@ module Opal
 
       def example_failed(example)
         super
-        duration = sprintf("%0.5f", example.execution_result[:run_time])
+        duration = sprintf("%0.5f", example.execution_result.run_time)
 
-        error = example.execution_result[:exception]
+        error = example.execution_result.exception
         error_name = error.class.name.to_s
         output = "#{short_padding}#{error_name}:\n"
         error.message.to_s.split("\n").each { |line| output += "#{long_padding}  #{line}\n" }
@@ -69,7 +69,7 @@ module Opal
 
       def example_passed(example)
         super
-        duration = sprintf("%0.5f", example.execution_result[:run_time])
+        duration = sprintf("%0.5f", example.execution_result.run_time)
 
         @rspec_dl << Element.new(:dd, class_name: "example passed", html: <<-HTML)
           <span class="passed_spec_name">#{h example.description}</span>
