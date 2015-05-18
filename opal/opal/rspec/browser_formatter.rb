@@ -5,8 +5,7 @@ module Opal
     class BrowserFormatter < ::RSpec::Core::Formatters::BaseFormatter
       include ERB::Util
       
-      ::RSpec::Core::Formatters.register self,
-                          :message, :dump_summary, :dump_failures, :dump_pending, :seed
+      ::RSpec::Core::Formatters.register self, :dump_summary
 
       CSS_STYLES = ::RSpec::Core::Formatters::HtmlPrinter::GLOBAL_STYLES
 
@@ -76,14 +75,7 @@ module Opal
           <span class="passed_spec_name">#{h example.description}</span>
           <span class="duration">#{duration}s</span>
         HTML
-      end
-
-      def dump_pending(notification)
-        return if notification.pending_examples.empty?
-        
-        puts "#{notification} is this"       
-        #output.puts notification.fully_formatted_pending_examples
-      end
+      end     
 
       def dump_summary(duration, example_count, failure_count, pending_count)
         super
