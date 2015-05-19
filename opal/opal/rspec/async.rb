@@ -201,7 +201,8 @@ module Opal
       #
       # @see AsyncHelpers::ClassMethods.async
       def self.register(*args)
-        examples << new(*args)
+        group = args[0]
+        group.examples << new(*args)
       end
 
       # All async examples in specs.
@@ -211,10 +212,9 @@ module Opal
         @examples ||= []
       end
 
-      def run(example_group_instance, reporter, &after_run_block)
+      def run(example_group_instance, reporter)
         @example_group_instance = example_group_instance
         @reporter               = reporter
-        @after_run_block        = after_run_block
         @finished               = false
 
         should_wait = true
@@ -225,15 +225,22 @@ module Opal
         start(reporter)
 
         begin
-          run_before_each
+          run_before_example
           @example_group_instance.instance_exec(self, &@example_block)
+          if pending?
+            Pending.mark_fixed! self
+
+            raise Pending::PendingExampleFixedError,
+                  'Expected example to fail since it is pending, but it passed.',
+                  [location]
+          end
         rescue Exception => e
           set_exception(e)
           should_wait = false
         end
 
         if should_wait
-          delay options[:timeout] || 10 do
+          delay 10 do
             next if finished?
 
             set_exception RuntimeError.new("timeout")
@@ -264,7 +271,7 @@ module Opal
         @finished = true
 
         begin
-          run_after_each
+          run_after_example
         rescue Exception => e
           set_exception(e)
         ensure
@@ -282,7 +289,6 @@ module Opal
 
         finish(@reporter)
         ::RSpec.current_example = nil
-        @after_run_block.call
       end
     end
   end
