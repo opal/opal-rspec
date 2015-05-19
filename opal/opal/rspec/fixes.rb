@@ -119,7 +119,7 @@ class RSpec::Core::Reporter
   # https://github.com/opal/opal/issues/858
   # The problem is not directly related to the Reporter class (it has more to do with Formatter's call in add using a splat in the args list and right now, Opal does not run a to_a on a splat before the callee method takes over)
   def register_listener(listener, *notifications)
-    # Unpack the splat unless it's already an array
+    # Without this, we won't flatten out each notification properly (e.g. example_started, finished, etc.)
     notifications = notifications[0].to_a unless notifications[0].is_a? Array
     notifications.each do |notification|
       @listeners[notification.to_sym] << listener
@@ -131,7 +131,8 @@ end
 # Thread usage in core.rb
 require 'thread'
 
-# RSpec tries to add color with this. something like this: https://github.com/stacktracejs/stacktrace.js would be better
+# RSpec tries to add color with this. something like this: https://github.com/stacktracejs/stacktrace.js would be better than this but
+# avoiding adding an NPM dependency for now
 module Kernel
   def caller
     %x{
@@ -228,9 +229,9 @@ class RSpec::Core::Example
   end
   
   # Fix unnecessary deprecation warnings
-  # Hash.public_instance_methods - Object.public_instance_methods, which is a part of HashImitatable (included by ExecutionResult), returns the initialize method, which gets marked as deprecated (and that should not happen). Therefore we need to override the define_method that HashImitatable puts into place
+  # Hash.public_instance_methods - Object.public_instance_methods, which is a part of metadata.rb/HashImitatable (included by ExecutionResult), returns the initialize method, which gets marked as deprecated. The intent of the issue_deprecation method though is to shift people away from using this as a hash. Initialize obviously is not indicative of hash usage (any new object will trip this up, and that should not happen).
   class ExecutionResult
-    # There is no real constructor in example.rb's ExecutionResult class, so nothing needs to go here
+    # There is no real constructor to preserve in example.rb's ExecutionResult class, so can eliminate the issue_deprecation call this way
     def initialize; end
   end  
 end
