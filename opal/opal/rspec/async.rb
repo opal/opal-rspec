@@ -202,8 +202,8 @@ module Opal
       #
       # @see AsyncHelpers::ClassMethods.async
       def self.register(*args)
-        group = args[0]
-        group.examples << new(*args)
+        example_group = args[0]
+        example_group.examples << new(*args)
       end
 
       # All async examples in specs.
