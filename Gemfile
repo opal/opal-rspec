@@ -1,6 +1,9 @@
 source 'https://rubygems.org'
 gemspec
 
+# Only run this if we don't have them
+system 'git submodule update --init' unless Dir.glob('rspec-core/**').any?
+
 gem 'rspec',              path: 'rspec'
 gem 'rspec-support',      path: 'rspec-support'
 gem 'rspec-core',         path: 'rspec-core'
