@@ -241,7 +241,7 @@ module Opal
         end
 
         if should_wait
-          delay 10 do
+          delay self.metadata[:timeout] || 10 do
             next if finished?
 
             set_exception RuntimeError.new("timeout")
