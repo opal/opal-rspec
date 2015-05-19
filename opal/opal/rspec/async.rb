@@ -98,8 +98,9 @@ module Opal
       #     end
       #   end
       #
-      def async(&block)
-        @example.continue_async(block)
+      def async(&block)        
+        # we may have timed out, in which case @example will be gone
+        @example.continue_async(block) if @example
       end
 
       # Runs the given block after a given duration. You are still required to
