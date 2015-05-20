@@ -1,3 +1,5 @@
+require 'encoding'
+
 # This breaks on 2.0.0, so it is here ready for when opal bumps to 2.0.0
 class RSpec::CallerFilter
   def self.first_non_rspec_line
@@ -92,4 +94,23 @@ RSpec::Core::Formatters::DeprecationFormatter::GeneratedDeprecationMessage.class
     msg += " Set config.deprecation_stream to a File for full output."
     msg
   end
+end
+
+def (RSpec::Expectations).fail_with(message, expected=nil, actual=nil)
+  if !message
+    raise ArgumentError, "Failure message is nil. Does your matcher define the " +
+                         "appropriate failure_message_for_* method to return a string?"
+  end
+
+  if actual && expected
+    if all_strings?(actual, expected)
+      if any_multiline_strings?(actual, expected)
+        message # + "\nDiff:" + differ.diff_as_string(coerce_to_string(actual), coerce_to_string(expected))
+      end
+    elsif no_procs?(actual, expected) && no_numbers?(actual, expected)
+      message # + "\nDiff:" + differ.diff_as_object(actual, expected)
+    end
+  end
+
+  raise(RSpec::Expectations::ExpectationNotMetError.new(message))
 end
