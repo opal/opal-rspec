@@ -15,7 +15,9 @@ Gem::Specification.new do |s|
 
   s.require_paths  = ['lib']
 
-  s.add_dependency 'opal', ['>= 0.7.0', '< 0.9'] 
+  s.add_dependency 'opal', ['>= 0.7.0', '< 0.9']
+  # Opal now does not include minitest but we need it for Sprockets/test execution
+  s.add_dependency 'opal-minitest', '~> 0.0'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'yard'
 end
