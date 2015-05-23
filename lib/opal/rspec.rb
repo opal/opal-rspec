@@ -3,7 +3,11 @@ require 'opal/rspec/version'
 
 # Just register our opal code path with opal build tools
 Opal.append_path File.expand_path('../../../opal', __FILE__)
-Opal.append_path File.expand_path('../../../vendor_lib', __FILE__)
+
+# TODO: If this isn't performant, inline it
+%w{rspec rspec-core rspec-expectations rspec-mocks rspec-support}.each do |gem|
+  Opal.append_path File.expand_path("../../../#{gem}/lib", __FILE__)
+end
 
 Opal::Processor.dynamic_require_severity = :warning
 
