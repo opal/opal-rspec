@@ -35,11 +35,14 @@ module Opal
         @failure_count = notification.failure_count
         @pending_count = notification.pending_count
 
-        msg = "\n#{@example_count} examples, #{@failure_count} failures (time taken: #{@duration})"
+        msg = "\n#{@example_count} examples, #{@failure_count} failures, #{@pending_count} pending (time taken: #{@duration})"
 
-        if @failure_count == 0
+        if @pending_count > 0
+          yellow msg
+          finish_with_code(1)
+        elsif @failure_count == 0
           green msg
-          finish_with_code(0)
+          finish_with_code(0)          
         else
           red msg
           finish_with_code(1)
@@ -63,6 +66,10 @@ module Opal
 
       def red(str)
         `console.log('\033[31m' + str + '\033[0m')`
+      end
+      
+      def yellow(str)
+        `console.log('\033[33m' + str + '\033[0m')`
       end
 
       def short_padding

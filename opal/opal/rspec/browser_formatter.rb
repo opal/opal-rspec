@@ -5,7 +5,7 @@ module Opal
     class BrowserFormatter < ::RSpec::Core::Formatters::BaseFormatter
       include ERB::Util
       
-      ::RSpec::Core::Formatters.register self, :dump_summary, :example_group_finished, :example_failed, :example_passed
+      ::RSpec::Core::Formatters.register self, :dump_summary, :example_group_finished, :example_failed, :example_passed, :example_pending
 
       CSS_STYLES = ::RSpec::Core::Formatters::HtmlPrinter::GLOBAL_STYLES
 
@@ -43,6 +43,25 @@ module Opal
           @rspec_dt.class_name = "failed"
           Element.id('rspec-header').class_name = 'failed'
         end
+        
+        if @example_group_pending
+          @rspec_group.class_name = "example_group not_implemented"
+          @rspec_dt.class_name = "pending"
+          Element.id('rspec-header').class_name = 'not_implemented'
+        end
+      end
+      
+      def example_pending(notification)
+        example = notification.example
+        duration = sprintf("%0.5f", example.execution_result.run_time)
+        
+        pending_message = example.execution_result.pending_message
+
+        @example_group_pending = true
+
+        @rspec_dl << Element.new(:dd, class_name: "example not_implemented", html: <<-HTML)
+          <span class="not_implemented_spec_name">#{h example.description} (PENDING: #{h(pending_message)})</span>          
+        HTML
       end
 
       def example_failed(notification)
@@ -76,7 +95,7 @@ module Opal
       end     
 
       def dump_summary(notification)
-        totals = "#{notification.example_count} examples, #{notification.failure_count} failures"
+        totals = "#{notification.example_count} examples, #{notification.failure_count} failures, #{notification.pending_count} pending"
         Element.id('totals').html = totals
 
         duration = "Finished in <strong>#{sprintf("%.5f", notification.duration)} seconds</strong>"
