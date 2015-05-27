@@ -139,7 +139,7 @@ module Kernel
       function getErrorObject(){
           try { throw Error('') } catch(err) { return err; }
       }
-  
+
 
       var err = getErrorObject();
     }
@@ -180,7 +180,7 @@ class RSpec::Core::Formatters::DeprecationFormatter
     end
 
     def too_many_warnings_message
-      "Too many similar deprecation messages reported, disregarding further reports. " + DEPRECATION_STREAM_NOTICE      
+      "Too many similar deprecation messages reported, disregarding further reports. " + DEPRECATION_STREAM_NOTICE
     end
 
     private
@@ -227,11 +227,30 @@ class RSpec::Core::Example
   ensure
     RSpec::Matchers.clear_generated_description
   end
-  
+
   # Fix unnecessary deprecation warnings
   # Hash.public_instance_methods - Object.public_instance_methods, which is a part of metadata.rb/HashImitatable (included by ExecutionResult), returns the initialize method, which gets marked as deprecated. The intent of the issue_deprecation method though is to shift people away from using this as a hash. Initialize obviously is not indicative of hash usage (any new object will trip this up, and that should not happen).
   class ExecutionResult
     # There is no real constructor to preserve in example.rb's ExecutionResult class, so can eliminate the issue_deprecation call this way
     def initialize; end
-  end  
+  end
+end
+
+def (RSpec::Expectations).fail_with(message, expected=nil, actual=nil)
+  if !message
+    raise ArgumentError, "Failure message is nil. Does your matcher define the " +
+                         "appropriate failure_message_for_* method to return a string?"
+  end
+
+  if actual && expected
+    if all_strings?(actual, expected)
+      if any_multiline_strings?(actual, expected)
+        message # + "\nDiff:" + differ.diff_as_string(coerce_to_string(actual), coerce_to_string(expected))
+      end
+    elsif no_procs?(actual, expected) && no_numbers?(actual, expected)
+      message # + "\nDiff:" + differ.diff_as_object(actual, expected)
+    end
+  end
+
+  raise(RSpec::Expectations::ExpectationNotMetError.new(message))
 end
