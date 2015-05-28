@@ -72,6 +72,7 @@ module Opal
         error_name = error.class.name.to_s
         output = "#{short_padding}#{error_name}:\n"
         error.message.to_s.split("\n").each { |line| output += "#{long_padding}  #{line}\n" }
+        error.backtrace.each {|trace| output += "#{long_padding}  #{trace}\n"}
 
         @example_group_failed = true
 
