@@ -7,11 +7,15 @@ describe "Asynchronous helpers" do
   
   async 'allows overriding the timeout', timeout: 15 do
     delay(11) do
-      async { expect(42).to eq(42) }
+      async do
+        expect(42).to eq(42)
+        expect(@@moved_on).to eq(false), 'The following example that sets this should not start until we are done but it did'
+      end
     end
   end
 
   async "can run examples async" do
+    @@moved_on = true
     async do
       1.should == 1
     end
