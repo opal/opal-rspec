@@ -39,20 +39,13 @@ module Opal
         @configuration.output_stream ||= out
 
         self.start
-        run_examples
-
-        run_async_examples do
-          self.finish
-        end
+        run_examples 
+        self.finish       
       end
 
       def run_examples
         @world.example_groups.map { |g| g.run(@reporter) }.all?
-      end
-
-      def run_async_examples(&block)
-        AsyncRunner.new(self, @reporter, block).run
-      end
+      end    
 
       def config_hook(hook_when)
         hook_context = ::RSpec::Core::SuiteHookContext.new
