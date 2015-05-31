@@ -13,7 +13,7 @@ class ::RSpec::Core::ExampleGroup
     options = Metadata.build_hash_from(args)
     options.update(:skip => RSpec::Core::Pending::NOT_YET_IMPLEMENTED) unless block
 
-    examples << ::RSpec::Core::Example.new(self, desc, options, block)
+    examples << Opal::RSpec::AsyncExample.new(self, desc, options, block)
     examples.last
   end
 
@@ -62,22 +62,24 @@ class ::RSpec::Core::ExampleGroup
       instance = new
       set_ivars(instance, before_context_ivars)
       promise_or_result = example.run(instance, reporter)
-      promise = if promise_or_result.is_a? Promise
-        promise_or_result
+      promise = Promise.new
+      if promise_or_result.is_a? Promise
+        puts "got back a promise from example #{example}"
+        promise_or_result.then do |result|
+          puts "sending back result #{result} for example #{example}"
+          promise.resolve result
+        end
       else
-        p = Promise.new
-        p.resolve promise_or_result
-        p
+        promise.resolve promise_or_result
       end
       promise
-    end
-        
+    end  
+    
     results = []
-    latest_promise = ordering_strategy.order(filtered_examples).inject(Promise.new.resolve(true)) do |previous_promise, example|
-      # initial one
+    latest_promise = ordering_strategy.order(filtered_examples).inject(Promise.new.resolve(true)) do |previous_promise, next_example|
       previous_promise.then do |result|
         results << result
-        example_promise[example]
+        example_promise[next_example]
       end
     end
     

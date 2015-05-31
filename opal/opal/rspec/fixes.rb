@@ -233,5 +233,7 @@ def (RSpec::Expectations).fail_with(message, expected=nil, actual=nil)
     end
   end
 
-  raise(RSpec::Expectations::ExpectationNotMetError.new(message))
+  exception = RSpec::Expectations::ExpectationNotMetError.new(message)
+  # we can't throw exceptions when testing asynchronously and we need to be able to get them back to the example. class variables are one way to do this. better way?
+  @@async_exception = exception
 end
