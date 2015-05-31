@@ -39,12 +39,21 @@ module Opal
         @configuration.output_stream ||= out
 
         self.start
-        run_examples 
-        self.finish       
+        run_examples.then do
+          puts 'calling finish'
+          self.finish
+        end        
       end
 
       def run_examples
-        @world.example_groups.map { |g| g.run(@reporter) }.all?
+        @world.example_groups.inject(Promise.new.resolve(true)) do |previous_promise, group|
+          previous_promise.then do |result|
+            puts "running group #{group}"
+            r = group.run @reporter
+            puts "got back #{r}"
+            r
+          end
+        end        
       end    
 
       def config_hook(hook_when)
