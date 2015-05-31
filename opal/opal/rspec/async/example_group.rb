@@ -7,19 +7,17 @@ class ::RSpec::Core::ExampleGroup
     self
   end
   
-  define_example_method :async
-  
-  # def self.async(*all_args, &block)
-#     desc, *args = *all_args
-#
-#     options = Metadata.build_hash_from(args)
-#     options.update(:skip => RSpec::Core::Pending::NOT_YET_IMPLEMENTED) unless block
-#
-#     examples << ::RSpec::Core::Example.new(self, desc, options, block)
-#     examples.last
-#   end
-#
-  # Runs all the examples in this group
+  def self.async(*all_args, &block)
+    desc, *args = *all_args
+
+    options = Metadata.build_hash_from(args)
+    options.update(:skip => RSpec::Core::Pending::NOT_YET_IMPLEMENTED) unless block
+
+    examples << ::RSpec::Core::Example.new(self, desc, options, block)
+    examples.last
+  end
+
+  # Promise oriented version
   def self.run(reporter)
     if RSpec.world.wants_to_quit
       RSpec.world.clear_remaining_example_groups if top_level?
@@ -58,6 +56,7 @@ class ::RSpec::Core::ExampleGroup
 #     end
   end
   
+  # Promise oriented version
   def self.run_examples(reporter)   
     example_promise = lambda do |example|
       instance = new
