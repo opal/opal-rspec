@@ -64,9 +64,7 @@ class ::RSpec::Core::ExampleGroup
       promise_or_result = example.run(instance, reporter)
       promise = Promise.new
       if promise_or_result.is_a? Promise
-        puts "got back a promise from example #{example}"
         promise_or_result.then do |result|
-          puts "sending back result #{result} for example #{example}"
           promise.resolve result
         end
       else
