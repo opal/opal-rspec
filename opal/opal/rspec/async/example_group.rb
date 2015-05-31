@@ -21,21 +21,16 @@ class ::RSpec::Core::ExampleGroup
 #
   # Runs all the examples in this group
   def self.run(reporter)
-    puts "group #{self} is running"
     if RSpec.world.wants_to_quit
       RSpec.world.clear_remaining_example_groups if top_level?
       return
     end
     
-    reporter.example_group_started(self)
-    puts "group #{self} eg started"
-    
+    reporter.example_group_started(self)    
     run_before_context_hooks(new)
-    puts "group #{self} before run"
     result_promise = Promise.new        
     result_promise_for_this_group = run_examples(reporter)
     result_promise_for_this_group.then do |this_group_result|
-      puts "group result is #{this_group_result}"
       # TODO: Need to run descendants here
       run_after_context_hooks(new)
       before_context_ivars.clear
@@ -68,7 +63,6 @@ class ::RSpec::Core::ExampleGroup
       instance = new
       set_ivars(instance, before_context_ivars)
       promise_or_result = example.run(instance, reporter)
-      puts "promise_or_result is #{promise_or_result}"
       promise = if promise_or_result.is_a? Promise
         promise_or_result
       else
