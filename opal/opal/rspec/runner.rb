@@ -48,10 +48,7 @@ module Opal
       def run_examples
         @world.example_groups.inject(Promise.new.resolve(true)) do |previous_promise, group|
           previous_promise.then do |result|
-            puts "running group #{group}"
-            r = group.run @reporter
-            puts "got back #{r}"
-            r
+            group.run @reporter
           end
         end        
       end    
