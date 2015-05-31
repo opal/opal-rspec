@@ -40,7 +40,6 @@ module Opal
 
         self.start
         run_examples.then do
-          puts 'calling finish'
           self.finish
         end        
       end
