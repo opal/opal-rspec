@@ -242,18 +242,41 @@ describe 'async subject' do
   end
 end
 
-describe 'async before' do
-  context 'by itself' do
+describe 'async before' do  
+  context 'sync subject' do
+    async_before do
+      promise = Promise.new
+      delay 1 do
+        @test_value == 42
+        promise.resolve
+      end
+      promise
+    end
+    
+    subject { 42 } 
+    
     context 'succeeds' do
+      async_it { is_expected.to eq @test_value }      
+    end
+    
+    context 'before fails properly' do
       pending 'write this'
     end
     
-    context 'fails properly' do
+    context 'match fails properly' do
       pending 'write this'
     end
   end
   
-  context 'with async subject' do
+  context 'async subject' do
+    subject do
+      promise = Promise.new
+      delay 1 do      
+        promise.resolve 42
+      end
+      promise
+    end
+    
     context 'both succeed' do
       pending 'write this'
     end
@@ -267,6 +290,10 @@ describe 'async before' do
     end
     
     context 'before fails properly' do
+      pending 'write this'
+    end
+    
+    context 'match fails properly' do
       pending 'write this'
     end
   end
