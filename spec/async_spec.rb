@@ -16,7 +16,7 @@ describe "Asynchronous helpers" do
   #   done.call
   # end
 
-  async "can finish running after a long delay" do |done|
+  async "can finish running after a long delay and fail" do |done|
     obj = [1, 2, 3, 4]
 
     delay(1) do
@@ -25,14 +25,49 @@ describe "Asynchronous helpers" do
     end
   end
   
-  # async 'skipped are skipped', skipped: true do |done|
-  #   obj = [1, 2, 3, 4]
-  #
-  #   delay(1) do
-  #     obj.should == [2, 2, 3, 4]
-  #     done.call
-  #   end
+  async "can finish running after a long delay and succeed" do |done|
+    obj = [1, 2, 3, 4]
+
+    delay(1) do
+      obj.should == [1, 2, 3, 4]
+      done.call
+    end
+  end  
+  
+  async 'skipped via variable', skip: true do |done|
+    obj = [1, 2, 3, 4]
+
+    delay(1) do
+      obj.should == [2, 2, 3, 4]
+      done.call
+    end
+  end
+  
+  xasync 'skipped via xasync' do |done|
+    obj = [1, 2, 3, 4]
+
+    delay(1) do
+      obj.should == [2, 2, 3, 4]
+      done.call
+    end
+  end
+  
+  # async 'skipped in example' do |done|
+  #   skip
   # end
+  
+  # async 'pending in example' do |done|
+  #   pending 'not ready yet'
+  # end
+  
+  async 'pending via variable', pending: 'the reason' do |done|
+    obj = [1, 2, 3, 4]
+
+    delay(1) do
+      obj.should == [2, 2, 3, 4]
+      done.call
+    end
+  end
   
   # TODO: test descendants
   #

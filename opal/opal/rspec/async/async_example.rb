@@ -20,6 +20,13 @@ class Opal::RSpec::AsyncExample < ::RSpec::Core::Example
         example_scope = self        
         wrapped_block = lambda do |example|
           done = lambda do
+            if example_scope.pending?
+              ::RSpec::Core::Pending.mark_fixed! example_scope
+
+              @@async_exception = ::RSpec::Core::Pending::PendingExampleFixedError,
+                    'Expected example to fail since it is pending, but it passed.',
+                    [example_scope.location]
+            end            
             if @@async_exception
               # exception needs to be set before calling finish so results are correct
               example_scope.set_exception @@async_exception
@@ -39,14 +46,6 @@ class Opal::RSpec::AsyncExample < ::RSpec::Core::Example
         end
         
         @example_group_instance.instance_exec(self, &wrapped_block)
-
-        if pending?
-          ::RSpec::Core::Pending.mark_fixed! self
-
-          raise ::RSpec::Core::Pending::PendingExampleFixedError,
-                'Expected example to fail since it is pending, but it passed.',
-                [location]
-        end        
       end
     end
     promise
