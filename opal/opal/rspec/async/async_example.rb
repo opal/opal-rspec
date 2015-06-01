@@ -18,7 +18,8 @@ class Opal::RSpec::AsyncExample < ::RSpec::Core::Example
       promise.resolve result
     elsif !::RSpec.configuration.dry_run?
       # TODO: around example needs to be async
-      with_around_example_hooks do          
+      with_around_example_hooks do
+        around_promise_begin = Promise.new
         run_before_example
         # Our wrapped block will execute with self == the group, not as the example, so we need to hold onto this for our promise resolve
         example_scope = self
@@ -50,11 +51,20 @@ class Opal::RSpec::AsyncExample < ::RSpec::Core::Example
             result = example_scope.finish(reporter)              
             ::RSpec.current_example = nil
             set_done_completed.call
-            promise.resolve result
+            unless example_scope.around_example_hooks.empty?
+              around_promise_completed = Promise.new
+              around_promise_completed.then { promise.resolve result }
+              around_promise_begin.resolve [result, around_promise_completed]
+            else
+              around_promise_begin.resolve result
+              promise.resolve result
+            end            
           end
           set_done_block[done]
           @@async_exceptions = []
           self.instance_exec(done, example, &example_scope.instance_variable_get(:@example_block))
+          # Around block needs this returned
+          around_promise_begin
         end
         
         @example_group_instance.instance_exec(self, &wrapped_block)
