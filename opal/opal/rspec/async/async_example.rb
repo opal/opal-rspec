@@ -20,22 +20,25 @@ class ::RSpec::Core::Example
   end
 end
 
-
-class Opal::RSpec::AsyncExample < ::RSpec::Core::Example  
+class Opal::RSpec::AsyncExample < ::RSpec::Core::Example
+  def notify_async_exception(exception)
+    @async_exceptions << exception
+  end
+  
   def notify_async_completed
     return if @async_completed
     if pending?
       ::RSpec::Core::Pending.mark_fixed! self
 
-      @@async_exceptions << ::RSpec::Core::Pending::PendingExampleFixedError.new(
+      @async_exceptions << ::RSpec::Core::Pending::PendingExampleFixedError.new(
             'Expected example to fail since it is pending, but it passed.',
             [location])
     end
                 
-    if @@async_exceptions.any?
+    if @async_exceptions.any?
       # exception needs to be set before calling finish so results are correct
       # the first test to fail should be the one reported
-      set_exception @@async_exceptions.first
+      set_exception @async_exceptions.first
     end
     
     run_after_example
@@ -49,10 +52,7 @@ class Opal::RSpec::AsyncExample < ::RSpec::Core::Example
     result = finish(@reporter)              
     ::RSpec.current_example = nil
     
-    @async_completed = true
-    
-    # A synchronous test might follow
-    @@async_exceptions = nil
+    @async_completed = true    
     
     unless around_example_hooks.empty?
       around_promise_completed = Promise.new
@@ -88,11 +88,11 @@ class Opal::RSpec::AsyncExample < ::RSpec::Core::Example
         # Our wrapped block will execute with self == the group, not as the example, so we need to hold onto this for our promise resolve
         example_scope = self
         @async_completed = false
+        @async_exceptions = []
         wrapped_block = lambda do |example|          
           done = lambda do
             example_scope.notify_async_completed
-          end
-          @@async_exceptions = []
+          end          
           result = self.instance_exec(done, example, &example_scope.instance_variable_get(:@example_block))
           # shortcut
           if result.is_a? Promise
@@ -101,7 +101,7 @@ class Opal::RSpec::AsyncExample < ::RSpec::Core::Example
             end.fail do |failure_reason|
               failure_reason ||= Exception.new 'Async promise failed for unspecified reason'
               failure_reason = Exception.new failure_reason unless failure_reason.kind_of?(Exception)
-              @@async_exceptions << failure_reason
+              example_scope.notify_async_exception failure_reason
               example_scope.notify_async_completed
             end
           end

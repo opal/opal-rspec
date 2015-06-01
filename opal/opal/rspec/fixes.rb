@@ -235,8 +235,10 @@ def (RSpec::Expectations).fail_with(message, expected=nil, actual=nil)
 
   exception = RSpec::Expectations::ExpectationNotMetError.new(message)
   # we can't throw exceptions when testing asynchronously and we need to be able to get them back to the example. class variables are one way to do this. better way?
-  if @@async_exceptions
-    @@async_exceptions << exception
+
+  current_example = ::RSpec.current_example
+  if current_example.is_a? Opal::RSpec::AsyncExample
+    current_example.notify_async_exception exception
   else
     raise exception
   end
