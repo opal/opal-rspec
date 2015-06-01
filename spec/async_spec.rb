@@ -33,6 +33,52 @@ describe "Asynchronous helpers" do
     1.should == 1
   end
   
+  context 'promise returned by example' do
+    async 'matcher fails properly' do
+      promise = Promise.new
+      delay 1 do
+        1.should == 2
+        promise.resolve
+      end
+      promise
+    end
+  
+    async 'matcher succeeds properly' do
+      promise = Promise.new
+      delay 1 do
+        1.should == 1
+        promise.resolve
+      end
+      promise
+    end
+  
+    describe 'promise fails properly' do
+      async 'no args' do
+        promise = Promise.new
+        delay 1 do
+          promise.reject
+        end
+        promise
+      end
+      
+      async 'string arg' do
+        promise = Promise.new
+        delay 1 do          
+          promise.reject 'string failure reason here'
+        end
+        promise
+      end
+      
+      async 'exception arg' do
+        promise = Promise.new
+        delay 1 do          
+          promise.reject TypeError.new('typeerror driven failure reason here')
+        end
+        promise
+      end    
+    end
+  end  
+  
   async "can run examples async" do |done|
     1.should == 1
     done.call
