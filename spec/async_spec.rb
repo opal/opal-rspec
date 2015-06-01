@@ -148,16 +148,14 @@ describe "Asynchronous helpers" do
       pending 'want to pend within'
     end
 
-    # TODO: This isn't working because the pending runs before the assertion failure, but we may be able to get rid of the 'done' thing entirely
     async 'in example with a done call' do |done|
       obj = [1, 2, 3, 4]
 
       delay(1) do
         obj.should == [2, 2, 3, 4]
+        pending 'want to pend within'
         done.call
-      end
-    
-      pending 'want to pend within'
+      end      
     end
 
     async 'via variable', pending: 'the reason' do |done|
@@ -171,7 +169,7 @@ describe "Asynchronous helpers" do
   end
   
   # TODO, how to test this now? Right now, manually looking and ensuring failure message shows foo/baz and not 42/43
-  async "should make example fail before async block reached" do |done|
+  async "should make example fail properly before async block reached" do |done|
     # Can't say "should raise exception" around an expectation anymore since expectations don't throw
     expect(:foo).to eq(:baz)
 
@@ -182,7 +180,7 @@ describe "Asynchronous helpers" do
   end
   
   context 'async/sync mix' do
-    it 'fails correctly if a sync test is among async tests' do
+    it 'fails properly if a sync test is among async tests' do
       1.should == 2
     end
   
