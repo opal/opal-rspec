@@ -48,7 +48,7 @@ describe "Asynchronous helpers" do
     @test_in_progress = 'can finish running after a long delay and fail'
     obj = [1, 2, 3, 4]
 
-    delay(2) do
+    delay(1) do
       obj.should == [2, 2, 3, 4]
       @test_in_progress = nil
       done.call
@@ -145,7 +145,7 @@ describe 'async/sync mix' do
     @test_in_progress = 'can finish running after a long delay and fail'
     obj = [1, 2, 3, 4]
 
-    delay(2) do
+    delay(1) do
       obj.should == [2, 2, 3, 4]
       @test_in_progress = nil
       done.call
