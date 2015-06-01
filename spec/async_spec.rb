@@ -28,6 +28,10 @@ describe "Asynchronous helpers" do
     raise @@around_failures.join "\n" if @@around_failures.any?
     raise 'hooks not empty!' unless @@around_testing.empty?
   end
+    
+  it 'works with a sync test in a group of async tests with an around hook' do
+    1.should == 1
+  end
   
   async "can run examples async" do |done|
     1.should == 1
@@ -123,6 +127,36 @@ describe "Asynchronous helpers" do
 
     delay(0) do
       expect(42).to eq(43)
+      done.call
+    end
+  end
+end
+
+describe 'async/sync mix' do
+  it 'fails correctly if a sync test is among async tests' do
+    1.should == 2
+  end
+  
+  it 'passes correctly if a sync test is among async tests' do
+    1.should == 1
+  end
+
+  async "can finish running after a long delay and fail" do |done|
+    @test_in_progress = 'can finish running after a long delay and fail'
+    obj = [1, 2, 3, 4]
+
+    delay(2) do
+      obj.should == [2, 2, 3, 4]
+      @test_in_progress = nil
+      done.call
+    end
+  end
+
+  async "can finish running after a long delay and succeed" do |done|
+    obj = [1, 2, 3, 4]
+
+    delay(1) do
+      obj.should == [1, 2, 3, 4]
       done.call
     end
   end
