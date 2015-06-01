@@ -46,8 +46,10 @@ module Opal
         
         if @example_group_pending
           @rspec_group.class_name = "example_group not_implemented"
-          @rspec_dt.class_name = "pending"
-          Element.id('rspec-header').class_name = 'not_implemented'
+          @rspec_dt.class_name = "pending"          
+          header = Element.id('rspec-header')
+          # Don't want to override failed with pending, which is less important
+          header.class_name = 'not_implemented' unless header.class_name == 'failed'
         end
       end
       
@@ -133,6 +135,10 @@ module Opal
           end
 
           attrs.each { |name, val| __send__ "#{name}=", val }
+        end
+        
+        def class_name
+          `#@native.className`
         end
 
         def class_name=(name)
