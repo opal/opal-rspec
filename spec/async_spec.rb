@@ -55,6 +55,10 @@ describe "Asynchronous helpers" do
   # async 'skipped in example' do |done|
   #   skip
   # end
+  async 'skipped in example with a done call' do |done|
+    skip
+    done.call
+  end
 
   # async 'pending in example' do |done|
   #   pending 'not ready yet'
