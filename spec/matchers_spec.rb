@@ -4,6 +4,10 @@ describe "be_truthy" do
     expect(1.0).to be_truthy
     expect([]).to be_truthy
   end
+  
+  it 'fails properly with truthy values' do
+    expect(false).to be_truthy
+  end
 
   it "fails with falsey values" do
     expect {
