@@ -5,10 +5,13 @@ class Opal::RSpec::AsyncExample < ::RSpec::Core::Example
     ::RSpec.current_example = self
 
     start(reporter)
-    ::RSpec::Core::Pending.mark_pending!(self, pending) if pending?
-    
+    ::RSpec::Core::Pending.mark_pending!(self, pending) if pending?    
+
     if skipped?
       ::RSpec::Core::Pending.mark_pending! self, skip
+      result = finish(reporter)              
+      ::RSpec.current_example = nil
+      promise.resolve result
     elsif !::RSpec.configuration.dry_run?
       # TODO: around example needs to be async
       with_around_example_hooks do          
@@ -27,9 +30,9 @@ class Opal::RSpec::AsyncExample < ::RSpec::Core::Example
               example_group_instance.instance_variable_set(ivar, nil)
             end
             example_scope.instance_variable_set(:@example_group_instance, nil)
-            example_scope.finish(reporter)              
+            result = example_scope.finish(reporter)              
             ::RSpec.current_example = nil
-            promise.resolve @@async_exception == nil
+            promise.resolve result
           end
           @@async_exception = nil
           self.instance_exec(done, example, &example_scope.instance_variable_get(:@example_block))
