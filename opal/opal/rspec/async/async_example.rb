@@ -86,7 +86,18 @@ class Opal::RSpec::AsyncExample < ::RSpec::Core::Example
           end
           set_done_block[done]
           @@async_exceptions = []
-          self.instance_exec(done, example, &example_scope.instance_variable_get(:@example_block))
+          result = self.instance_exec(done, example, &example_scope.instance_variable_get(:@example_block))
+          # shortcut
+          if result.is_a? Promise
+            result.then do
+              example_scope.notify_async_completed
+            end.fail do |failure_reason|
+              failure_reason ||= Exception.new 'Async promise failed for unspecified reason'
+              failure_reason = Exception.new failure_reason unless failure_reason.kind_of?(Exception)
+              @@async_exceptions << failure_reason
+              example_scope.notify_async_completed
+            end            
+          end
           # Around block needs this returned
           around_promise_begin
         end
