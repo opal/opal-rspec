@@ -230,7 +230,15 @@ describe 'async subject' do
   end
     
   context 'fails properly during subject create' do
-    pending 'write this'
+    subject do
+      promise = Promise.new
+      delay 1 do      
+        promise.reject 'did not work'
+      end
+      promise
+    end
+    
+    async_it { is_expected.to eq 42 }
   end
 end
 
