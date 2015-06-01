@@ -24,10 +24,9 @@ class ::RSpec::Core::ExampleGroup
     options = Metadata.build_hash_from(args)
     options.update skip: 'Temporarily skipped with xasync'
     do_async options, desc, &block    
-  end
-  
-  # TODO: Rename this method?
-  def self.get_promise_if_not_already(promise_or_result)
+  end  
+
+  def self.get_promise_based_on_completion_of(promise_or_result)
     promise = Promise.new
     if promise_or_result.is_a? Promise
       promise_or_result.then do |result|
@@ -56,7 +55,7 @@ class ::RSpec::Core::ExampleGroup
         previous_promise.then do |result|
           results_for_descendants << result
           promise_or_result = next_descendant.run reporter
-          get_promise_if_not_already promise_or_result
+          get_promise_based_on_completion_of promise_or_result
         end
       end
       latest_descendant.then do |result|
@@ -79,7 +78,7 @@ class ::RSpec::Core::ExampleGroup
       instance = new
       set_ivars(instance, before_context_ivars)
       promise_or_result = example.run(instance, reporter)
-      get_promise_if_not_already promise_or_result
+      get_promise_based_on_completion_of promise_or_result
     end  
     
     results = []
