@@ -82,7 +82,9 @@ class Opal::RSpec::AsyncExample < ::RSpec::Core::Example
             else
               around_promise_begin.resolve result
               promise.resolve result
-            end            
+            end
+            # nil is important, otherwise a done.call might be interpreted as a promise by the shortcut code below
+            nil           
           end
           set_done_block[done]
           @@async_exceptions = []
@@ -96,7 +98,7 @@ class Opal::RSpec::AsyncExample < ::RSpec::Core::Example
               failure_reason = Exception.new failure_reason unless failure_reason.kind_of?(Exception)
               @@async_exceptions << failure_reason
               example_scope.notify_async_completed
-            end            
+            end
           end
           # Around block needs this returned
           around_promise_begin

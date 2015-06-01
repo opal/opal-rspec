@@ -42,7 +42,7 @@ describe "Asynchronous helpers" do
       end
       promise
     end
-  
+
     async 'matcher succeeds properly' do
       promise = Promise.new
       delay 1 do
@@ -51,7 +51,7 @@ describe "Asynchronous helpers" do
       end
       promise
     end
-  
+
     describe 'promise fails properly' do
       async 'no args' do
         promise = Promise.new
@@ -60,24 +60,24 @@ describe "Asynchronous helpers" do
         end
         promise
       end
-      
+
       async 'string arg' do
         promise = Promise.new
-        delay 1 do          
+        delay 1 do
           promise.reject 'string failure reason here'
         end
         promise
       end
-      
+
       async 'exception arg' do
         promise = Promise.new
-        delay 1 do          
+        delay 1 do
           promise.reject TypeError.new('typeerror driven failure reason here')
         end
         promise
-      end    
+      end
     end
-  end  
+  end
   
   async "can run examples async" do |done|
     1.should == 1
@@ -90,81 +90,85 @@ describe "Asynchronous helpers" do
     done.call
   end
 
-  async "can finish running after a long delay and fail" do |done|
-    @test_in_progress = 'can finish running after a long delay and fail'
-    obj = [1, 2, 3, 4]
+  context 'long delay' do
+    async 'fail properly' do |done|
+      @test_in_progress = 'can finish running after a long delay and fail properly'
+      obj = [1, 2, 3, 4]
 
-    delay(1) do
-      obj.should == [2, 2, 3, 4]
-      @test_in_progress = nil
-      done.call
+      delay(1) do
+        obj.should == [2, 2, 3, 4]
+        @test_in_progress = nil
+        done.call
+      end
     end
-  end
 
-  async "can finish running after a long delay and succeed" do |done|
-    obj = [1, 2, 3, 4]
+    async "succeed" do |done|
+      obj = [1, 2, 3, 4]
 
-    delay(1) do
-      obj.should == [1, 2, 3, 4]
-      done.call
-    end
-  end
-
-  async 'skipped via variable', skip: true do |done|
-    obj = [1, 2, 3, 4]
-
-    delay(1) do
-      obj.should == [2, 2, 3, 4]
-      done.call
-    end
-  end
-
-  xasync 'skipped via xasync' do |done|
-    obj = [1, 2, 3, 4]
-
-    delay(1) do
-      obj.should == [2, 2, 3, 4]
-      done.call
-    end
-  end
-
-  async 'skipped in example without a done call' do
-    skip 'want to skip within'
+      delay(1) do
+        obj.should == [1, 2, 3, 4]
+        done.call
+      end
+    end    
   end
   
-  async 'skipped in example with a done call' do |done|
-    skip 'want to skip within'
-    done.call
-  end
+  context 'skipped' do
+    async 'via variable', skip: true do |done|
+      obj = [1, 2, 3, 4]
 
-  async 'pending in example without a done call' do
-    obj = [1, 2, 3, 4]
-    obj.should == [2, 2, 3, 4]
-    pending 'want to pend within'
-  end
-
-  # TODO: This isn't working because the pending runs before the assertion failure, but we may be able to get rid of the 'done' thing entirely
-  async 'pending in example with a done call' do |done|
-    obj = [1, 2, 3, 4]
-
-    delay(1) do
-      obj.should == [2, 2, 3, 4]
-      done.call
+      delay(1) do
+        obj.should == [2, 2, 3, 4]
+        done.call
+      end
     end
+
+    xasync 'via xasync' do |done|
+      obj = [1, 2, 3, 4]
+
+      delay(1) do
+        obj.should == [2, 2, 3, 4]
+        done.call
+      end
+    end
+
+    async 'in example, no done call' do
+      skip 'want to skip within'
+    end
+  
+    async 'in example, with done call' do |done|
+      skip 'want to skip within'
+      done.call
+    end    
+  end
+  
+  context 'pending' do
+    async 'in example without a done call' do
+      obj = [1, 2, 3, 4]
+      obj.should == [2, 2, 3, 4]
+      pending 'want to pend within'
+    end
+
+    # TODO: This isn't working because the pending runs before the assertion failure, but we may be able to get rid of the 'done' thing entirely
+    async 'in example with a done call' do |done|
+      obj = [1, 2, 3, 4]
+
+      delay(1) do
+        obj.should == [2, 2, 3, 4]
+        done.call
+      end
     
-    pending 'want to pend within'
-  end
-
-  async 'pending via variable', pending: 'the reason' do |done|
-    obj = [1, 2, 3, 4]
-
-    delay(1) do
-      obj.should == [2, 2, 3, 4]
-      done.call
+      pending 'want to pend within'
     end
+
+    async 'via variable', pending: 'the reason' do |done|
+      obj = [1, 2, 3, 4]
+
+      delay(1) do
+        obj.should == [2, 2, 3, 4]
+        done.call
+      end
+    end    
   end
-  
-  # TODO: test example group descendants
   
   # TODO, how to test this now? Right now, manually looking and ensuring failure message shows foo/baz and not 42/43
   async "should make example fail before async block reached" do |done|
@@ -176,34 +180,34 @@ describe "Asynchronous helpers" do
       done.call
     end
   end
-end
-
-describe 'async/sync mix' do
-  it 'fails correctly if a sync test is among async tests' do
-    1.should == 2
-  end
   
-  it 'passes correctly if a sync test is among async tests' do
-    1.should == 1
-  end
-
-  async "can finish running after a long delay and fail" do |done|
-    @test_in_progress = 'can finish running after a long delay and fail'
-    obj = [1, 2, 3, 4]
-
-    delay(1) do
-      obj.should == [2, 2, 3, 4]
-      @test_in_progress = nil
-      done.call
+  context 'async/sync mix' do
+    it 'fails correctly if a sync test is among async tests' do
+      1.should == 2
     end
-  end
-
-  async "can finish running after a long delay and succeed" do |done|
-    obj = [1, 2, 3, 4]
-
-    delay(1) do
-      obj.should == [1, 2, 3, 4]
-      done.call
+  
+    it 'passes correctly if a sync test is among async tests' do
+      1.should == 1
     end
-  end
+
+    async "can finish running after a long delay and fail properly" do |done|
+      @test_in_progress = 'can finish running after a long delay and fail'
+      obj = [1, 2, 3, 4]
+
+      delay(1) do
+        obj.should == [2, 2, 3, 4]
+        @test_in_progress = nil
+        done.call
+      end
+    end
+
+    async "can finish running after a long delay and succeed" do |done|
+      obj = [1, 2, 3, 4]
+
+      delay(1) do
+        obj.should == [1, 2, 3, 4]
+        done.call
+      end
+    end
+  end  
 end
