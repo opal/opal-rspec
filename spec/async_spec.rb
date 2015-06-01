@@ -52,11 +52,12 @@ describe "Asynchronous helpers" do
     end
   end
 
-  # async 'skipped in example' do |done|
-  #   skip
-  # end
+  async 'skipped in example without a done call' do
+    skip 'want to skip within'
+  end
+  
   async 'skipped in example with a done call' do |done|
-    skip
+    skip 'want to skip within'
     done.call
   end
 

@@ -1,4 +1,8 @@
-class Opal::RSpec::AsyncExample < ::RSpec::Core::Example  
+class Opal::RSpec::AsyncExample < ::RSpec::Core::Example 
+  def notify_async_completed
+    @done.call
+  end
+  
   def run(example_group_instance, reporter)
     promise = Promise.new
     @example_group_instance = example_group_instance
@@ -17,8 +21,9 @@ class Opal::RSpec::AsyncExample < ::RSpec::Core::Example
       with_around_example_hooks do          
         run_before_example
         # Our wrapped block will execute with self == the group, not as the example, so we need to hold onto this for our promise resolve
-        example_scope = self        
-        wrapped_block = lambda do |example|
+        example_scope = self
+        set_done_block = lambda {|executing_block| @done = executing_block}  
+        wrapped_block = lambda do |example|          
           done = lambda do
             if example_scope.pending?
               ::RSpec::Core::Pending.mark_fixed! example_scope
@@ -42,6 +47,7 @@ class Opal::RSpec::AsyncExample < ::RSpec::Core::Example
             ::RSpec.current_example = nil
             promise.resolve result
           end
+          set_done_block[done]
           @@async_exceptions = []
           self.instance_exec(done, example, &example_scope.instance_variable_get(:@example_block))
         end
