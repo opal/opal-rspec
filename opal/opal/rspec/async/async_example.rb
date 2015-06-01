@@ -51,6 +51,8 @@ class Opal::RSpec::AsyncExample < ::RSpec::Core::Example
             result = example_scope.finish(reporter)              
             ::RSpec.current_example = nil
             set_done_completed.call
+            # A synchronous test might follow
+            @@async_exceptions = nil
             unless example_scope.around_example_hooks.empty?
               around_promise_completed = Promise.new
               around_promise_completed.then { promise.resolve result }
