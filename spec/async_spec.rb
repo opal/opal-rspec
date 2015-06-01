@@ -61,9 +61,23 @@ describe "Asynchronous helpers" do
     done.call
   end
 
-  # async 'pending in example' do |done|
-  #   pending 'not ready yet'
-  # end
+  async 'pending in example without a done call' do
+    obj = [1, 2, 3, 4]
+    obj.should == [2, 2, 3, 4]
+    pending 'want to pend within'
+  end
+
+  # TODO: This isn't working because the pending runs before the assertion failure, but we may be able to get rid of the 'done' thing entirely
+  async 'pending in example with a done call' do |done|
+    obj = [1, 2, 3, 4]
+
+    delay(1) do
+      obj.should == [2, 2, 3, 4]
+      done.call
+    end
+    
+    pending 'want to pend within'
+  end
 
   async 'pending via variable', pending: 'the reason' do |done|
     obj = [1, 2, 3, 4]
