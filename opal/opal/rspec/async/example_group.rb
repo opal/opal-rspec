@@ -25,6 +25,19 @@ class ::RSpec::Core::ExampleGroup
     options.update skip: 'Temporarily skipped with xasync'
     do_async options, desc, &block    
   end
+  
+  # TODO: Rename this method?
+  def self.get_promise_if_not_already(promise_or_result)
+    promise = Promise.new
+    if promise_or_result.is_a? Promise
+      promise_or_result.then do |result|
+        promise.resolve result
+      end
+    else
+      promise.resolve promise_or_result
+    end
+    promise
+  end
 
   # Promise oriented version
   def self.run(reporter)
@@ -37,32 +50,27 @@ class ::RSpec::Core::ExampleGroup
     run_before_context_hooks(new)
     result_promise = Promise.new        
     result_promise_for_this_group = run_examples(reporter)
-    result_promise_for_this_group.then do |this_group_result|
-      # TODO: Need to run descendants here
-      run_after_context_hooks(new)
-      before_context_ivars.clear
-      reporter.example_group_finished(self)
-      result_promise.resolve this_group_result
+    result_promise_for_this_group.then do |result_for_this_group|
+      results_for_descendants = []
+      latest_descendant = ordering_strategy.order(children).inject(Promise.new.resolve(true)) do |previous_promise, next_descendant|
+        previous_promise.then do |result|
+          results_for_descendants << result
+          promise_or_result = next_descendant.run reporter
+          get_promise_if_not_already promise_or_result
+        end
+      end
+      latest_descendant.then do |result|
+        results_for_descendants << result
+        combined_result = result_for_this_group && results_for_descendants.all?
+        run_after_context_hooks(new)
+        before_context_ivars.clear
+        reporter.example_group_finished(self)
+        result_promise.resolve combined_result
+      end
+      # TODO: Incorporate for_filtered_examples(reporter) { |example| example.skip_with_exception(reporter, ex) } like sync example_group does
+      # TODO: Incorporate fail fast stuff      
     end
-    ordering_strategy.order(children).each do |child|
-      puts "child is #{child}"
-    end
-    result_promise
-      # begin
-    #       run_before_context_hooks(new)
-#       result_for_this_group = run_examples(reporter)
-#       results_for_descendants = ordering_strategy.order(children).map { |child| child.run(reporter) }.all?
-#       result_for_this_group && results_for_descendants
-#     rescue Pending::SkipDeclaredInExample => ex
-#       for_filtered_examples(reporter) { |example| example.skip_with_exception(reporter, ex) }
-#     rescue Exception => ex
-#       RSpec.world.wants_to_quit = true if fail_fast?
-#       for_filtered_examples(reporter) { |example| example.fail_with_exception(reporter, ex) }
-#     ensure
-#       run_after_context_hooks(new)
-#       before_context_ivars.clear
-#       reporter.example_group_finished(self)
-#     end
+    result_promise     
   end
   
   # Promise oriented version
@@ -71,15 +79,7 @@ class ::RSpec::Core::ExampleGroup
       instance = new
       set_ivars(instance, before_context_ivars)
       promise_or_result = example.run(instance, reporter)
-      promise = Promise.new
-      if promise_or_result.is_a? Promise
-        promise_or_result.then do |result|
-          promise.resolve result
-        end
-      else
-        promise.resolve promise_or_result
-      end
-      promise
+      get_promise_if_not_already promise_or_result
     end  
     
     results = []
