@@ -178,34 +178,34 @@ describe "Asynchronous helpers" do
       done.call
     end
   end
-  
-  context 'async/sync mix' do
-    it 'fails properly if a sync test is among async tests' do
-      1.should == 2
-    end
-  
-    it 'passes correctly if a sync test is among async tests' do
-      1.should == 1
-    end
-
-    async "can finish running after a long delay and fail properly" do |done|
-      @test_in_progress = 'can finish running after a long delay and fail'
-      obj = [1, 2, 3, 4]
-
-      delay(1) do
-        obj.should == [2, 2, 3, 4]
-        @test_in_progress = nil
-        done.call
-      end
-    end
-
-    async "can finish running after a long delay and succeed" do |done|
-      obj = [1, 2, 3, 4]
-
-      delay(1) do
-        obj.should == [1, 2, 3, 4]
-        done.call
-      end
-    end
-  end  
 end
+
+describe 'async/sync mix' do
+  it 'fails properly if a sync test is among async tests' do
+    1.should == 2
+  end
+
+  it 'passes correctly if a sync test is among async tests' do
+    1.should == 1
+  end
+
+  async "can finish running after a long delay and fail properly" do |done|
+    @test_in_progress = 'can finish running after a long delay and fail'
+    obj = [1, 2, 3, 4]
+
+    delay(1) do
+      obj.should == [2, 2, 3, 4]
+      @test_in_progress = nil
+      done.call
+    end
+  end
+
+  async "can finish running after a long delay and succeed" do |done|
+    obj = [1, 2, 3, 4]
+
+    delay(1) do
+      obj.should == [1, 2, 3, 4]
+      done.call
+    end
+  end
+end  
