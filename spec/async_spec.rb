@@ -3,6 +3,24 @@ describe "Asynchronous helpers" do
 
   before do
     @model = Object.new
+    @test_in_progress = nil
+  end
+  
+  before :all do
+    @@around_testing = []
+  end
+  
+  around do |example|
+    look_for = example.description
+    @@around_testing << look_for
+    example.run
+    last = @@around_testing.pop   
+    raise "Around hook kept executing even though test #{@test_in_progress} was running!" if @test_in_progress
+    raise "Around hooks are messed up because we expected #{look_for} but we popped off #{last}" unless last == look_for
+  end
+  
+  after :all do
+    raise 'hooks not empty!' unless @@around_testing.empty?
   end
   
   async "can run examples async" do |done|
@@ -17,10 +35,12 @@ describe "Asynchronous helpers" do
   end
 
   async "can finish running after a long delay and fail" do |done|
+    @test_in_progress = 'can finish running after a long delay and fail'
     obj = [1, 2, 3, 4]
 
-    delay(1) do
+    delay(2) do
       obj.should == [2, 2, 3, 4]
+      @test_in_progress = nil
       done.call
     end
   end
@@ -88,7 +108,7 @@ describe "Asynchronous helpers" do
     end
   end
   
-  # TODO: test example group descendants, around blocks
+  # TODO: test example group descendants
   
   # TODO, how to test this now? Right now, manually looking and ensuring failure message shows foo/baz and not 42/43
   async "should make example fail before async block reached" do |done|
