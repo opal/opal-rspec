@@ -9,12 +9,21 @@ class ::RSpec::Core::ExampleGroup
   
   def self.async(*all_args, &block)
     desc, *args = *all_args
-
-    options = Metadata.build_hash_from(args)
+    options = Metadata.build_hash_from(args)    
+    do_async options, desc, &block
+  end
+  
+  def self.do_async(options, desc, &block)
     options.update(:skip => RSpec::Core::Pending::NOT_YET_IMPLEMENTED) unless block
-
     examples << Opal::RSpec::AsyncExample.new(self, desc, options, block)
     examples.last
+  end
+  
+  def self.xasync(*all_args, &block)
+    desc, *args = *all_args
+    options = Metadata.build_hash_from(args)
+    options.update skip: 'Temporarily skipped with xasync'
+    do_async options, desc, &block    
   end
 
   # Promise oriented version
