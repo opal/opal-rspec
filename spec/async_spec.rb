@@ -209,3 +209,31 @@ describe 'async/sync mix' do
     end
   end
 end
+
+describe 'async subject' do
+  describe 'assertion' do
+    subject do
+      promise = Promise.new
+      delay 1 do      
+        promise.resolve 42
+      end
+      promise
+    end
+    
+    context 'passes' do  
+      async_it { is_expected.to eq 42 }
+    end
+    
+    context 'assertion fails properly' do  
+      async_it { is_expected.to eq 43 }
+    end    
+  end
+    
+  context 'fails properly during subject create' do
+    pending 'write this'
+  end
+end
+
+describe 'async before' do
+  pending 'write this'
+end
