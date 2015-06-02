@@ -242,12 +242,38 @@ describe 'async subject' do
   end
 end
 
+describe 'sync before' do
+  before do
+    @test_value = 42
+  end
+  
+  subject { 42 } 
+  
+  context 'succeeds' do
+    it { is_expected.to eq @test_value }
+  end
+  
+  context 'before fails properly' do
+    before do
+      raise 'something did not work right'
+    end
+    
+    it { is_expected.to eq @test_value }
+  end
+  
+  context 'match fails properly' do
+    it { is_expected.to_not eq @test_value }
+  end
+end
+
 describe 'async before' do  
   context 'sync subject' do
-    async_before do
+    before do      
       promise = Promise.new
+      # self/instance variable will not work inside delay
+      set_test_val = lambda {|v| @test_value = v}
       delay 1 do
-        @test_value == 42
+        set_test_val[42]
         promise.resolve
       end
       promise
