@@ -14,13 +14,8 @@ class ::RSpec::Core::ExampleGroup
       result.resolve
     }
     result.then do
-      puts 'timer triggered, eval block'
-      begin
-        self.instance_eval(&block)
-      rescue StandardError => e
-        puts "delay block failed #{e}"
-        Promise.new.reject e
-      end
+      puts 'timer triggered, eval block'      
+      self.instance_eval(&block)      
     end
   end  
 
