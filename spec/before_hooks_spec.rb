@@ -1,4 +1,4 @@
-describe 'hooks' do
+describe 'before hooks' do
   # describe 'async before' do
 #     context 'sync subject' do
 #       before do
