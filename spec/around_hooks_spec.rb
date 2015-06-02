@@ -1,4 +1,5 @@
-# describe 'around hooks' do
+#describe 'hooks' do
+# describe 'around' do
 #   before do
 #     @model = Object.new
 #     @test_in_progress = nil
@@ -43,3 +44,4 @@
 #     end
 #   end
 # end
+#end

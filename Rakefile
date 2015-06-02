@@ -28,12 +28,14 @@ task :test do
   
   failure_messages = []
   
-  expected_failures= ['Asynchronous helpers should make example fail properly before async block reached',
-                      'Asynchronous helpers promise returned by example matcher fails properly',
-                      'Asynchronous helpers promise returned by example promise fails properly no args',
-                      'Asynchronous helpers promise returned by example promise fails properly string arg',
-                      'Asynchronous helpers promise returned by example promise fails properly exception arg',
-                      'Asynchronous helpers long delay fail properly',
+  expected_pending_count = 12
+  
+  expected_failures= ['promise should make example fail properly before async block reached',
+                      'promise matcher fails properly',
+                      'promise non-assertion failure in promise no args',
+                      'promise non-assertion failure in promise string arg',
+                      'promise non-assertion failure in promise exception arg',
+                      'pending in example no promise would not fail otherwise, thus fails properly',
                       'async/sync mix fails properly if a sync test is among async tests',
                       'async/sync mix can finish running after a long delay and fail properly',
                       'be_truthy fails properly with truthy values',
@@ -41,8 +43,10 @@ task :test do
                       'subject sync fails properly during subject create',
                       'subject async assertion assertion fails properly should eq 43',
                       'subject async fails properly during subject create',
-                      'hooks sync before before fails properly',
-                      'hooks sync before match fails properly should not eq 42'].sort
+                      'hooks before sync before fails properly',
+                      'hooks before sync match fails properly should not eq 42',
+                      'exception handling should fail properly if an exception is raised',
+                      'exception handling should ignore an exception after a failed assertion'].sort
   if actual_failures != expected_failures
     unexpected = actual_failures - expected_failures
     missing = expected_failures - actual_failures
@@ -51,7 +55,7 @@ task :test do
     failure_messages << "\nUnexpected fails:\n#{unexpected.join("\n")}\n\nMissing fails:\n#{missing.join("\n")}\n\n"
   end
   
-  failure_messages << "Expected 6 pending examples but actual was #{pending}" unless pending == '7'
+  failure_messages << "Expected #{expected_pending_count} pending examples but actual was #{pending}" unless pending == expected_pending_count.to_s
   
   if failure_messages.empty?
     puts 'Test successful!'

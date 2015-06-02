@@ -1,43 +1,39 @@
-describe 'Promise examples' do
+describe 'promise' do
   let(:foo) { 100 }    
   
-  # TODO: Flatten this context
-  # TODO: Add tests for 'after'
-  context 'promise returned by example' do
-    it 'matcher fails properly' do
+  it 'matcher fails properly' do
+    delay_with_promise 1 do
+      1.should == 2
+    end      
+  end
+
+  it 'matcher succeeds' do
+    delay_with_promise 1 do
+      1.should == 1
+    end      
+  end
+
+  context 'non-assertion failure in promise' do
+    it 'no args' do
       delay_with_promise 1 do
-        1.should == 2
-      end      
+        raise 'some problem'
+      end
     end
 
-    it 'matcher succeeds properly' do
-      delay_with_promise 1 do
-        1.should == 1
-      end      
+    it 'string arg' do
+      promise = Promise.new
+      delay 1 do
+        promise.reject 'string failure reason here'
+      end
+      promise
     end
 
-    describe 'promise fails properly' do
-      it 'no args' do
-        delay_with_promise 1 do
-          raise 'some problem'
-        end
+    it 'exception arg' do
+      promise = Promise.new
+      delay 1 do
+        promise.reject TypeError.new('typeerror driven failure reason here')
       end
-
-      it 'string arg' do
-        promise = Promise.new
-        delay 1 do
-          promise.reject 'string failure reason here'
-        end
-        promise
-      end
-
-      it 'exception arg' do
-        promise = Promise.new
-        delay 1 do
-          promise.reject TypeError.new('typeerror driven failure reason here')
-        end
-        promise
-      end
+      promise
     end
   end
   
@@ -97,16 +93,7 @@ describe 'Promise examples' do
     delay_with_promise(0) do
       expect(42).to eq(43)
     end
-  end
-  
-  it "should fail properly if an exception is raised" do
-    raise 'problem'
-  end
-  
-  it "should ignore an exception after a failed assertion" do
-    expect(42).to eq(43)
-    raise 'problem'
-  end
+  end  
 end
 
 describe 'async/sync mix' do
