@@ -45,7 +45,8 @@ module Opal
       end
 
       def run_examples
-        @world.example_groups.inject(Promise.new.resolve(true)) do |previous_promise, group|
+        seed = Promise.new.resolve(true)
+        @world.example_groups.inject(seed) do |previous_promise, group|
           previous_promise.then do |result|
             group.run @reporter
           end

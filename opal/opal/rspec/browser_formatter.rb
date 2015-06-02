@@ -67,6 +67,7 @@ module Opal
       end
 
       def example_failed(notification)
+        puts "REPORTER - got ex failed #{notification}"
         example = notification.example
         duration = sprintf("%0.5f", example.execution_result.run_time)
 
