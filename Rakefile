@@ -45,8 +45,12 @@ task :test do
                       'subject async fails properly during creation explicit async',
                       'subject async fails properly during creation implicit usage',
                       'subject async assertion explicit async fails properly',
-                      'hooks before sync before fails properly',
-                      'hooks before sync match fails properly should not eq 42',
+                      'hooks before both sync before fails properly',
+                      'hooks before both sync match fails properly should not eq 42',
+                      'hooks after sync after fails should eq 42',
+                      'hooks after sync before fails',
+                      'hooks after sync match fails async match',
+                      'hooks after sync match fails sync match should eq 43',
                       'exception handling should fail properly if an exception is raised',
                       'exception handling should ignore an exception after a failed assertion'].sort
   if actual_failures != expected_failures
