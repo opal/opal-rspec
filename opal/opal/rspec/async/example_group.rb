@@ -72,15 +72,19 @@ class ::RSpec::Core::ExampleGroup
         ensure_stuff.call
       end
     end.fail do |ex|
+      puts "--FAILURE WITH EXCEPTION-- #{ex}"
       ex ||= Exception.new 'Async promise failed for unspecified reason'
       ex = Exception.new ex unless ex.kind_of?(Exception)
-      if ex.is_a? Pending::SkipDeclaredInExample
-        for_filtered_examples(reporter) { |example| example.skip_with_exception(reporter, ex) }
+      result = if ex.is_a? Pending::SkipDeclaredInExample
+        puts 'got skip'
+        for_filtered_examples(reporter) { |example| example.skip_with_exception(reporter, ex) }        
       else
         RSpec.world.wants_to_quit = true if fail_fast?
         for_filtered_examples(reporter) { |example| example.fail_with_exception(reporter, ex) }
       end
       ensure_stuff.call
+      puts "example_group.run - #{metadata[:description]} - returning #{result}"
+      result
     end
   end
   

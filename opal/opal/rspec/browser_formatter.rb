@@ -38,6 +38,7 @@ module Opal
       end
 
       def example_group_finished(_notification)
+        puts "REPORTER - got example_group_finished #{_notification}"
         if @example_group_failed
           @rspec_group.class_name = "example_group failed"
           @rspec_dt.class_name = "failed"
