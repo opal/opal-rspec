@@ -15,7 +15,9 @@ end
 task :test do
   test_output = `rake default`
   raise "Expected test runner to fail due to failed tests, but got return code of #{$?.exitstatus}" if $?.success?
-  total, failed, pending = /(\d+) examples, (\d+) failures, (\d+) pending/.match(test_output).captures
+  count_match = /(\d+) examples, (\d+) failures, (\d+) pending/.match(test_output)
+  raise 'Expected a finished count of test failures/success/etc. but did not see it' unless count_match
+  total, failed, pending = count_match.captures
 
   actual_failures = []
   test_output.scan /\d+\) (.*)/ do |match|
