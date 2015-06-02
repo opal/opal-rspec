@@ -28,12 +28,12 @@ class ::RSpec::Core::ExampleGroup
     descendants = ordering_strategy.order(children)
     if descendants.empty?
       puts "example_group.run - #{metadata[:description]} - no descendants, this group is complete, our examples result is #{our_examples_result}"
-      return Promise.new.resolve our_examples_result
+      return Promise.value our_examples_result
     end
     
     results_for_descendants = []
     # Can use true for this because we're AND'ing everything anyways
-    seed = Promise.new.resolve(true)
+    seed = Promise.value(true)
     latest_descendant = descendants.inject(seed) do |previous_promise, next_descendant|
       previous_promise.then do |result|
         results_for_descendants << result
@@ -93,7 +93,7 @@ class ::RSpec::Core::ExampleGroup
     examples = ordering_strategy.order(filtered_examples)
     if examples.empty?
       puts "example_group.run_examples - #{metadata[:description]} - no examples, returning now"
-      return Promise.new.resolve(true)
+      return Promise.value true
     end
 
     example_promise = lambda do |example|
@@ -107,7 +107,7 @@ class ::RSpec::Core::ExampleGroup
     
     results = []
     # Can use true for this because we're AND'ing everything anyways
-    seed = Promise.new.resolve(true)
+    seed = Promise.value true
     puts "example_group.run_examples - #{metadata[:description]} - seed promise is #{seed}"
     latest_promise = examples.inject(seed) do |previous_promise, next_example|
       puts "example_group.run_examples - #{metadata[:description]} - inject loop - next example to QUEUE is #{next_example.metadata[:description]}, previous promise is #{previous_promise}"
