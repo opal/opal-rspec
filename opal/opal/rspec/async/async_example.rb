@@ -48,7 +48,7 @@ class ::RSpec::Core::Example
       ::RSpec::Core::Pending.mark_pending! self, skip
       result = finish(reporter)              
       ::RSpec.current_example = nil
-      return Promise.new.resolve result
+      return Promise.value result
     elsif !::RSpec.configuration.dry_run?
       # TODO: Put around back in here      
       begin
@@ -57,7 +57,7 @@ class ::RSpec::Core::Example
         puts "possible_example_promise is a #{possible_example_promise}"
         synchronous_example = !possible_example_promise.is_a?(Promise)
         puts "synchronous example!" if synchronous_example
-        example_promise = synchronous_example ? Promise.new.resolve(possible_example_promise) : possible_example_promise
+        example_promise = synchronous_example ? Promise.value(possible_example_promise) : possible_example_promise
         example_promise.then do |result|
           puts 'notifying completed'
           notify_async_completed nil
@@ -67,7 +67,7 @@ class ::RSpec::Core::Example
         end
       rescue Exception => ex
         puts "Synchronous exception detected! #{ex}"
-        Promise.new.resolve(notify_async_completed(ex))
+        Promise.value(notify_async_completed(ex))
       end
     end
   end
