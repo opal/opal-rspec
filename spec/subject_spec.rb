@@ -10,7 +10,7 @@ describe 'subject' do
       it "should be the named subject" do
         subject.should eql(named_subject)
       end     
-    end
+    end    
     
     context 'unnamed' do
       subject { 42 }
@@ -33,31 +33,47 @@ describe 'subject' do
     end
   end
   
-  # context 'async' do
-#     describe 'assertion' do
-#       subject do
-#         delay_with_promise 1 do
-#           42
-#         end
-#       end
-#
-#       context 'passes' do
-#         it { is_expected.to eq 42 }
-#       end
-#
-#       context 'assertion fails properly' do
-#         it { is_expected.to eq 43 }
-#       end
-#     end
-#
-#     context 'fails properly during subject create' do
-#       subject do
-#         delay_with_promise 1 do
-#           raise 'did not work'
-#         end
-#       end
-#
-#       it { is_expected.to eq 42 }
-#     end
-#   end
+  context 'async' do
+    describe 'assertion' do
+      subject do
+        delay_with_promise 1 do
+          42
+        end
+      end
+      
+      context 'explicit async' do
+        it 'passes' do
+          delay_with_promise 0 do
+            expect(subject).to eq 42
+          end
+        end
+        
+        it 'fails properly' do
+          delay_with_promise 0 do
+            expect(subject).to eq 43
+          end
+        end
+      end
+      
+      context 'implicit' do
+        context 'passes' do
+          it { is_expected.to eq 42 }
+        end
+
+        context 'fails properly' do
+          it { is_expected.to eq 43 }
+        end        
+      end      
+    end
+
+    context 'fails properly during creation' do
+      subject do
+        delay_with_promise 1 do
+          raise 'did not work'
+        end
+      end
+
+      it { is_expected.to eq 42 }
+    end
+  end
 end

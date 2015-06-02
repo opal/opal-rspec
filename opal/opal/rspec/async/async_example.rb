@@ -40,8 +40,8 @@ class ::RSpec::Core::Example
   end
   
   def core_block_run(result_promise, reporter)
-    possible_example_promise = @example_group_instance.instance_exec(self, &@example_block)
-    puts "possible_example_promise is a #{possible_example_promise}"
+    possible_example_promise = @example_group_instance.instance_exec(self, &@example_block)    
+    puts "possible_example_promise for #{metadata[:description]} is a #{possible_example_promise}"
     synchronous_example = !possible_example_promise.is_a?(Promise)
     puts "synchronous example!" if synchronous_example
     example_promise = synchronous_example ? Promise.value(possible_example_promise) : possible_example_promise
@@ -77,7 +77,24 @@ class ::RSpec::Core::Example
         run_before_example
         # Not chaining to keep exceptions from propagating
         result_promise = Promise.new
-        core_block_run result_promise, reporter
+
+        if example_group_instance.respond_to? :subject and example_group_instance.subject.is_a?(Promise)
+          example_group_instance.subject.then do |resolved_subject|
+            # This is a private method, but we're using Opal
+            example_group_instance.__memoized[:subject] = resolved_subject
+            puts 'running core_block_run'
+            # the parent rescue won't catch exceptions because we're in a then!
+            begin
+              core_block_run result_promise, reporter
+            rescue Exception => ex
+              puts "Synchronous exception with async subject detected! #{ex}"
+              # We'll never make it to the result_promise.resolve in core_block_run, need to do it here
+              result_promise.resolve notify_async_completed(reporter, ex)
+            end
+          end
+        else
+          core_block_run result_promise, reporter
+        end
         # Needs to be returned
         result_promise
       rescue Exception => ex
