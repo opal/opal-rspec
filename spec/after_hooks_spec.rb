@@ -2,25 +2,40 @@ describe 'hooks' do
   describe 'after' do
     before :all do
       @@total = 0
+      @@example_still_in_progress = nil
     end
     
     after :all do
       expected = 10
-      raise "Expected #{expected} after hits but got #{@@total}" unless @@total == expected
+      unless @@total == expected
+        msg = "Expected #{expected} after hits but got #{@@total}"
+        `console.error(#{msg})`
+      end       
     end
     
     let(:raise_before_error) { false }
-    before do
-      raise 'before problem' if raise_before_error
+    
+    before do |example|
+      if raise_before_error
+        @@example_still_in_progress = nil
+        raise 'before problem'
+      end
+      if @@example_still_in_progress
+        raise "Another spec (#{@@example_still_in_progress}) is still running, after block problem"
+        @@example_still_in_progress = nil
+      end
+      @@example_still_in_progress = example.description
     end
     
-    let(:raise_after_error) { false }
-    after do
-      raise 'after problem' if raise_after_error
-      @@total += 1      
-    end
+    let(:raise_after_error) { false }    
     
     context 'sync' do
+      after do
+        raise 'after problem' if raise_after_error
+        @@total += 1
+        @@example_still_in_progress = nil
+      end
+      
       subject { 42 }            
       
       context 'before fails' do
