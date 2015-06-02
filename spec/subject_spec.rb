@@ -73,7 +73,15 @@ describe 'subject' do
         end
       end
 
-      it { is_expected.to eq 42 }
+      context 'implicit usage' do
+        it { is_expected.to eq 42 }
+      end
+      
+      it 'explicit async' do
+        delay_with_promise 0 do
+          expect(subject).to eq 42
+        end
+      end
     end
   end
 end
