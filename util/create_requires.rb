@@ -4,40 +4,38 @@ require 'json'
 Object.send(:remove_const, :Random)
 
 # These scripts allow a leaner top level spec (like noted here)
-FORMATTERS = %w{base_formatter html_printer}
-MOCK_STUFF = %w{matchers/expectation_customization any_instance}
-REQUIRES = %w{rspec rspec/mocks rspec/expectations rspec/core rspec/core/mocking_adapters/rspec} + FORMATTERS.map {|f| "rspec/core/formatters/#{f}"} + MOCK_STUFF.map { |f| "rspec/mocks/#{f}" }
+BASE_FILES = %w{rspec rspec/mocks rspec/expectations rspec/core rspec/core/mocking_adapters/rspec}
+FORMATTERS = %w{base_formatter html_printer}.map {|f| "rspec/core/formatters/#{f}"}
+MOCK_STUFF = %w{matchers/expectation_customization any_instance}.map { |f| "rspec/mocks/#{f}" }
+REQUIRES = BASE_FILES + FORMATTERS + MOCK_STUFF
 
 # Should not need to edit below this
 
-alias :orig_require :require
+ROOTS = Dir[__dir__+'/../rspec{,-{core,expectations,mocks,support}}/lib'].map {|root| File.expand_path(root)}
+ROOTS_REGEXP = /\A(#{ROOTS.map {|r| Regexp.escape r}.join('|')})\//
 
-module RequireCreation
-  PATHS = []
-end
-
-def require s
-  RequireCreation::PATHS << s if orig_require(s)
-end
-
-alias :orig_require_relative :require_relative
-def require_relative s
-  # Relative won't function normally without normal gem usage (using submodules here)
-  guesses = [s, "rspec/#{s}"]
-  use = guesses.find do |g|
-      begin
-        orig_require g
-        true
-      rescue LoadError
-        false
-      end
+module Kernel
+  alias :orig_require :require
+  def require path
+    puts "requiring: #{path}"
+    RSPEC_PATHS << path if orig_require(path)
   end
-  raise "Unable to find dependency #{s}, guessed with #{guesses}" unless use
-  RequireCreation::PATHS << use
+
+  alias :orig_require_relative :require_relative
+  def require_relative path
+    base = File.dirname(caller(1,1).first)
+    path_for_require = File.expand_path(path, base).sub(ROOTS_REGEXP, '')
+    require path_for_require
+  end
 end
 
+RSPEC_PATHS = []
 REQUIRES.each {|r| require r }
 
+# Put top level items first
+requires = RSPEC_PATHS.uniq.sort
+
 File.open 'opal/opal/rspec/requires.rb', 'w' do |file|
-  file << JSON.dump(RequireCreation::PATHS.uniq)
+  file << "# Generated automatically by util/normalize_requires.rb, triggered by Rake task :generate_requires, do not edit\n"
+  file << requires.map { |p| "require '#{p}'" }.join("\n")
 end
