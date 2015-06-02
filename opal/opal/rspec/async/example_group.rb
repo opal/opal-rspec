@@ -111,9 +111,6 @@ class ::RSpec::Core::ExampleGroup
         puts "example_group.run_examples - #{metadata[:description]} - previous promise #{previous_promise} completed, now running next example (#{next_example.metadata[:description]})"
         results << succeeded
         example_promise[next_example]
-      end.fail do |result|
-        puts "caught failure #{failure}"
-        32323
       end
       puts "example_group.run_examples - #{metadata[:description]} - wrapped promise is #{p2}"
       p2
@@ -125,9 +122,6 @@ class ::RSpec::Core::ExampleGroup
       puts "example_group.run_examples, #{metadata[:description]} - final example promise is #{latest_promise}, result was #{succeeded}"
       results << succeeded
       results.all?
-    end.fail do |failure|
-      puts "caught failure4 #{failure}"
-      44444
     end
   end
 end
