@@ -35,30 +35,22 @@ describe "Asynchronous helpers" do
   
   context 'promise returned by example' do
     it 'matcher fails properly' do
-      promise = Promise.new
-      delay 1 do
+      delay_with_promise 1 do
         1.should == 2
-        promise.resolve
-      end
-      promise
+      end      
     end
 
     it 'matcher succeeds properly' do
-      promise = Promise.new
-      delay 1 do
+      delay_with_promise 1 do
         1.should == 1
-        promise.resolve
-      end
-      promise
+      end      
     end
 
     describe 'promise fails properly' do
       it 'no args' do
-        promise = Promise.new
-        delay 1 do
-          promise.reject
+        delay_with_promise 1 do
+          raise 'some problem'
         end
-        promise
       end
 
       it 'string arg' do

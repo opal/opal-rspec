@@ -22,32 +22,28 @@ describe 'subject' do
   context 'async' do
     describe 'assertion' do
       subject do
-        promise = Promise.new
-        delay 1 do      
-          promise.resolve 42
-        end
-        promise
+        delay_with_promise 1 do      
+          42
+        end        
       end
     
       context 'passes' do  
-        async_it { is_expected.to eq 42 }
+        it { is_expected.to eq 42 }
       end
     
       context 'assertion fails properly' do  
-        async_it { is_expected.to eq 43 }
+        it { is_expected.to eq 43 }
       end    
     end
     
     context 'fails properly during subject create' do
       subject do
-        promise = Promise.new
-        delay 1 do      
-          promise.reject 'did not work'
+        delay_with_promise 1 do      
+          raise 'did not work'
         end
-        promise
       end
     
-      async_it { is_expected.to eq 42 }
+      it { is_expected.to eq 42 }
     end    
   end
 end
