@@ -62,16 +62,10 @@ class ::RSpec::Core::ExampleGroup
     puts "example_group.run - #{metadata[:description]} - starting run_examples"
     our_examples_promise = run_examples(reporter)
     puts "example_group.run - #{metadata[:description]} - got back run_examples promise of #{our_examples_promise}"
-    ensure_stuff = lambda do
-      run_after_context_hooks(new)
-      before_context_ivars.clear
-      reporter.example_group_finished(self)
-    end
+   
     our_examples_promise.then do |our_examples_result|
-      process_descendants(our_examples_result, reporter).then do
-        ensure_stuff.call
-      end
-    end.fail do |ex|
+      process_descendants(our_examples_result, reporter)
+    end.rescue do |ex|
       puts "--FAILURE WITH EXCEPTION-- #{ex}"
       ex ||= Exception.new 'Async promise failed for unspecified reason'
       ex = Exception.new ex unless ex.kind_of?(Exception)
@@ -82,9 +76,12 @@ class ::RSpec::Core::ExampleGroup
         RSpec.world.wants_to_quit = true if fail_fast?
         for_filtered_examples(reporter) { |example| example.fail_with_exception(reporter, ex) }
       end
-      ensure_stuff.call
       puts "example_group.run - #{metadata[:description]} - returning #{result}"
       result
+    end.always do
+      run_after_context_hooks(new)
+      before_context_ivars.clear
+      reporter.example_group_finished(self)
     end
   end
   
@@ -116,6 +113,9 @@ class ::RSpec::Core::ExampleGroup
         puts "example_group.run_examples - #{metadata[:description]} - previous promise #{previous_promise} completed, now running next example (#{next_example.metadata[:description]})"
         results << succeeded
         example_promise[next_example]
+      end.fail do |result|
+        puts "caught failure #{failure}"
+        32323
       end
       puts "example_group.run_examples - #{metadata[:description]} - wrapped promise is #{p2}"
       p2
@@ -127,6 +127,9 @@ class ::RSpec::Core::ExampleGroup
       puts "example_group.run_examples, #{metadata[:description]} - final example promise is #{latest_promise}, result was #{succeeded}"
       results << succeeded
       results.all?
+    end.fail do |failure|
+      puts "caught failure4 #{failure}"
+      44444
     end
   end
 end
