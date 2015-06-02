@@ -1,4 +1,4 @@
-class Opal::RSpec::AsyncExample < ::RSpec::Core::Example
+class ::RSpec::Core::Example
   def notify_async_exception(exception)
     @async_exceptions << exception
   end
