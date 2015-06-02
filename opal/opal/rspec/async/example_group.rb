@@ -9,7 +9,7 @@ class ::RSpec::Core::ExampleGroup
   
   def delay_with_promise(duration, &block)
     result = Promise.new
-    delay duration, lambda { 
+    delay(duration) { 
       puts 'timer telling inner promise to resolve'
       result.resolve
     }
@@ -103,7 +103,7 @@ class ::RSpec::Core::ExampleGroup
     seed = Promise.new.resolve(true)
     puts "example_group.run_examples - #{metadata[:description]} - seed promise is #{seed}"
     latest_promise = examples.inject(seed) do |previous_promise, next_example|
-      puts "example_group.run_examples #{metadata[:description]} - inject loop - next example is #{next_example.metadata[:description]}, previous promise is #{previous_promise}"
+      puts "example_group.run_examples - #{metadata[:description]} - inject loop - next example to QUEUE is #{next_example.metadata[:description]}, previous promise is #{previous_promise}"
       p2 = previous_promise.then do |result|
         puts "example_group.run_examples - #{metadata[:description]} - previous promise #{previous_promise} completed, now running next example (#{next_example.metadata[:description]})"
         results << result
