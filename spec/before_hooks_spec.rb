@@ -3,16 +3,13 @@ describe 'hooks' do
     context 'async' do
       let(:raise_before_error) { false }
       before do
-        promise = Promise.new
         # self/instance variables will not work inside delay
         set_test_val = lambda {|v| @test_value = v}
         raise_err = raise_before_error
-        delay 1 do
+        delay_with_promise 0 do
           raise 'problem in before' if raise_err
           set_test_val[42]
-          promise.resolve
         end
-        promise
       end
       
       context 'with sync subject' do
@@ -25,6 +22,7 @@ describe 'hooks' do
         context 'before fails properly' do
           let(:raise_before_error) { true }
         
+          # Won't run, but needs to be here to make test go
           it { is_expected.to eq @test_value }
         end
 
@@ -34,34 +32,44 @@ describe 'hooks' do
       end
       
       context 'with async subject' do
+        let(:raise_before_subj_error) { false }
+        
         subject do
-          promise = Promise.new
-          delay 1 do
-            promise.resolve 42
+          raise_err = raise_before_subj_error
+          delay_with_promise 0 do
+            raise 'problem in subject' if raise_err
+            42
           end
-          promise
         end
 
         context 'both succeed' do
-          pending 'write this'
+          it { is_expected_to eq @test_value }
         end
 
         context 'both fail properly' do
           let(:raise_before_error) { true }
-          pending 'write this'
+          let(:raise_before_subj_error) { true }
+          
+          # Won't run, but needs to be here to make test go
+          it { is_expected_to eq @test_value }
         end
 
         context 'before succeeds, assertion fails properly' do
-          pending 'write this'
+          it { is_expected_to_not eq @test_value }
         end
 
         context 'before fails properly' do
           let(:raise_before_error) { true }
-          pending 'write this'
+          
+          # Won't run, but needs to be here to make test go
+          it { is_expected_to eq @test_value }
         end
 
         context 'before succeeds, subject fails properly' do
-          pending 'write this'
+          let(:raise_before_subj_error) { true }
+          
+          # Won't run, but needs to be here to make test go
+          it { is_expected_to eq @test_value }
         end
       end
     end    
