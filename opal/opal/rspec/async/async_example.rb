@@ -2,19 +2,23 @@ class ::RSpec::Core::Example
   def notify_async_completed(exception)
     puts "notify_async_completed called with exception #{exception}"
     begin
-      if pending?
-        ::RSpec::Core::Pending.mark_fixed! self
+      if exception
+        unless exception.is_a? Pending::SkipDeclaredInExample
+          puts 'got an exception, noting it'
+          # exception needs to be set before calling finish so results are correct
+          # the first test to fail should be the one reported
+          set_exception exception
+        end            
+      else
+        if pending?
+          puts 'found pending example that did not fail!!!'
+          ::RSpec::Core::Pending.mark_fixed! self
 
-        raise ::RSpec::Core::Pending::PendingExampleFixedError.new(
-              'Expected example to fail since it is pending, but it passed.',
-              [location])
+          set_exception ::RSpec::Core::Pending::PendingExampleFixedError.new(
+                'Expected example to fail since it is pending, but it passed.',
+                [location])
+        end        
       end
-      unless !exception or exception.is_a? Pending::SkipDeclaredInExample
-        puts 'got an exception, noting it'
-        # exception needs to be set before calling finish so results are correct
-        # the first test to fail should be the one reported
-        set_exception exception
-      end      
     ensure
       run_after_example
       @example_group_instance.instance_variables.each do |ivar|
