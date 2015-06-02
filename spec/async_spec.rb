@@ -140,6 +140,15 @@ describe "Asynchronous helpers" do
       expect(42).to eq(43)
     end
   end
+  
+  it "should fail properly if an exception is raised" do
+    raise 'problem'
+  end
+  
+  it "should ignore an exception after a failed assertion" do
+    expect(42).to eq(43)
+    raise 'problem'
+  end
 end
 
 describe 'async/sync mix' do
@@ -154,9 +163,13 @@ describe 'async/sync mix' do
   it "can finish running after a long delay and fail properly" do
     @test_in_progress = 'can finish running after a long delay and fail'
     obj = [1, 2, 3, 4]
+    
+    # TODO: Why do we not see any of this??????
 
     delay_with_promise(1) do
+      puts 'before assertion'
       obj.should == [2, 2, 3, 4]
+      puts 'after assertion'
       @test_in_progress = nil
     end
   end
