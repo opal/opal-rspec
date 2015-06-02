@@ -34,8 +34,10 @@ task :test do
                       'async/sync mix fails properly if a sync test is among async tests',
                       'async/sync mix can finish running after a long delay and fail properly',
                       'be_truthy fails properly with truthy values',
-                      'async subject assertion assertion fails properly should eq 43',
-                      'async subject fails properly during subject create',
+                      'subject sync assertion fails properly should eq 43',
+                      'subject sync fails properly during subject create',
+                      'subject async assertion assertion fails properly should eq 43',
+                      'subject async fails properly during subject create',
                       'hooks sync before before fails properly',
                       'hooks sync before match fails properly should not eq 42'].sort
   if actual_failures != expected_failures
