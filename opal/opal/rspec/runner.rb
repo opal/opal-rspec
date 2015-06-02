@@ -19,12 +19,8 @@ module Opal
           end
         end
 
-        def autorun
-          if browser?
-            `setTimeout(function() { #{Runner.new.run} }, 0)`
-          else # phantom
-            Runner.new.run
-          end
+        def autorun          
+            Runner.new.run          
         end
       end
 
@@ -40,17 +36,22 @@ module Opal
 
         self.start
         run_examples.then do
+          puts 'FINISH!'
           self.finish
         end        
       end
 
       def run_examples
         seed = Promise.new.resolve(true)
-        @world.example_groups.inject(seed) do |previous_promise, group|
+        last = @world.example_groups.inject(seed) do |previous_promise, group|
           previous_promise.then do |result|
             group.run @reporter
+          end.fail do |failure|
+            puts "FAILED - #{failure}"
           end
-        end        
+        end
+        puts 'runner, everything kicked off, waiting'
+        last
       end    
 
       def config_hook(hook_when)
