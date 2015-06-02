@@ -18,16 +18,32 @@ task :test do
   raise "Expected test runner to fail due to failed tests, but got return code of #{$?.exitstatus}" if $?.success?
   total, failed, pending = /(\d+) examples, (\d+) failures, (\d+) pending/.match(test_output).captures
     
-  failures = []
+  actual_failures = []
   test_output.scan /\d+\) (.*)/ do |match|
-    failures << match[0]
+    actual_failures << match[0]
+  end
+  actual_failures.sort!
+  
+  failure_messages = []
+  
+  expected_failures= ['Asynchronous helpers should make example fail properly before async block reached',
+                      'Asynchronous helpers promise returned by example matcher fails properly',
+                      'Asynchronous helpers promise returned by example promise fails properly no args',
+                      'Asynchronous helpers promise returned by example promise fails properly string arg',
+                      'Asynchronous helpers promise returned by example promise fails properly exception arg',
+                      'Asynchronous helpers long delay fail properly',
+                      'async/sync mix fails properly if a sync test is among async tests',
+                      'async/sync mix can finish running after a long delay and fail properly',
+                      'be_truthy fails properly with truthy values'].sort
+  if actual_failures != expected_failures
+    failure_messages << "Expected test failures do not match actual.\n\nExpected:\n#{expected_failures.join("\n")}\n\nActual:\n#{actual_failures.join("\n")}"
   end
   
-  unexpected_failures = failures.reject {|f| /fails? properly/.match f}
-  raise "Expected only fail properly tests, but failures included: #{unexpected_failures}" unless unexpected_failures.empty?
+  failure_messages << "Expected 6 pending examples but actual was #{pending}" unless pending == '7'
   
-  raise "Expected 10 examples to fail but actual was #{failed}" unless failed == '9'
-  raise "Expected 6 pending examples but actual was #{pending}" unless pending == '7'
-  
-  puts 'Test successful!'
+  if failure_messages.empty?
+    puts 'Test successful!'
+  else
+    raise "Test failed, reasons:\n\n#{failure_messages.join("\n")}\n"
+  end
 end
