@@ -1,6 +1,8 @@
 describe 'Promise examples' do
   let(:foo) { 100 }    
   
+  # TODO: Flatten this context
+  # TODO: Add tests for 'after'
   context 'promise returned by example' do
     it 'matcher fails properly' do
       delay_with_promise 1 do
@@ -127,8 +129,6 @@ describe 'async/sync mix' do
   it "can finish running after a long delay and fail properly" do
     @test_in_progress = 'can finish running after a long delay and fail'
     obj = [1, 2, 3, 4]
-    
-    # TODO: Why do we not see any of this??????
 
     delay_with_promise(1) do
       puts 'before assertion'
