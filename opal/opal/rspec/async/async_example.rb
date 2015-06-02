@@ -70,6 +70,8 @@ class ::RSpec::Core::Example
           result = notify_async_completed nil
           @result_promise.resolve result
         end.rescue do |ex|
+          ex ||= Exception.new 'Async promise failed for unspecified reason'
+          ex = Exception.new ex unless ex.kind_of?(Exception)          
           puts "notifying example exception #{ex}"
           result = notify_async_completed ex
           @result_promise.resolve result

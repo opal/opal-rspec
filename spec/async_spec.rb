@@ -77,8 +77,8 @@ describe 'Promise examples' do
       obj = [1, 2, 3, 4]
 
       delay_with_promise(1) do
-        obj.should == [2, 2, 3, 4]
         pending 'want to pend within'
+        obj.should == [2, 2, 3, 4]        
       end      
     end
 
@@ -115,11 +115,9 @@ describe 'async/sync mix' do
   end
   
   it 'is an async test between 2 sync tests' do
-    p = delay_with_promise 0 do
+    delay_with_promise 0 do
       1.should == 1
-    end
-    puts "promise we created is #{p}"
-    p
+    end    
   end
 
   it 'passes correctly if a sync test is among async tests' do

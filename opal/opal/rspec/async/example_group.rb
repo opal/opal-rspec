@@ -67,8 +67,6 @@ class ::RSpec::Core::ExampleGroup
       process_descendants(our_examples_result, reporter)
     end.rescue do |ex|
       puts "--FAILURE WITH EXCEPTION-- #{ex}"
-      ex ||= Exception.new 'Async promise failed for unspecified reason'
-      ex = Exception.new ex unless ex.kind_of?(Exception)
       result = if ex.is_a? Pending::SkipDeclaredInExample
         puts 'got skip'
         for_filtered_examples(reporter) { |example| example.skip_with_exception(reporter, ex) }        
