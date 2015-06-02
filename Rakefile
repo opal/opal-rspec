@@ -20,7 +20,7 @@ task :test do
     
   actual_failures = []
   test_output.scan /\d+\) (.*)/ do |match|
-    actual_failures << match[0]
+    actual_failures << match[0].strip
   end
   actual_failures.sort!
   
