@@ -91,6 +91,8 @@ class ::RSpec::Core::Example
               # We'll never make it to the result_promise.resolve in core_block_run, need to do it here
               result_promise.resolve notify_async_completed(reporter, ex)
             end
+          end.fail do |async_subj_create_ex|
+            result_promise.resolve notify_async_completed(reporter, async_subj_create_ex)
           end
         else
           core_block_run result_promise, reporter
