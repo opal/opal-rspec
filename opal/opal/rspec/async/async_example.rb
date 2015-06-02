@@ -68,10 +68,7 @@ class ::RSpec::Core::Example
         @async_completed = false
         @async_exceptions = []
         wrapped_block = lambda do |example|          
-          done = lambda do
-            example_scope.notify_async_completed
-          end          
-          result = self.instance_exec(done, example, &example_scope.instance_variable_get(:@example_block))
+          result = self.instance_exec(example, &example_scope.instance_variable_get(:@example_block))
           # shortcut
           if result.is_a? Promise
             result.then do
@@ -82,6 +79,8 @@ class ::RSpec::Core::Example
               example_scope.notify_async_exception failure_reason
               example_scope.notify_async_completed
             end
+          else
+            example_scope.notify_async_completed
           end
         end
         
