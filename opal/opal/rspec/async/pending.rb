@@ -8,18 +8,14 @@ module RSpec::Core::Pending
       sync_skip message
     rescue SkipDeclaredInExample => e
       example = RSpec.current_example
-      if example.is_a? Opal::RSpec::AsyncExample
-        example.notify_async_exception e
-        example.notify_async_completed
-      else
-        raise
-      end      
+      example.notify_async_exception e
+      example.notify_async_completed   
     end
   end
   
   def pending(message=nil)
     sync_pending message
     example = RSpec.current_example
-    example.notify_async_completed if example.is_a? Opal::RSpec::AsyncExample
+    example.notify_async_completed
   end
 end

@@ -5,26 +5,19 @@ class ::RSpec::Core::ExampleGroup
   def delay(duration, &block)
     `setTimeout(block, duration * 1000)`
     self
-  end
-  
-  def self.async(*all_args, &block)
-    desc, *args = *all_args
-    options = Metadata.build_hash_from(args)    
-    do_async options, desc, &block
-  end
-  
-  def self.do_async(options, desc, &block)
-    options.update(:skip => RSpec::Core::Pending::NOT_YET_IMPLEMENTED) unless block
-    examples << Opal::RSpec::AsyncExample.new(self, desc, options, block)
-    examples.last
-  end
-  
-  def self.xasync(*all_args, &block)
-    desc, *args = *all_args
-    options = Metadata.build_hash_from(args)
-    options.update skip: 'Temporarily skipped with xasync'
-    do_async options, desc, &block    
   end  
+  
+  def delay_with_promise(duration, &block)
+    result = Promise.new
+    delay duration, lambda { result.resolve }
+    result.then do
+      begin
+        self.instance_eval(&block)
+      rescue StandardError => e
+        Promise.new.reject e
+      end
+    end
+  end
 
   def self.get_promise_based_on_completion_of(promise_or_result)
     promise = Promise.new

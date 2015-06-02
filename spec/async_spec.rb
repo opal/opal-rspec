@@ -34,7 +34,7 @@ describe "Asynchronous helpers" do
   end
   
   context 'promise returned by example' do
-    async 'matcher fails properly' do
+    it 'matcher fails properly' do
       promise = Promise.new
       delay 1 do
         1.should == 2
@@ -43,7 +43,7 @@ describe "Asynchronous helpers" do
       promise
     end
 
-    async 'matcher succeeds properly' do
+    it 'matcher succeeds properly' do
       promise = Promise.new
       delay 1 do
         1.should == 1
@@ -53,7 +53,7 @@ describe "Asynchronous helpers" do
     end
 
     describe 'promise fails properly' do
-      async 'no args' do
+      it 'no args' do
         promise = Promise.new
         delay 1 do
           promise.reject
@@ -61,7 +61,7 @@ describe "Asynchronous helpers" do
         promise
       end
 
-      async 'string arg' do
+      it 'string arg' do
         promise = Promise.new
         delay 1 do
           promise.reject 'string failure reason here'
@@ -69,7 +69,7 @@ describe "Asynchronous helpers" do
         promise
       end
 
-      async 'exception arg' do
+      it 'exception arg' do
         promise = Promise.new
         delay 1 do
           promise.reject TypeError.new('typeerror driven failure reason here')
@@ -79,103 +79,73 @@ describe "Asynchronous helpers" do
     end
   end
   
-  async "can run examples async" do |done|
-    1.should == 1
-    done.call
-  end
-
-  async "can access let() helpers and before() helpers" do |done|
-    foo.should eq(100)
-    @model.should be_kind_of(Object)
-    done.call
-  end
-
-  context 'long delay' do
-    async 'fail properly' do |done|
-      @test_in_progress = 'can finish running after a long delay and fail properly'
-      obj = [1, 2, 3, 4]
-
-      delay(1) do
-        obj.should == [2, 2, 3, 4]
-        @test_in_progress = nil
-        done.call
-      end
-    end
-
-    async "succeed" do |done|
-      obj = [1, 2, 3, 4]
-
-      delay(1) do
-        obj.should == [1, 2, 3, 4]
-        done.call
-      end
-    end    
-  end
-  
   context 'skipped' do
-    async 'via variable', skip: true do |done|
+    it 'via variable', skip: true do
       obj = [1, 2, 3, 4]
 
-      delay(1) do
+      delay_with_promise 1 do
         obj.should == [2, 2, 3, 4]
-        done.call
       end
     end
 
-    xasync 'via xasync' do |done|
+    xit 'via xasync' do
       obj = [1, 2, 3, 4]
 
-      delay(1) do
+      delay_with_promise 1 do
         obj.should == [2, 2, 3, 4]
-        done.call
       end
     end
 
-    async 'in example, no done call' do
+    it 'in example, no promise' do
       skip 'want to skip within'
     end
   
-    async 'in example, with done call' do |done|
+    it 'in example, inside promise' do
+      delay_with_promise 1 do
+        skip 'want to skip within'
+      end
+    end
+  
+    it 'in example, outside promise' do
       skip 'want to skip within'
-      done.call
+      delay_with_promise 1 do
+        1.should == 1
+      end      
     end    
   end
   
   context 'pending' do
-    async 'in example without a done call' do
+    it 'in example without a promise' do
       obj = [1, 2, 3, 4]
       obj.should == [2, 2, 3, 4]
       pending 'want to pend within'
     end
 
-    async 'in example with a done call' do |done|
+    it 'in example with a promise' do
       obj = [1, 2, 3, 4]
 
-      delay(1) do
+      delay_with_promise(1) do
         obj.should == [2, 2, 3, 4]
         pending 'want to pend within'
-        done.call
       end      
     end
 
-    async 'via variable', pending: 'the reason' do |done|
+    it 'via variable', pending: 'the reason' do
       obj = [1, 2, 3, 4]
 
-      delay(1) do
+      delay_with_promise(1) do
         obj.should == [2, 2, 3, 4]
-        done.call
       end
     end    
   end
   
   # TODO, how to test this now? Right now, manually looking and ensuring failure message shows foo/baz and not 42/43
-  async "should make example fail properly before async block reached" do |done|
+  it "should make example fail properly before async block reached" do
     # Can't say "should raise exception" around an expectation anymore since expectations don't throw
     expect(:foo).to eq(:baz)
 
-    delay(0) do
+    delay_with_promise(0) do
       expect(42).to eq(43)
-      done.call
     end
   end
 end
@@ -189,23 +159,21 @@ describe 'async/sync mix' do
     1.should == 1
   end
 
-  async "can finish running after a long delay and fail properly" do |done|
+  it "can finish running after a long delay and fail properly" do
     @test_in_progress = 'can finish running after a long delay and fail'
     obj = [1, 2, 3, 4]
 
-    delay(1) do
+    delay_with_promise(1) do
       obj.should == [2, 2, 3, 4]
       @test_in_progress = nil
-      done.call
     end
   end
 
-  async "can finish running after a long delay and succeed" do |done|
+  it "can finish running after a long delay and succeed" do
     obj = [1, 2, 3, 4]
 
-    delay(1) do
+    delay_with_promise(1) do
       obj.should == [1, 2, 3, 4]
-      done.call
     end
   end
 end
