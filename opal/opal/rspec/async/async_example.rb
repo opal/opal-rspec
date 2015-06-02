@@ -50,9 +50,9 @@ class ::RSpec::Core::Example
       ::RSpec.current_example = nil
       return Promise.new.resolve result
     elsif !::RSpec.configuration.dry_run?
-      # TODO: Put around back in here
-      run_before_example
+      # TODO: Put around back in here      
       begin
+        run_before_example
         possible_example_promise = @example_group_instance.instance_exec(self, &@example_block)
         puts "possible_example_promise is a #{possible_example_promise}"
         synchronous_example = !possible_example_promise.is_a?(Promise)
