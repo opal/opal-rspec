@@ -36,7 +36,11 @@ task :test do
                       'async/sync mix can finish running after a long delay and fail properly',
                       'be_truthy fails properly with truthy values'].sort
   if actual_failures != expected_failures
-    failure_messages << "Expected test failures do not match actual.\n\nExpected:\n#{expected_failures.join("\n")}\n\nActual:\n#{actual_failures.join("\n")}"
+    unexpected = actual_failures - expected_failures
+    missing = expected_failures - actual_failures
+    failure_messages << "Expected test failures do not match actual\n"
+    failure_messages << "Expected:\n#{expected_failures.join("\n")}\n\nActual:\n#{actual_failures.join("\n")}"
+    failure_messages << "\nUnexpected fails:\n#{unexpected.join("\n")}\n\nMissing fails:\n#{missing.join("\n")}\n\n"
   end
   
   failure_messages << "Expected 6 pending examples but actual was #{pending}" unless pending == '7'
