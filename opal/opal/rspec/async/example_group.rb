@@ -24,7 +24,7 @@ class ::RSpec::Core::ExampleGroup
     end
   end  
 
-  def self.process_descendants(our_examples_result)
+  def self.process_descendants(our_examples_result, reporter)
     descendants = ordering_strategy.order(children)
     if descendants.empty?
       puts "example_group.run - #{metadata[:description]} - no descendants, this group is complete, our examples result is #{our_examples_result}"
@@ -68,7 +68,7 @@ class ::RSpec::Core::ExampleGroup
       reporter.example_group_finished(self)
     end
     our_examples_promise.then do |our_examples_result|
-      process_descendants(our_examples_result).then do
+      process_descendants(our_examples_result, reporter).then do
         ensure_stuff.call
       end
     end.fail do |ex|
