@@ -76,47 +76,59 @@ describe 'hooks' do
     end
     
     context 'async' do
+      after do
+        # delay/self scope
+        raise_err = raise_after_error
+        increment_total = lambda { @@total += 1}
+        reset_progress = lambda { @@example_still_in_progress = nil }
+        delay_with_promise 1 do
+          raise 'after problem' if raise_err
+          increment_total.call
+          reset_progress.call          
+        end
+      end
+      
       subject do
         delay_with_promise 0 do
           42
         end
-      end            
-      
+      end
+
       context 'before fails' do
         let(:raise_before_error) { true }
-        
+
         it { is_expected.to eq 42 }
       end
-      
+
       context 'match succeeds' do
         context 'sync match' do
           it { is_expected.to eq 42 }
         end
-        
+
         it 'async match' do
           delay_with_promise 0 do
             expect(subject).to eq 42
           end
         end
       end
-      
+
       context 'match fails' do
         context 'sync match' do
           it { is_expected.to eq 43 }
         end
-        
+
         it 'async match' do
           delay_with_promise 0 do
             expect(subject).to eq 43
           end
         end
-      end     
-      
+      end
+
       context 'after fails' do
         let(:raise_after_error) { true }
-        
+
         it { is_expected.to eq 42 }
       end
-    end        
+    end
   end
 end
