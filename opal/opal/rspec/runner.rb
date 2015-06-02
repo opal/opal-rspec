@@ -46,8 +46,6 @@ module Opal
         last = @world.example_groups.inject(seed) do |previous_promise, group|
           previous_promise.then do |result|
             group.run @reporter
-          end.fail do |failure|
-            puts "FAILED - #{failure}"
           end
         end
         puts 'runner, everything kicked off, waiting'

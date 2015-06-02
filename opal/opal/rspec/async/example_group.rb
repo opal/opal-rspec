@@ -21,8 +21,6 @@ class ::RSpec::Core::ExampleGroup
         puts "delay block failed #{e}"
         Promise.new.reject e
       end
-    end.fail do |failure|
-      puts "we failed #{failure}"
     end
   end  
 
@@ -42,19 +40,13 @@ class ::RSpec::Core::ExampleGroup
         p = next_descendant.run reporter
         puts "example_group.run - got back #{p} from descendant.run"
         p
-      end.fail do |failure|
-        puts "we failed #{failure}"
       end
     end
     latest_descendant.then do |result|
       results_for_descendants << result
       combined_result = our_examples_result && results_for_descendants.all?      
       combined_result
-    end.fail do |failure|
-      puts "we failed #{failure}"
-    end
-    # TODO: Incorporate for_filtered_examples(reporter) { |example| example.skip_with_exception(reporter, ex) } like sync example_group does
-    # TODO: Incorporate fail fast stuff
+    end    
   end
 
   # Promise oriented version
@@ -70,14 +62,25 @@ class ::RSpec::Core::ExampleGroup
     puts "example_group.run - #{metadata[:description]} - starting run_examples"
     our_examples_promise = run_examples(reporter)
     puts "example_group.run - #{metadata[:description]} - got back run_examples promise of #{our_examples_promise}"
+    ensure_stuff = lambda do
+      run_after_context_hooks(new)
+      before_context_ivars.clear
+      reporter.example_group_finished(self)
+    end
     our_examples_promise.then do |our_examples_result|
       process_descendants(our_examples_result).then do
-        run_after_context_hooks(new)
-        before_context_ivars.clear
-        reporter.example_group_finished(self)
+        ensure_stuff.call
       end
-    end.fail do |failure|
-      puts "we failed #{failure}"
+    end.fail do |ex|
+      ex ||= Exception.new 'Async promise failed for unspecified reason'
+      ex = Exception.new ex unless ex.kind_of?(Exception)
+      if ex.is_a? Pending::SkipDeclaredInExample
+        for_filtered_examples(reporter) { |example| example.skip_with_exception(reporter, ex) }
+      else
+        RSpec.world.wants_to_quit = true if fail_fast?
+        for_filtered_examples(reporter) { |example| example.fail_with_exception(reporter, ex) }
+      end
+      ensure_stuff.call
     end
   end
   
@@ -104,22 +107,22 @@ class ::RSpec::Core::ExampleGroup
     puts "example_group.run_examples - #{metadata[:description]} - seed promise is #{seed}"
     latest_promise = examples.inject(seed) do |previous_promise, next_example|
       puts "example_group.run_examples - #{metadata[:description]} - inject loop - next example to QUEUE is #{next_example.metadata[:description]}, previous promise is #{previous_promise}"
-      p2 = previous_promise.then do |result|
+      p2 = previous_promise.then do |succeeded|
+        RSpec.world.wants_to_quit = true if fail_fast? && !succeeded
         puts "example_group.run_examples - #{metadata[:description]} - previous promise #{previous_promise} completed, now running next example (#{next_example.metadata[:description]})"
-        results << result
+        results << succeeded
         example_promise[next_example]
-      end.fail do |failure|
-        puts "example_group.run_examples #{metadata[:description]} - we failed #{failure}"
       end
       puts "example_group.run_examples - #{metadata[:description]} - wrapped promise is #{p2}"
       p2
     end    
 
     puts "example_group.run_examples #{metadata[:description]} - last promise we are waiting on is #{latest_promise}"
-    latest_promise.then do |result|
-      puts "example_group.run_examples, #{metadata[:description]} - final example promise is #{latest_promise}, result was #{result}"
-      results << result
+    latest_promise.then do |succeeded|
+      RSpec.world.wants_to_quit = true if fail_fast? && !succeeded
+      puts "example_group.run_examples, #{metadata[:description]} - final example promise is #{latest_promise}, result was #{succeeded}"
+      results << succeeded
       results.all?
-    end.fail {|failure| puts "we failed #{failure}" }
+    end
   end
 end

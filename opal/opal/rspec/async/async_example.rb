@@ -60,13 +60,7 @@ class ::RSpec::Core::Example
       example_promise.then do |result|
         puts 'notifying completed'
         notify_async_completed
-      end.fail do |failure_reason|
-        puts "failing #{failure_reason}"
-        failure_reason ||= Exception.new 'Async promise failed for unspecified reason'
-        failure_reason = Exception.new failure_reason unless failure_reason.kind_of?(Exception)
-        notify_async_exception failure_reason
-        notify_async_completed
-      end     
+      end   
     end
   end
 end
