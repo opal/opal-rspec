@@ -29,6 +29,20 @@ describe 'hooks' do
         context 'match fails properly' do
           it { is_expected.to_not eq @test_value }
         end
+        
+        context 'async match' do
+          it 'succeeds' do
+            delay_with_promise 0 do
+              expect(subject).to eq @test_value
+            end
+          end
+          
+          it 'fails properly' do
+            delay_with_promise 0 do
+              expect(subject).to_not eq @test_value
+            end
+          end
+        end
       end
       
       context 'with async subject' do
@@ -70,6 +84,20 @@ describe 'hooks' do
           
           # Won't run, but needs to be here to make test go
           it { is_expected_to eq @test_value }
+        end        
+        
+        context 'async match' do
+          it 'succeeds' do
+            delay_with_promise 0 do
+              expect(subject).to eq @test_value
+            end
+          end
+          
+          it 'fails properly' do
+            delay_with_promise 0 do
+              expect(subject).to_not eq @test_value
+            end
+          end
         end
       end
     end    
