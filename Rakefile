@@ -29,7 +29,8 @@ task :test do
 
   bad_strings = [/.*is still running, after block problem.*/,
                  /.*should not have.*/,
-                 /.*Expected \d+ after hits but got \d+.*/]
+                 /.*Expected \d+ after hits but got \d+.*/,
+                 /.*Expected \d+ around hits but got \d+.*/]
 
   bad_strings.each do |regex|
     test_output.scan(regex) do |match|
