@@ -104,7 +104,7 @@ describe 'hooks' do
         end
       end
 
-      context 'before fails' do
+      context 'before(:each) fails properly' do
         let(:raise_before_error) { true }
 
         it { is_expected.to eq 42 }
@@ -122,7 +122,7 @@ describe 'hooks' do
         end
       end
 
-      context 'match fails' do
+      context 'match fails properly' do
         context 'sync match' do
           it { is_expected.to eq 43 }
         end
@@ -134,7 +134,7 @@ describe 'hooks' do
         end
       end
 
-      context 'after fails' do
+      context 'after(:each) fails properly' do
         let(:raise_after_error) { true }
 
         it { is_expected.to eq 42 }
