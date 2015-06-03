@@ -1,6 +1,6 @@
 ## 0.5.0 (edge)
 
-*   By default, any subject, it example block, before(:each), after(:each) that returns a promise will be executed asynchronously. Async is NOT yet supported for context hooks or around hooks
+*   By default, any subject, it example block, before(:each), after(:each), and around that returns a promise will be executed asynchronously. Async is NOT yet supported for context level hooks.
 
 *   Update to RSpec 3.1 (core is 3.1.7, expectations/support 3.1.2, mocks 3.1.3)
 
