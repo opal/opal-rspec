@@ -60,7 +60,6 @@ class ::RSpec::Core::Example
                 end
               end
             end.rescue do |e|
-              puts "got exception in run #{e}"
               # no-op, required metadata has already been set by the `skip`
               # method.              
               unless e.is_a? Pending::SkipDeclaredInExample
