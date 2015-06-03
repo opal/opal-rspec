@@ -18,8 +18,6 @@ class RSpec::Core::Hooks::AroundHook
         Pending.mark_skipped!(example, "#{hook_description} did not execute the example")
       end
       use_promise.resolve
-    end.rescue do |ex|
-      use_promise.reject ex
     end
   end
 end
@@ -34,7 +32,10 @@ class RSpec::Core::Hooks::AroundHookCollection
         previous_hook_promise.then do
           puts "BRADY: Executing hook #{around_hook} on example #{@example} with promise #{new_hook_promise}"
           around_hook.execute_with_promise new_hook_promise, @example, procsy
-        end        
+        end.rescue do |ex|
+          # because of the way Procsy works, we need to set this here and not in the execute_with_promise method
+          new_hook_promise.reject ex
+        end
       end
       [new_procsy, new_hook_promise]
     end
