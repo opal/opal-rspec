@@ -15,9 +15,8 @@ describe 'hooks' do
       after :all do
         raise @@around_failures.join "\n" if @@around_failures.any?
         raise 'hooks not empty!' unless @@around_stack.empty?
-        expected = 11
-        unless @@around_completed == expected
-          msg = "Expected #{expected} around hits but got #{@@around_completed}"        
+        unless @@around_completed == @@expected_around_hits
+          msg = "Expected #{@@expected_around_hits} around hits but got #{@@around_completed} for #{self}"        
           `console.error(#{msg})`
         end        
       end
@@ -130,16 +129,28 @@ describe 'hooks' do
     end
     
     context 'succeeds' do
+      before :context do
+        @@expected_around_hits = 10
+      end
+      
       include_context :around_specs
     end
     
     context 'fails before example' do
+      before :context do
+        @@expected_around_hits = 0
+      end
+      
       let(:fail_before_example_run) { true }
       
       include_context :around_specs
     end
     
     context 'fails after example' do
+      before :context do
+        @@expected_around_hits = 10
+      end
+      
       let(:fail_after_example_run) { true }
       
       include_context :around_specs
