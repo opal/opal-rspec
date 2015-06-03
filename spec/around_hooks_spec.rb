@@ -133,13 +133,13 @@ describe 'hooks' do
       include_context :around_specs
     end
     
-    context 'around(:each) fails before example' do
+    context 'fails before example' do
       let(:fail_before_example_run) { true }
       
       include_context :around_specs
     end
     
-    context 'around(:each) fails after example' do
+    context 'fails after example' do
       let(:fail_after_example_run) { true }
       
       include_context :around_specs
