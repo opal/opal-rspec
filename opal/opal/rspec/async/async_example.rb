@@ -1,8 +1,8 @@
 class ::RSpec::Core::Example  
   def notify_async_completed(reporter, exception=nil)
     puts "notify_async_completed called with exception #{exception}"
-    Promise.value(nil).then do
-      Promise.value(nil).then do
+    Promise.value.then do
+      Promise.value.then do
         if exception
           unless exception.is_a? Pending::SkipDeclaredInExample
             puts 'got an exception, noting it'
@@ -39,11 +39,7 @@ class ::RSpec::Core::Example
   end
   
   def core_block_run(reporter)
-    possible_example_promise = @example_group_instance.instance_exec(self, &@example_block)    
-    puts "possible_example_promise for #{metadata[:description]} is a #{possible_example_promise}"
-    synchronous_example = !possible_example_promise.is_a?(Promise)
-    puts "synchronous example!" if synchronous_example
-    example_promise = synchronous_example ? Promise.value(possible_example_promise) : possible_example_promise
+    example_promise = Promise.value(@example_group_instance.instance_exec(self, &@example_block))
     example_promise.then do |result|
       puts 'notifying completed'
       notify_async_completed reporter      
