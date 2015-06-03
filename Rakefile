@@ -46,6 +46,7 @@ task :test do
                       'subject async assertion explicit async fails properly',
                       'hooks before both sync before fails properly',
                       'hooks before both sync match fails properly should not eq 42',
+                      'hooks before both sync first before in chain triggers failure inner context',
                       'hooks after sync after fails should eq 42',
                       'hooks after sync before fails',
                       'hooks after sync match fails async match',
