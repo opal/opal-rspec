@@ -87,14 +87,10 @@ describe 'hooks' do
     
     context 'async' do
       after do
-        # delay/self scope
-        raise_err = raise_after_error
-        increment_total = lambda { @@total += 1}
-        reset_progress = lambda { @@example_still_in_progress = nil }
         delay_with_promise 0 do
-          increment_total.call
-          reset_progress.call
-          raise 'after problem' if raise_err          
+          @@total += 1
+          @@example_still_in_progress = nil
+          raise 'after problem' if raise_after_error          
         end
       end
 
