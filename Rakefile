@@ -53,11 +53,12 @@ task :test do
                       'subject async fails properly during creation explicit async',
                       'subject async fails properly during creation implicit usage',
                       'subject async assertion explicit async fails properly',
-                      'hooks before both sync before fails properly',
-                      'hooks before both sync match fails properly should not eq 42',
-                      'hooks before both sync first before in chain triggers failure inner context',
+                      'hooks before sync subject is sync context fails properly should not reach the example',
+                      'hooks before sync subject is sync before :each fails properly should not reach the example',
+                      'hooks before sync subject is sync match fails properly should not eq 42',
+                      'hooks before sync subject is sync first before :each in chain triggers failure inner context should not reach the example',
                       'hooks after sync after fails should eq 42',
-                      'hooks after sync before fails',
+                      'hooks after sync before fails should not reach the example',
                       'hooks after sync match fails async match',
                       'hooks after sync match fails sync match should eq 43',
                       'exception handling should fail properly if an exception is raised',
@@ -66,7 +67,6 @@ task :test do
     unexpected = actual_failures - expected_failures
     missing = expected_failures - actual_failures
     failure_messages << "Expected test failures do not match actual\n"
-    failure_messages << "Expected:\n#{expected_failures.join("\n")}\n\nActual:\n#{actual_failures.join("\n")}"
     failure_messages << "\nUnexpected fails:\n#{unexpected.join("\n")}\n\nMissing fails:\n#{missing.join("\n")}\n\n"
   end
 
