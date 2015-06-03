@@ -49,7 +49,7 @@ describe 'hooks' do
         end     
       end
       
-      context 'before fails' do
+      context 'before(:each) fails' do
         before do
           raise 'before fails properly'
         end
@@ -59,7 +59,7 @@ describe 'hooks' do
         end
       end
       
-      context 'after' do
+      context 'after(:each)' do
         context 'async' do
           after do
             # self/scope
