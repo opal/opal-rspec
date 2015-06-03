@@ -4,7 +4,7 @@ Bundler.require
 Bundler::GemHelper.install_tasks
 
 require 'opal/rspec/rake_task'
-Opal::RSpec::RakeTask.new(:default)
+Opal::RSpec::RakeTask.new(:specs_untested)
 
 desc 'Generates an RSpec requires file free of dynamic requires'
 task :generate_requires do
@@ -13,8 +13,8 @@ task :generate_requires do
   sh 'ruby util/normalize_requires.rb'
 end
 
-task :test do
-  test_output = `rake default`
+task :default do
+  test_output = `rake specs_untested`
   raise "Expected test runner to fail due to failed tests, but got return code of #{$?.exitstatus}" if $?.success?
   count_match = /(\d+) examples, (\d+) failures, (\d+) pending/.match(test_output)
   raise 'Expected a finished count of test failures/success/etc. but did not see it' unless count_match
@@ -56,31 +56,33 @@ task :test do
                       'subject async fails properly during creation explicit async',
                       'subject async fails properly during creation implicit usage',
                       'subject async assertion explicit async fails properly',
-                      'hooks around fails after example after(:each) async fails sync match passes',
-                      'hooks around fails after example after(:each) async passes sync match passes',
-                      'hooks around fails after example after(:each) sync fails sync match passes',
-                      'hooks around fails after example after(:each) sync passes sync match passes',
-                      'hooks around fails after example before(:each) fails should not reach the example',
-                      'hooks around fails after example matches another async match',
-                      'hooks around fails after example matches async match',
-                      'hooks around fails after example matches async match fails properly',
-                      'hooks around fails after example matches sync fails properly',
-                      'hooks around fails after example matches sync match',
-                      'hooks around fails before example after(:each) async fails sync match passes',
-                      'hooks around fails before example after(:each) async passes sync match passes',
-                      'hooks around fails before example after(:each) sync fails sync match passes',
-                      'hooks around fails before example after(:each) sync passes sync match passes',
-                      'hooks around fails before example before(:each) fails should not reach the example',
-                      'hooks around fails before example matches another async match',
-                      'hooks around fails before example matches async match',
-                      'hooks around fails before example matches async match fails properly',
-                      'hooks around fails before example matches sync fails properly',
-                      'hooks around fails before example matches sync match',
-                      'hooks around succeeds after(:each) async fails sync match passes',
-                      'hooks around succeeds after(:each) sync fails sync match passes',
-                      'hooks around succeeds before(:each) fails should not reach the example',
-                      'hooks around succeeds matches async match fails properly',
-                      'hooks around succeeds matches sync fails properly',
+                      'hooks around sync fails after example should equal 42',
+                      'hooks around sync fails before example',
+                      'hooks around async fails after example after(:each) async fails sync match passes',
+                      'hooks around async fails after example after(:each) async passes sync match passes',
+                      'hooks around async fails after example after(:each) sync fails sync match passes',
+                      'hooks around async fails after example after(:each) sync passes sync match passes',
+                      'hooks around async fails after example before(:each) fails should not reach the example',
+                      'hooks around async fails after example matches another async match',
+                      'hooks around async fails after example matches async match',
+                      'hooks around async fails after example matches async match fails properly',
+                      'hooks around async fails after example matches sync fails properly',
+                      'hooks around async fails after example matches sync match',
+                      'hooks around async fails before example after(:each) async fails sync match passes',
+                      'hooks around async fails before example after(:each) async passes sync match passes',
+                      'hooks around async fails before example after(:each) sync fails sync match passes',
+                      'hooks around async fails before example after(:each) sync passes sync match passes',
+                      'hooks around async fails before example before(:each) fails should not reach the example',
+                      'hooks around async fails before example matches another async match',
+                      'hooks around async fails before example matches async match',
+                      'hooks around async fails before example matches async match fails properly',
+                      'hooks around async fails before example matches sync fails properly',
+                      'hooks around async fails before example matches sync match',
+                      'hooks around async succeeds after(:each) async fails sync match passes',
+                      'hooks around async succeeds after(:each) sync fails sync match passes',
+                      'hooks around async succeeds before(:each) fails should not reach the example',
+                      'hooks around async succeeds matches async match fails properly',
+                      'hooks around async succeeds matches sync fails properly',
                       'hooks before async with async subject async match fails properly',
                       'hooks before async with async subject before :each fails properly should not reach the example',
                       'hooks before async with async subject before :each succeeds, assertion fails properly should not eq 42',
