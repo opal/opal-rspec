@@ -64,10 +64,8 @@ describe 'hooks' do
       context 'after(:each)' do
         context 'async' do
           after do
-            # self/scope
-            raise_err = raise_after_exception
             delay_with_promise 0 do
-              raise 'after fails properly' if raise_err
+              raise 'after fails properly' if raise_after_exception
             end
           end
           

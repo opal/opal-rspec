@@ -3,12 +3,9 @@ describe 'hooks' do
     context 'async' do
       let(:raise_before_error) { false }
       before do
-        # self/instance variables will not work inside delay
-        set_test_val = lambda {|v| @test_value = v}
-        raise_err = raise_before_error
         delay_with_promise 0 do
-          raise 'problem in before' if raise_err
-          set_test_val[42]
+          raise 'problem in before' if raise_before_error
+          @test_value = 42
         end
       end
 
@@ -50,9 +47,8 @@ describe 'hooks' do
         let(:raise_before_subj_error) { false }
 
         subject do
-          raise_err = raise_before_subj_error
           delay_with_promise 0 do
-            raise 'problem in subject' if raise_err
+            raise 'problem in subject' if raise_before_subj_error
             42
           end
         end
