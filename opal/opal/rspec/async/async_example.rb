@@ -1,8 +1,8 @@
 class ::RSpec::Core::Example  
   def notify_async_completed(reporter, exception=nil)
     puts "notify_async_completed called with exception #{exception}"
-    begin
-      begin
+    Promise.value(nil).then do
+      Promise.value(nil).then do
         if exception
           unless exception.is_a? Pending::SkipDeclaredInExample
             puts 'got an exception, noting it'
@@ -20,12 +20,12 @@ class ::RSpec::Core::Example
                   [location])
           end        
         end
-      ensure
-        run_after_example        
+      end.ensure do
+        run_after_example
       end
-    rescue Exception => e
+    end.rescue do |e|
       set_exception e
-    ensure
+    end.ensure do
       @example_group_instance.instance_variables.each do |ivar|
         @example_group_instance.instance_variable_set(ivar, nil)
       end  
@@ -33,13 +33,12 @@ class ::RSpec::Core::Example
       
       result = finish(reporter)     
       puts "----- example complete #{metadata[:description]} with result #{result} ------"
-      return result
-    end
-    ensure
       ::RSpec.current_example = nil
+      result
+    end     
   end
   
-  def core_block_run(result_promise, reporter)
+  def core_block_run(reporter)
     possible_example_promise = @example_group_instance.instance_exec(self, &@example_block)    
     puts "possible_example_promise for #{metadata[:description]} is a #{possible_example_promise}"
     synchronous_example = !possible_example_promise.is_a?(Promise)
@@ -47,18 +46,16 @@ class ::RSpec::Core::Example
     example_promise = synchronous_example ? Promise.value(possible_example_promise) : possible_example_promise
     example_promise.then do |result|
       puts 'notifying completed'
-      result = notify_async_completed reporter
-      result_promise.resolve result
+      notify_async_completed reporter      
     end.rescue do |ex|
       ex ||= Exception.new 'Async promise failed for unspecified reason'
       ex = Exception.new ex unless ex.kind_of?(Exception)          
       puts "notifying example exception #{ex}"
-      result = notify_async_completed reporter, ex
-      result_promise.resolve result
+      notify_async_completed reporter, ex      
     end
   end
   
-  def resolve_subject_promise
+  def resolve_subject
     if example_group_instance.respond_to? :subject and example_group_instance.subject.is_a?(Promise)
       example_group_instance.subject.then do |resolved_subject|
         # This is a private method, but we're using Opal
@@ -85,19 +82,16 @@ class ::RSpec::Core::Example
     elsif !::RSpec.configuration.dry_run?
       # TODO: Put around back in here      
       begin
-        run_before_example
-        # Not chaining to keep exceptions from propagating
-        result_promise = Promise.new        
-        resolve_subject_promise.then do
-          core_block_run result_promise, reporter
+        run_before_example.then do
+          resolve_subject         
+        end.then do
+          core_block_run reporter          
         end.fail do |ex|
-          result_promise.resolve notify_async_completed(reporter, ex)
-        end    
-        # Needs to be returned
-        result_promise
+          notify_async_completed(reporter, ex)
+        end        
       rescue Exception => ex
         puts "Synchronous exception detected! #{ex}"
-        Promise.value(notify_async_completed(reporter, ex))
+        notify_async_completed(reporter, ex)
       end
     end
   end
