@@ -36,7 +36,7 @@ describe 'subject' do
   context 'async' do
     describe 'assertion' do
       subject do
-        delay_with_promise 1 do
+        delay_with_promise 0 do
           42
         end
       end
@@ -68,7 +68,7 @@ describe 'subject' do
 
     context 'fails properly during creation' do
       subject do
-        delay_with_promise 1 do
+        delay_with_promise 0 do
           raise 'did not work'
         end
       end
