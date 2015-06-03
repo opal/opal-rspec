@@ -32,11 +32,6 @@ class ::RSpec::Core::Example
     end    
   end
   
-  # TODO: Fix this
-  def with_around_example_hooks
-    yield
-  end 
-  
   def run(example_group_instance, reporter)
     @example_group_instance = example_group_instance
     RSpec.current_example = self
