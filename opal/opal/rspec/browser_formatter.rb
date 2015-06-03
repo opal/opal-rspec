@@ -5,7 +5,7 @@ module Opal
     class BrowserFormatter < ::RSpec::Core::Formatters::BaseFormatter
       include ERB::Util
       
-      ::RSpec::Core::Formatters.register self, :dump_summary, :example_group_finished, :example_failed, :example_passed, :example_pending
+      ::RSpec::Core::Formatters.register self, :dump_summary, :example_group_finished, :example_failed, :example_passed, :example_pending, :message
 
       CSS_STYLES = ::RSpec::Core::Formatters::HtmlPrinter::GLOBAL_STYLES
 
@@ -18,6 +18,19 @@ module Opal
         css_text = CSS_STYLES + "\n body { padding: 0; margin: 0 }"
         styles = Element.new(:style, type: 'text/css', css_text: css_text)
         styles.append_to_head
+      end
+      
+      def message(notification)
+        @rspec_group  = Element.new(:div, class_name: "example_group passed")
+        @rspec_dl     = Element.new(:dl)
+        @rspec_dt     = Element.new(:dt, class_name: "passed", text: notification.message)
+        @rspec_group << @rspec_dl
+        @rspec_dl << @rspec_dt
+
+        parents = @example_group.parent_groups.size
+        @rspec_dl.style 'margin-left', "#{(parents - 2) * 15}px"
+
+        @rspec_results << @rspec_group
       end
 
       def example_group_started(notification)
