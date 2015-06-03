@@ -120,6 +120,20 @@ describe 'hooks' do
     
         it { is_expected.to eq @test_value }
       end
+      
+      context 'first before in chain triggers failure' do
+        before do
+          raise 'first before fails'
+        end
+        
+        context 'inner context' do
+          before do
+            puts 'SHOULD NOT SEE THIS'
+          end
+          
+          it { is_expected.to eq @test_value }
+        end
+      end
   
       context 'match fails properly' do
         before do
