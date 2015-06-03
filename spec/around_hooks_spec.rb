@@ -1,8 +1,7 @@
 describe 'hooks' do
   describe 'around' do
-    RSpec.shared_context :around_specs do      
+    RSpec.shared_context :around_count do
       before do
-        @model = Object.new
         @test_in_progress = nil
       end
 
@@ -19,7 +18,10 @@ describe 'hooks' do
           msg = "Expected #{@@expected_around_hits} around hits but got #{@@around_completed} for #{self}"        
           `console.error(#{msg})`
         end        
-      end     
+      end    
+    end
+    RSpec.shared_context :async_spec_mix do
+      include_context :around_count     
       
       context 'matches' do        
         it 'async match' do
@@ -114,61 +116,110 @@ describe 'hooks' do
     let(:fail_after_example_run) { false }
     let(:skip_run) { false }
     
-    around do |example|
-      raise 'around failed before example properly' if fail_before_example_run        
-      look_for = example.description
-      @@around_stack << look_for
-      clean_ending = lambda do
+    context 'sync' do
+      subject { 42 }     
+      
+      around do |example|
+        raise 'around failed before example properly' if fail_before_example_run        
+        look_for = example.description
+        @@around_stack << look_for        
+        example.run unless skip_run
         last = @@around_stack.pop
         @@around_failures << "Around hook kept executing even though test #{@test_in_progress} was running!" if @test_in_progress
         @@around_failures << "Around hooks are messed up because we expected #{look_for} but we popped off #{last}" unless last == look_for
         @@around_completed += 1
-        raise 'around failed after example properly' if fail_after_example_run
+        raise 'around failed after example properly' if fail_after_example_run       
       end
-      if skip_run
-        clean_ending.call
-      else
-        example.run.then do
+      
+      context 'succeeds' do        
+        before :context do
+          @@expected_around_hits = 1
+        end
+        include_context :around_count
+        
+        it { is_expected.to equal 42 }
+      end
+      
+      context 'fails before example' do
+        before :context do
+          @@expected_around_hits = 0
+        end
+        include_context :around_count
+        
+        let(:fail_before_example_run) { true }
+        
+        it { is_expected.to equal 42 }
+      end
+      
+      context 'fails after example' do
+        before :context do
+          @@expected_around_hits = 1
+        end
+        include_context :around_count
+        
+        let(:fail_after_example_run) { true }
+        
+        it { is_expected.to equal 42 }
+      end
+    end
+    
+    context 'async' do
+      around do |example|
+        raise 'around failed before example properly' if fail_before_example_run        
+        look_for = example.description
+        @@around_stack << look_for
+        clean_ending = lambda do
+          last = @@around_stack.pop
+          @@around_failures << "Around hook kept executing even though test #{@test_in_progress} was running!" if @test_in_progress
+          @@around_failures << "Around hooks are messed up because we expected #{look_for} but we popped off #{last}" unless last == look_for
+          @@around_completed += 1
+          raise 'around failed after example properly' if fail_after_example_run
+        end
+        if skip_run
           clean_ending.call
-        end        
+        else
+          example.run.then do
+            clean_ending.call
+          end        
+        end
       end
-    end
+      
+      context 'succeeds' do
+        before :context do
+          @@expected_around_hits = 10
+        end
+      
+        include_context :async_spec_mix
+      end
     
-    context 'succeeds' do
-      before :context do
-        @@expected_around_hits = 10
-      end
+      context 'fails before example' do
+        before :context do
+          @@expected_around_hits = 0
+        end
       
-      include_context :around_specs
-    end
+        let(:fail_before_example_run) { true }
+      
+        include_context :async_spec_mix
+      end
     
-    context 'fails before example' do
-      before :context do
-        @@expected_around_hits = 0
+      context 'fails after example' do
+        before :context do
+          @@expected_around_hits = 10
+        end
+      
+        let(:fail_after_example_run) { true }
+      
+        include_context :async_spec_mix
       end
-      
-      let(:fail_before_example_run) { true }
-      
-      include_context :around_specs
-    end
     
-    context 'fails after example' do
-      before :context do
-        @@expected_around_hits = 10
+      context 'skip' do
+        before :context do
+          @@expected_around_hits = 10
+        end
+      
+        let(:skip_run) { true }
+        include_context :async_spec_mix
       end
-      
-      let(:fail_after_example_run) { true }
-      
-      include_context :around_specs
-    end
-    
-    context 'skip' do
-      before :context do
-        @@expected_around_hits = 10
-      end
-      
-      let(:skip_run) { true }
-      include_context :around_specs
-    end
+    end   
   end
 end
