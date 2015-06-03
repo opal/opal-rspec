@@ -31,7 +31,7 @@ describe 'hooks' do
     
     context 'sync' do
       after do
-        raise 'after problem' if raise_after_error
+        raise 'expected after problem' if raise_after_error
         @@total += 1
         @@example_still_in_progress = nil
       end
@@ -41,7 +41,9 @@ describe 'hooks' do
       context 'before fails' do
         let(:raise_before_error) { true }
         
-        it { is_expected.to eq 42 }
+        it 'should not reach the example' do
+          fail 'we reached the example and we should not have!'
+        end
       end
       
       context 'match succeeds' do

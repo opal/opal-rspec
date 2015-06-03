@@ -52,13 +52,11 @@ class ::RSpec::Core::ExampleGroup
     end
     
     reporter.example_group_started(self)    
-    run_before_context_hooks(new)
-
-    puts "example_group.run - #{metadata[:description]} - starting run_examples"
-    our_examples_promise = run_examples(reporter)
-    puts "example_group.run - #{metadata[:description]} - got back run_examples promise of #{our_examples_promise}"
-   
-    our_examples_promise.then do |our_examples_result|
+    Promise.value.then do
+      run_before_context_hooks(new)
+    end.then do
+      run_examples(reporter)
+    end.then do |our_examples_result|
       process_descendants(our_examples_result, reporter)
     end.rescue do |ex|
       puts "--FAILURE WITH EXCEPTION-- #{ex}"
