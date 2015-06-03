@@ -71,6 +71,10 @@ task :test do
                       'hooks after sync before fails should not reach the example',
                       'hooks after sync match fails async match',
                       'hooks after sync match fails sync match should eq 43',
+                      'hooks after async after(:each) fails properly',
+                      'hooks after async before(:each) fails properly',
+                      'hooks after async match fails properly async match',
+                      'hooks after async match fails properly sync match should eq 43',
                       'exception handling should fail properly if an exception is raised',
                       'exception handling should ignore an exception after a failed assertion'].sort
   if actual_failures != expected_failures
