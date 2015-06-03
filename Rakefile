@@ -28,6 +28,15 @@ task :test do
   
   failure_messages = []
   
+  bad_strings = [/.*is still running, after block problem.*/,
+                 /.*should not have.*/]
+                 
+  bad_strings.each do |regex|
+    test_output.scan(regex) do |match|
+      failure_messages << "Expected not to see #{regex} in output, but found match #{match}"
+    end
+  end               
+  
   expected_pending_count = 12
   
   expected_failures= ['promise should make example fail properly before async block reached',
