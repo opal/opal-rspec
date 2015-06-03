@@ -6,9 +6,9 @@ describe 'hooks' do
     end
     
     after :all do
-      expected = 10
+      expected = 13
       unless @@total == expected
-        msg = "Expected #{expected} after hits but got #{@@total}"
+        msg = "Expected #{expected} after hits but got #{@@total}"        
         `console.error(#{msg})`
       end       
     end
@@ -31,9 +31,9 @@ describe 'hooks' do
     
     context 'sync' do
       after do
-        raise 'expected after problem' if raise_after_error
         @@total += 1
-        @@example_still_in_progress = nil
+        @@example_still_in_progress = nil        
+        raise 'expected after problem' if raise_after_error
       end
       
       subject { 42 }            
@@ -75,6 +75,14 @@ describe 'hooks' do
         
         it { is_expected.to eq 42 }
       end
+      
+      context 'context' do
+        after :context do
+          raise 'it failed in the after context!'
+        end
+            
+        it { is_expected.to eq 42 }
+      end
     end
     
     context 'async' do
@@ -83,13 +91,13 @@ describe 'hooks' do
         raise_err = raise_after_error
         increment_total = lambda { @@total += 1}
         reset_progress = lambda { @@example_still_in_progress = nil }
-        delay_with_promise 1 do
-          raise 'after problem' if raise_err
+        delay_with_promise 0 do
           increment_total.call
-          reset_progress.call          
+          reset_progress.call
+          raise 'after problem' if raise_err          
         end
       end
-      
+
       subject do
         delay_with_promise 0 do
           42
