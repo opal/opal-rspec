@@ -58,7 +58,7 @@ describe 'hooks' do
         end
 
         context 'both succeed' do
-          it { is_expected_to eq @test_value }
+          it { is_expected.to eq @test_value }
         end
 
         context 'both subject and before(:each) fail properly' do
@@ -71,7 +71,7 @@ describe 'hooks' do
         end
 
         context 'before :each succeeds, assertion fails properly' do
-          it { is_expected_to_not eq @test_value }
+          it { is_expected.to_not eq @test_value }
         end
 
         context 'before :each fails properly' do
