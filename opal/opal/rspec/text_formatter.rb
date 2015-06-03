@@ -2,7 +2,7 @@ module Opal
   module RSpec
     class TextFormatter < ::RSpec::Core::Formatters::BaseFormatter
 
-      ::RSpec::Core::Formatters.register self, :dump_summary, :dump_failures
+      ::RSpec::Core::Formatters.register self, :dump_summary, :dump_failures, :message
 
       def dump_failures(notification)
         failed_examples = notification.failed_examples
@@ -15,6 +15,10 @@ module Opal
             dump_failure(example, index)
           end
         end
+      end
+      
+      def message(notification)
+        puts notification.message
       end
 
       def dump_failure(example, index)
