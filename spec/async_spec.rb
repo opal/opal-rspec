@@ -91,7 +91,7 @@ describe 'promise' do
     expect(:foo).to eq(:baz)
 
     delay_with_promise(0) do
-      expect(42).to eq(43)
+      expect(nil).to eq 'we reached this assertion and we should not have'
     end
   end  
 end
