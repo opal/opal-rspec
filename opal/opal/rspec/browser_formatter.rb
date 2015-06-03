@@ -51,7 +51,6 @@ module Opal
       end
 
       def example_group_finished(_notification)
-        puts "REPORTER - got example_group_finished #{_notification}"
         if @example_group_failed
           @rspec_group.class_name = "example_group failed"
           @rspec_dt.class_name = "failed"
@@ -81,7 +80,6 @@ module Opal
       end
 
       def example_failed(notification)
-        puts "REPORTER - got ex failed #{notification}"
         example = notification.example
         duration = sprintf("%0.5f", example.execution_result.run_time)
 

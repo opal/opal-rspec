@@ -116,9 +116,7 @@ describe 'async/sync mix' do
     obj = [1, 2, 3, 4]
 
     delay_with_promise 1 do
-      puts 'before assertion'
       obj.should == [2, 2, 3, 4]
-      puts 'after assertion'
       @test_in_progress = nil
     end
   end

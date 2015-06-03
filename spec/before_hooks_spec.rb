@@ -113,13 +113,10 @@ describe 'hooks' do
         context 'context' do
           context 'success' do
             before :context do
-              puts 'before context runs'
               @@before_context_both_sync = 22
-              puts 'before context finishes'
             end
         
             before do
-              puts 'before runs'
               raise "@@before_context_both_sync should already be 22!" unless @@before_context_both_sync == 22
               @test_value = 42
             end

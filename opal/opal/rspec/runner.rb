@@ -35,21 +35,17 @@ module Opal
         @configuration.output_stream ||= out
 
         self.start
-        run_examples.then do
-          puts 'FINISH!'
+        run_examples.then do          
           self.finish
         end        
       end
 
       def run_examples
-        seed = Promise.value(true)
-        last = @world.example_groups.inject(seed) do |previous_promise, group|
-          previous_promise.then do |result|
+        @world.example_groups.inject(Promise.value) do |previous_promise, group|
+          previous_promise.then do
             group.run @reporter
           end
-        end
-        puts 'runner, everything kicked off, waiting'
-        last
+        end        
       end    
 
       def config_hook(hook_when)
