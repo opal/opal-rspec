@@ -58,6 +58,17 @@ class ::RSpec::Core::Example
     end
   end
   
+  def resolve_subject_promise
+    if example_group_instance.respond_to? :subject and example_group_instance.subject.is_a?(Promise)
+      example_group_instance.subject.then do |resolved_subject|
+        # This is a private method, but we're using Opal
+        example_group_instance.__memoized[:subject] = resolved_subject        
+      end
+    else
+      Promise.value
+    end
+  end
+  
   def run(example_group_instance, reporter)
     puts "----- example begin #{metadata[:description]} ------"    
     @example_group_instance = example_group_instance
@@ -76,27 +87,12 @@ class ::RSpec::Core::Example
       begin
         run_before_example
         # Not chaining to keep exceptions from propagating
-        result_promise = Promise.new
-
-        if example_group_instance.respond_to? :subject and example_group_instance.subject.is_a?(Promise)
-          example_group_instance.subject.then do |resolved_subject|
-            # This is a private method, but we're using Opal
-            example_group_instance.__memoized[:subject] = resolved_subject
-            puts 'running core_block_run'
-            # the parent rescue won't catch exceptions because we're in a then!
-            begin
-              core_block_run result_promise, reporter
-            rescue Exception => ex
-              puts "Synchronous exception with async subject detected! #{ex}"
-              # We'll never make it to the result_promise.resolve in core_block_run, need to do it here
-              result_promise.resolve notify_async_completed(reporter, ex)
-            end
-          end.fail do |async_subj_create_ex|
-            result_promise.resolve notify_async_completed(reporter, async_subj_create_ex)
-          end
-        else
+        result_promise = Promise.new        
+        resolve_subject_promise.then do
           core_block_run result_promise, reporter
-        end
+        end.fail do |ex|
+          result_promise.resolve notify_async_completed(reporter, ex)
+        end    
         # Needs to be returned
         result_promise
       rescue Exception => ex
