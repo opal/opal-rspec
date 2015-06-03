@@ -62,6 +62,17 @@ class ::RSpec::Core::Example
     end
   end
   
+  def run_after_example
+    @example_group_class.hooks.run(:after, :example, self).then do
+      verify_mocks
+      assign_generated_description if RSpec.configuration.expecting_with_rspec?      
+    end.rescue do |e|
+      set_exception(e, "in an `after(:example)` hook")
+    end.ensure do
+      @example_group_instance.teardown_mocks_for_rspec
+    end    
+  end
+  
   def run(example_group_instance, reporter)
     puts "----- example begin #{metadata[:description]} ------"    
     @example_group_instance = example_group_instance
