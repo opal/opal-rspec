@@ -38,7 +38,7 @@ task :test do
     end
   end
 
-  expected_pending_count = 12
+  expected_pending_count = 22
 
   expected_failures= ['promise should make example fail properly before async block reached',
                       'promise matcher fails properly',
