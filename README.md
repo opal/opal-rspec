@@ -72,7 +72,8 @@ describe MyClass do
   end
 	
 	it 'does another thing' do
-		# Argument is number of seconds, delay_with_promise is a convenience method that will call setTimeout with the block and return a promise
+		# Argument is number of seconds, delay_with_promise is a convenience method that will
+		# call setTimeout with the block and return a promise
 		delay_with_promise 0 do
 			expect(:foo).to eq(:foo)
 		end
