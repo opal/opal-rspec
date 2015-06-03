@@ -62,29 +62,40 @@ describe MyClass do
   end
 
   # async example
-  async 'does something else, too' do
-    # ...
+  it 'does something else, too' do
+    promise = Promise.new
+		delay 1 do
+			expect(:foo).to eq(:foo)
+			promise.resolve
+		end
+		promise
   end
+	
+	it 'does another thing' do
+		# Argument is number of seconds, delay_with_promise is a convenience method that will call setTimeout with the block and return a promise
+		delay_with_promise 0 do
+			expect(:foo).to eq(:foo)
+		end
+	end	
+end
+
+describe MyClass2 do
+  # will wait for the before promise to complete before proceeding
+	before do
+		delay_with_promise 0 do
+			puts 'async before 'action
+		end
+	end
+	
+	# If you use an around block and have async specs, you must use this approach
+	around do |example|
+		puts 'do stuff before'
+		example.run.then do
+			puts 'do stuff after example'
+		end
+	end
 end
 ```
-
-This just marks the example as running async. To actually handle the async result,
-you also need to use a `run_async` call inside some future handler:
-
-```ruby
-async 'HTTP requests should work' do
-  HTTP.get('/users/1.json') do |res|
-    run_async {
-      expect(res).to be_ok
-    }
-  end
-end
-```
-
-The block passed to `run_async` informs the runner that this spec is finished
-so it can move on. Any failures/expectations run inside this block will be run
-in the context of the example.
-
 ## Contributing
 
 Install required gems at required versions:
