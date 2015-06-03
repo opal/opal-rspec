@@ -111,26 +111,38 @@ describe 'hooks' do
       end      
     end
     
-    context 'sync' do
-      around do |example|
-        look_for = example.description
-        @@around_stack << look_for
-        # Result is the result of the test, aka the promised value from run (true if success, false if failed)
-        # The complete_promise is needed so the runner knows when to continue
-        example.run.then do |result, complete_promise|
-          last = @@around_stack.pop
-          @@around_failures << "Around hook kept executing even though test #{@test_in_progress} was running!" if @test_in_progress
-          @@around_failures << "Around hooks are messed up because we expected #{look_for} but we popped off #{last}" unless last == look_for
-          @@around_completed += 1
-          complete_promise.resolve
-        end
+    let(:fail_before_example_run) { false }
+    let(:fail_after_example_run) { false }
+    
+    around do |example|
+      raise 'around failed before example properly' if fail_before_example_run        
+      look_for = example.description
+      @@around_stack << look_for
+      # Result is the result of the test, aka the promised value from run (true if success, false if failed)
+      # The complete_promise is needed so the runner knows when to continue
+      example.run.then do |result|
+        last = @@around_stack.pop
+        @@around_failures << "Around hook kept executing even though test #{@test_in_progress} was running!" if @test_in_progress
+        @@around_failures << "Around hooks are messed up because we expected #{look_for} but we popped off #{last}" unless last == look_for
+        @@around_completed += 1
+        raise 'around failed after example properly' if fail_after_example_run
       end
-            
+    end
+    
+    context 'succeeds' do
       include_context :around_specs
     end
     
-    context 'async' do
-      pending 'write this'
-    end   
+    context 'around(:each) fails before example' do
+      let(:fail_before_example_run) { true }
+      
+      include_context :around_specs
+    end
+    
+    context 'around(:each) fails after example' do
+      let(:fail_after_example_run) { true }
+      
+      include_context :around_specs
+    end
   end
 end
