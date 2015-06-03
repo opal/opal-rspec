@@ -88,18 +88,13 @@ class ::RSpec::Core::Example
       return Promise.value result
     elsif !::RSpec.configuration.dry_run?
       # TODO: Put around back in here      
-      begin
-        run_before_example.then do
-          resolve_subject         
-        end.then do
-          core_block_run reporter          
-        end.fail do |ex|
-          notify_async_completed(reporter, ex)
-        end        
-      rescue Exception => ex
-        puts "Synchronous exception detected! #{ex}"
+      run_before_example.then do
+        resolve_subject         
+      end.then do
+        core_block_run reporter          
+      end.fail do |ex|
         notify_async_completed(reporter, ex)
-      end
+      end      
     end
   end
 end
