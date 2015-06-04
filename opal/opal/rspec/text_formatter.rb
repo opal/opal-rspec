@@ -2,7 +2,10 @@ module Opal
   module RSpec
     class TextFormatter < ::RSpec::Core::Formatters::BaseFormatter
 
-      def dump_failures
+      ::RSpec::Core::Formatters.register self, :dump_summary, :dump_failures
+
+      def dump_failures(notification)
+        failed_examples = notification.failed_examples
         if failed_examples.empty?
           puts "\nFinished"
         else
@@ -20,23 +23,26 @@ module Opal
       end
 
       def dump_failure_info(example)
-        exception = example.execution_result[:exception]
+        exception = example.execution_result.exception
         exception_class_name = exception.class.name.to_s
         red "#{long_padding}#{exception_class_name}:"
         exception.message.to_s.split("\n").each { |line| red "#{long_padding}  #{line}" }
       end
 
-      def dump_summary(duration, example_count, failure_count, pending_count)
-        @duration = duration
-        @example_count = example_count
-        @failure_count = failure_count
-        @pending_count = pending_count
+      def dump_summary(notification)
+        @duration = notification.duration
+        @example_count = notification.example_count
+        @failure_count = notification.failure_count
+        @pending_count = notification.pending_count
 
-        msg = "\n#{example_count} examples, #{failure_count} failures (time taken: #{duration})"
+        msg = "\n#{@example_count} examples, #{@failure_count} failures, #{@pending_count} pending (time taken: #{@duration})"
 
-        if failure_count == 0
+        if @pending_count > 0
+          yellow msg
+          finish_with_code(1)
+        elsif @failure_count == 0
           green msg
-          finish_with_code(0)
+          finish_with_code(0)          
         else
           red msg
           finish_with_code(1)
@@ -60,6 +66,10 @@ module Opal
 
       def red(str)
         `console.log('\033[31m' + str + '\033[0m')`
+      end
+      
+      def yellow(str)
+        `console.log('\033[33m' + str + '\033[0m')`
       end
 
       def short_padding
