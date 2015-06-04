@@ -88,6 +88,15 @@ describe MyClass2 do
 		end
 	end
 	
+	# async subject works too
+	subject do
+		delay_with_promise 0 do
+		42
+		end
+	end
+	
+	it { is_expected.to eq 42 }
+	
 	# If you use an around block and have async specs, you must use this approach
 	around do |example|
 		puts 'do stuff before'
@@ -97,6 +106,11 @@ describe MyClass2 do
 	end
 end
 ```
+
+Limitations:
+* Right now, async before(:context) and after(:context) hooks cannot be async
+* let dependencies cannot be async, only subject
+
 ## Contributing
 
 Install required gems at required versions:
