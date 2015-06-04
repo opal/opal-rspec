@@ -211,5 +211,15 @@ def (RSpec::Expectations).fail_with(message, expected=nil, actual=nil)
   # diff = differ.diff(actual, expected)
   # message = "#{message}\nDiff:#{diff}" unless diff.empty?
 
+  if actual && expected
+    if all_strings?(actual, expected)
+      if any_multiline_strings?(actual, expected)
+        message # + "\nDiff:" + differ.diff_as_string(coerce_to_string(actual), coerce_to_string(expected))
+      end
+    elsif no_procs?(actual, expected) && no_numbers?(actual, expected)
+      message # + "\nDiff:" + differ.diff_as_object(actual, expected)
+    end
+  end
+
   raise(RSpec::Expectations::ExpectationNotMetError.new(message))
 end
