@@ -1,3 +1,5 @@
+# Usage: `rake generate_requires`
+
 require 'json'
 
 # Opal will not have the built-in RNG, which affects the required outcome
