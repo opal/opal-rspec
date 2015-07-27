@@ -4,6 +4,12 @@ describe "Asynchronous helpers" do
   before do
     @model = Object.new
   end
+  
+  async 'allows overriding the timeout', timeout: 15 do
+    delay(11) do
+      async { expect(42).to eq(42) }
+    end
+  end
 
   async "can run examples async" do
     async do

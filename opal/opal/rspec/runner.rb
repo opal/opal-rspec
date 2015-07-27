@@ -54,14 +54,19 @@ module Opal
         AsyncRunner.new(self, @reporter, block).run
       end
 
+      def config_hook(hook_when)
+        hook_context = ::RSpec::Core::SuiteHookContext.new
+        @configuration.hooks.run(hook_when, :suite, hook_context)
+      end
+
       def start
         @reporter = @configuration.reporter
         @reporter.start(@world.example_count)
-        @configuration.run_hook(:before, :suite)
+        config_hook :before
       end
 
       def finish
-        @configuration.run_hook(:after, :suite)
+        config_hook :after
         @reporter.finish
       end
     end
