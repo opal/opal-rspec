@@ -17,8 +17,10 @@ ROOTS_REGEXP = /\A(#{ROOTS.map {|r| Regexp.escape r}.join('|')})\//
 module Kernel
   alias :orig_require :require
   def require path
-    puts "requiring: #{path}"
-    RSPEC_PATHS << path if orig_require(path)
+    result = orig_require(path)
+    puts "requiring: #{path} (#{result})"
+    RSPEC_PATHS << path
+    result
   end
 
   alias :orig_require_relative :require_relative
