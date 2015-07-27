@@ -12,21 +12,30 @@ end
 
 Opal::Processor.dynamic_require_severity = :warning
 
-stubs = ['mutex_m', # Used with some threading operations but seems to run OK without this
-         'prettyprint',
-         'tempfile', # Doesn't exist in Opal
-         'diff/lcs', 
-         'diff/lcs/block', 
-         'diff/lcs/callbacks',
-         'diff/lcs/change', 
-         'diff/lcs/hunk', 
-         'diff/lcs/internals', 
-         'test/unit/assertions', 
-         'optparse', # Opal doesn't have a command line per se
-         'shellwords', 
-         'socket', 
-         'uri', 
-         'drb/drb', 
-         'minitest/unit'] # Minitest used to be in stdlib, now is in opal-minitest GEM, but this file does not exist (referenced from minitest_assertions_adapter.rb in RSpec)
+stubs = [
+  'mutex_m', # Used with some threading operations but seems to run OK without this
+  'prettyprint',
+  'tempfile', # Doesn't exist in Opal
+  'diff/lcs',
+  'diff/lcs/block',
+  'diff/lcs/callbacks',
+  'diff/lcs/change',
+  'diff/lcs/hunk',
+  'diff/lcs/internals',
+  'test/unit/assertions',
+
+  # Opal doesn't have optparse, yet
+  'optparse',
+
+  'shellwords',
+  'socket',
+  'uri',
+  'drb/drb',
+
+  # Minitest used to be in stdlib, now is in opal-minitest GEM,
+  # but this file does not exist
+  # (referenced from minitest_assertions_adapter.rb in RSpec)
+  'minitest/unit',
+]
 
 stubs.each {|mod| Opal::Processor.stub_file mod }
