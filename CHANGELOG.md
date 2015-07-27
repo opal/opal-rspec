@@ -14,7 +14,7 @@
 
 *   Avoid phantomjs warning messages
 
-## 0.4.1
+## 0.4.1 (2015-02-25)
 
 *   Remove predicate matcher fixes as Opal supports $1..$9 special gvars.
 
@@ -27,5 +27,3 @@
 *   Replaced browser formatter to use html printer from rspec
 
 *   Add timeout support to asynchronous specs
-
-## 0.2.1  November 24, 2013
