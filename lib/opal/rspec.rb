@@ -36,6 +36,8 @@ stubs = [
   # but this file does not exist
   # (referenced from minitest_assertions_adapter.rb in RSpec)
   'minitest/unit',
+
+  'cgi/util',
 ]
 
 stubs.each {|mod| Opal::Processor.stub_file mod }
