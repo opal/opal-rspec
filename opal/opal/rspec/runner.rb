@@ -19,12 +19,8 @@ module Opal
           end
         end
 
-        def autorun
-          if browser?
-            `setTimeout(function() { #{Runner.new.run} }, 0)`
-          else # phantom
-            Runner.new.run
-          end
+        def autorun          
+            Runner.new.run          
         end
       end
 
@@ -39,19 +35,22 @@ module Opal
         @configuration.output_stream ||= out
 
         self.start
-        run_examples
-
-        run_async_examples do
+        run_examples.then do          
           self.finish
-        end
+        end        
       end
 
       def run_examples
-        @world.example_groups.map { |g| g.run(@reporter) }.all?
-      end
+        @world.example_groups.inject(Promise.value) do |previous_promise, group|
+          previous_promise.then do
+            group.run @reporter
+          end
+        end        
+      end    
 
-      def run_async_examples(&block)
-        AsyncRunner.new(self, @reporter, block).run
+      def config_hook(hook_when)
+        hook_context = ::RSpec::Core::SuiteHookContext.new
+        @configuration.hooks.run(hook_when, :suite, hook_context)
       end
 
       def config_hook(hook_when)

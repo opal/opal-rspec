@@ -10,9 +10,6 @@ RSpec.configure do |config|
   # For now, always use our custom formatter for results
   config.default_formatter = Opal::RSpec::Runner.default_formatter
 
-  # Async helpers for specs
-  config.include Opal::RSpec::AsyncHelpers
-
   # Always support expect() and .should syntax (we should not do this really..)
   config.expect_with :rspec do |c|
     c.syntax = [:should, :expect]

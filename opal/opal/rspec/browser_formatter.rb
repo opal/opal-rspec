@@ -5,7 +5,7 @@ module Opal
     class BrowserFormatter < ::RSpec::Core::Formatters::BaseFormatter
       include ERB::Util
       
-      ::RSpec::Core::Formatters.register self, :dump_summary, :example_group_finished, :example_failed, :example_passed, :example_pending
+      ::RSpec::Core::Formatters.register self, :dump_summary, :example_group_finished, :example_failed, :example_passed, :example_pending, :message
 
       CSS_STYLES = ::RSpec::Core::Formatters::HtmlPrinter::GLOBAL_STYLES
 
@@ -18,6 +18,19 @@ module Opal
         css_text = CSS_STYLES + "\n body { padding: 0; margin: 0 }"
         styles = Element.new(:style, type: 'text/css', css_text: css_text)
         styles.append_to_head
+      end
+      
+      def message(notification)
+        @rspec_group  = Element.new(:div, class_name: "example_group passed")
+        @rspec_dl     = Element.new(:dl)
+        @rspec_dt     = Element.new(:dt, class_name: "passed", text: notification.message)
+        @rspec_group << @rspec_dl
+        @rspec_dl << @rspec_dt
+
+        parents = @example_group.parent_groups.size
+        @rspec_dl.style 'margin-left', "#{(parents - 2) * 15}px"
+
+        @rspec_results << @rspec_group
       end
 
       def example_group_started(notification)
@@ -46,8 +59,10 @@ module Opal
         
         if @example_group_pending
           @rspec_group.class_name = "example_group not_implemented"
-          @rspec_dt.class_name = "pending"
-          Element.id('rspec-header').class_name = 'not_implemented'
+          @rspec_dt.class_name = "pending"          
+          header = Element.id('rspec-header')
+          # Don't want to override failed with pending, which is less important
+          header.class_name = 'not_implemented' unless header.class_name == 'failed'
         end
       end
       
@@ -133,6 +148,10 @@ module Opal
           end
 
           attrs.each { |name, val| __send__ "#{name}=", val }
+        end
+        
+        def class_name
+          `#@native.className`
         end
 
         def class_name=(name)
