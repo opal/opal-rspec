@@ -51,8 +51,12 @@ in any web browser.
 
 ## Async examples
 
-`opal-rspec` adds support for async specs to rspec. These specs are defined using
-`#async` instead of `#it`:
+`opal-rspec` adds support for async specs to rspec. These specs can be defined using 2 approaches:
+
+1. Promises returned from subject or the `#it` block (preferred)
+1. `#async` instead of `#it` (in use with opal-rspec <= 0.4.3)
+
+### Promise approach
 
 ```ruby
 describe MyClass do
@@ -107,9 +111,39 @@ describe MyClass2 do
 end
 ```
 
+Advantages:
+* Assuming your subject under test (or matchers) return/use promises, the syntax is the same for sync or async specs
+
 Limitations:
-* Right now, async before(:context) and after(:context) hooks cannot be async
-* let dependencies cannot be async, only subject
+* Right now, async `before(:context)` and `after(:context)` hooks cannot be async
+* `let` dependencies cannot be async, only subject
+* Opal-rspec will not timeout while waiting for your async code to finish
+
+### Async/it approach
+
+This is the approach that was supported in opal-rspec <= 0.4.3 and it still works.
+
+```ruby
+describe MyClass2 do
+	async 'HTTP requests should work' do
+	  HTTP.get('/users/1.json') do |res|
+	    async {
+	      expect(res).to be_ok
+	    }
+	  end
+	end
+end
+```
+
+The block passed to the second `async` call informs the runner that this spec is finished
+so it can move on. Any failures/expectations run inside this block will be run
+in the context of the example.
+
+Advantages:
+* Hides promises from the specs
+
+Disadvantages:
+* Requires different syntax for async specs vs. sync specs
 
 ## Contributing
 

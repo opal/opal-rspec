@@ -103,7 +103,8 @@ task :default do
                       'hooks after async match fails properly async match',
                       'hooks after async match fails properly sync match should eq 43',
                       'exception handling should fail properly if an exception is raised',
-                      'exception handling should ignore an exception after a failed assertion'].sort
+                      'exception handling should ignore an exception after a failed assertion',
+                      'legacy async fails properly after a long delay'].sort
   if actual_failures != expected_failures
     unexpected = actual_failures - expected_failures
     missing = expected_failures - actual_failures
