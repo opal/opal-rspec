@@ -9,3 +9,4 @@ end
 # gem 'opal', git: 'https://github.com/opal/opal.git'
 gem 'rspec'
 gem 'capybara-webkit'
+gem 'selenium-webdriver'
