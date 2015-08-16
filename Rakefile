@@ -1,10 +1,11 @@
 require 'bundler'
+require 'rspec/core/rake_task'
 Bundler.require
 
 Bundler::GemHelper.install_tasks
 
 require 'opal/rspec/rake_task'
-Opal::RSpec::RakeTask.new(:specs_untested)
+Opal::RSpec::RakeTask.new(:specs_via_rake)
 
 desc 'Generates an RSpec requires file free of dynamic requires'
 task :generate_requires do
@@ -12,8 +13,14 @@ task :generate_requires do
   sh 'ruby -Irspec/lib -Irspec-core/lib/rspec -Irspec-support/lib/rspec util/create_requires.rb'
 end
 
-task :default do
-  test_output = `rake specs_untested`
+RSpec::Core::RakeTask.new :browser_specs do |t|
+  t.pattern = 'spec_mri/**/*_spec.rb'
+end
+
+task :default => [:verify_rake_specs, :browser_specs]
+
+task :verify_rake_specs do
+  test_output = `rake specs_via_rake`
   raise "Expected test runner to fail due to failed tests, but got return code of #{$?.exitstatus}" if $?.success?
   count_match = /(\d+) examples, (\d+) failures, (\d+) pending/.match(test_output)
   raise 'Expected a finished count of test failures/success/etc. but did not see it' unless count_match
