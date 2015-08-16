@@ -19,6 +19,7 @@ end
 
 task :default => [:verify_rake_specs, :browser_specs]
 
+desc 'Will run a spec suite (rake specs_via_rake) and check for expected combination of failures and successes'
 task :verify_rake_specs do
   test_output = `rake specs_via_rake`
   raise "Expected test runner to fail due to failed tests, but got return code of #{$?.exitstatus}" if $?.success?
