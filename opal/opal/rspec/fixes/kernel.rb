@@ -13,22 +13,35 @@ module Kernel
     stack = `err.stack`
     caller_lines = stack.split("\n")[4..-1]
     caller_lines.reject! {|l| l.strip.empty? }
+    
+    result_formatter = lambda do |filename, line, method=nil|
+      "#{filename}:#{line} in `(#{method ? method : 'unknown method'})'"
+    end
+    
     caller_lines.map do |raw_line|
       if match = /\s*at (.*) \((\S+):(\d+):\d+/.match(raw_line)
         method, filename, line = match.captures
-        "#{filename}:#{line} in `#{method}'"
+        result_formatter[filename, line, method]
       elsif match = /\s*at (\S+):(\d+):\d+/.match(raw_line)
         filename, line = match.captures
-        "#{filename}:#{line} in `(unknown method)'"
+        result_formatter[filename, line]
       # catch phantom/no 2nd line/col #
       elsif match = /\s*at (.*) \((\S+):(\d+)/.match(raw_line)
         method, filename, line = match.captures
-        "#{filename}:#{line} in `#{method}'"
+        result_formatter[filename, line, method]
       elsif match = /\s*at (.*):(\d+)/.match(raw_line)
         filename, line = match.captures
-        "#{filename}:#{line} in `(unknown method)'"
+        result_formatter[filename, line]
+      # Firefox - Opal.modules["rspec/core/metadata"]/</</</</def.$populate@http://192.168.59.103:9292/assets/rspec/core/metadata.self.js?body=1:102:13
+      elsif match = /(.*?)@(\S+):(\d+):\d+/.match(raw_line)
+        method, filename, line = match.captures
+        result_formatter[filename, line, method]
+      # webkit - http://192.168.59.103:9292/assets/opal/rspec/sprockets_runner.js:45117:314
+      elsif match = /(\S+):(\d+):\d+/.match(raw_line)
+        filename,line = match.captures
+        result_formatter[filename, line]
       else
-        raise "Don't know how to parse #{raw_line}!"
+        "#{filename}:-1 in `(can't parse this stack trace)`"
       end
     end
   end
