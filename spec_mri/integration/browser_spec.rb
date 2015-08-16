@@ -11,12 +11,17 @@ end
 
 describe 'browser formatter', type: :feature, js: true do
   RSpec.shared_examples :browser do
-    before do
-      visit '/'      
+    before do      
+      visit '/'
+      # specs can take some time to finish and Capybara.default_wait_time didn't seem to work right with synchronize (see below)
+      sleep 20
     end
     
     it 'has test results' do
-      expect(page).to have_content 'foobar'
+      # synchronize is needed to play nice with Selenium/Firefox
+      page.document.synchronize do
+        expect(page).to have_content '182 examples, 65 failures, 22 pending'
+      end
     end
     
     it 'has expected JS errors' do
@@ -30,6 +35,7 @@ describe 'browser formatter', type: :feature, js: true do
     end
     
     let(:js_errors) { page.driver.error_messages }
+    
     include_examples :browser
   end
   
@@ -38,7 +44,12 @@ describe 'browser formatter', type: :feature, js: true do
       Capybara.javascript_driver = :selenium
     end
         
-    let(:js_errors) { page.execute_script("return window.JSErrorCollector_errors.pump()") }
+    let(:js_errors) do
+      raw = page.execute_script 'return window.JSErrorCollector_errors.pump()'
+      # Noise
+      raw.reject {|e| e['errorMessage'] == 'SyntaxError: unreachable code after return statement'}
+    end
+    
     include_examples :browser
   end
 end
