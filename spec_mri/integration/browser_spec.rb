@@ -4,6 +4,7 @@ require 'capybara-webkit'
 
 # Use Rack config exactly as shipped in the GEM
 Capybara.app = Rack::Builder.new_from_string(File.read('config.ru'))
+Capybara.javascript_driver = :webkit # since Firefox is skipped right now, avoid firefox missing errors from selenium/webdriver
 
 describe 'browser formatter', type: :feature, js: true do
   RSpec.shared_examples :browser do
@@ -19,10 +20,6 @@ describe 'browser formatter', type: :feature, js: true do
   end
   
   context 'Webkit' do
-    before do
-      Capybara.javascript_driver = :webkit
-    end   
-    
     include_examples :browser
   end
   
