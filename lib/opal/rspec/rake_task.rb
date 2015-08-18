@@ -8,8 +8,11 @@ module Opal
       RUNNER = File.expand_path('../../../../vendor/spec_runner.js', __FILE__)
       PORT = 9999
       URL = "http://localhost:9999/"
+      
+      attr_accessor :pattern
 
       def initialize(name = 'opal:rspec', &block)
+        @pattern = 'spec/**/*_spec.{rb,opal}' # default
         desc "Run opal specs in phantomjs"
         task name do
           require 'rack'
@@ -17,10 +20,11 @@ module Opal
 
           app = Opal::Server.new { |s|
             s.main = 'opal/rspec/sprockets_runner'
-            s.append_path 'spec'
+            s.append_path 'spec' # Pathname.glob('spec/**/*_spec.{rb,opal}').map {|p| p.dirname.to_s}.uniq
             s.debug = false
 
-            block.call s if block
+            block.call s, self if block
+            ENV['PATTERN'] = self.pattern
           }
 
           server = Thread.new do
