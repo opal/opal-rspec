@@ -4,6 +4,9 @@ require 'rspec/core/rake_task'
 Bundler::GemHelper.install_tasks
 
 require 'opal/rspec/rake_task'
+
+task :default => [:unit_specs, :verify_rake_specs, :integration_specs, :verify_other_spec_dir]
+
 Opal::RSpec::RakeTask.new(:specs_via_rake)
 
 desc 'Generates an RSpec requires file free of dynamic requires'
@@ -19,8 +22,6 @@ end
 RSpec::Core::RakeTask.new :unit_specs do |t|
   t.pattern = 'spec_mri/unit/**/*_spec.rb'
 end
-
-task :default => [:unit_specs, :verify_rake_specs, :integration_specs, :verify_other_spec_dir]
 
 Opal::RSpec::RakeTask.new(:other_spec_dir_via_rake) do |server, task|
   task.pattern = 'spec_other/**/*_spec.rb'

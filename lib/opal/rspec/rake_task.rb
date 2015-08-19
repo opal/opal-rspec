@@ -30,6 +30,7 @@ module Opal
       def self.get_opal_relative_specs
         Dir.glob(RakeTask.get_opal_runner_pattern).map do |file|
           relative_path = RakeTask.relative_spec_path file
+          # These will go directly into require '...' statements in Opal, so need to trim extensions
           relative_path.sub File.extname(relative_path), ''
         end
       end
@@ -42,7 +43,7 @@ module Opal
           begin
             matching = spec_file.relative_path_from spec_base_path
             break
-          rescue ArgumentError
+          rescue ArgumentError # expensive but most of the time, should match the first one
             # wrong path
             nil
           end
