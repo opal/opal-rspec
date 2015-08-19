@@ -21,6 +21,10 @@ describe 'browser formatter', type: :feature, js: true do
   
   context 'Webkit' do
     include_examples :browser
+    
+    after do
+      puts "Javascript errors: #{page.driver.error_messages}"
+    end
   end
   
   # TODO: This passes in my local tests (Firefox 40.0.2), but something in the Travis environment causes it to fail
