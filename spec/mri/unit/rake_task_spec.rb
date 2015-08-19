@@ -40,7 +40,7 @@ describe Opal::RSpec::RakeTask do
       block.call
       thread_double
     end
-    allow(task_definition).to receive(:system) # don't actually call phantom
+    allow(task_definition).to receive(:launch_phantom).and_return(nil) # don't actually call phantom
   end
   
   subject do
@@ -61,7 +61,7 @@ describe Opal::RSpec::RakeTask do
     describe 'spec paths for runner' do
       subject { Opal::RSpec::RakeTask.get_opal_relative_specs }
       
-      it { is_expected.to include 'after_hooks_spec', 'around_hooks_spec' }
+      it { is_expected.to include 'opal/after_hooks_spec', 'opal/around_hooks_spec', 'mri/integration/browser_spec' }
     end
   end
   
@@ -69,12 +69,12 @@ describe Opal::RSpec::RakeTask do
     let(:task_name) { :bar }
     let(:task_definition) do
       Opal::RSpec::RakeTask.new(task_name) do |server, task|
-        task.pattern = 'spec_other/**/*_spec.rb'
+        task.pattern = 'spec/other/**/*_spec.rb'
       end
     end
     
-    it { is_expected.to have_attributes pattern: 'spec_other/**/*_spec.rb' }
-    it { is_expected.to append_opal_path 'spec_other' }
+    it { is_expected.to have_attributes pattern: 'spec/other/**/*_spec.rb' }
+    it { is_expected.to append_opal_path 'spec/other' }
     it { is_expected.to_not append_opal_path 'spec' }
     
     describe 'spec paths for runner' do
