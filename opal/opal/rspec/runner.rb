@@ -33,6 +33,7 @@ module Opal
       def run(err=$stdout, out=$stdout)
         @configuration.error_stream = err
         @configuration.output_stream ||= out
+        @world.announce_filters
 
         self.start
         run_examples.then do          

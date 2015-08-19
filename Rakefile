@@ -4,6 +4,7 @@ require 'rspec/core/rake_task'
 Bundler::GemHelper.install_tasks
 
 require 'opal/rspec/rake_task'
+require_relative 'spec/rspec_provided/stubbing'
 
 task :default => [:unit_specs, :verify_rake_specs, :integration_specs, :verify_other_spec_dir]
 
@@ -30,6 +31,13 @@ end
 desc 'A more limited spec suite to test pattern usage'
 Opal::RSpec::RakeTask.new(:other_spec_dir_via_rake) do |server, task|
   task.pattern = 'spec/other/**/*_spec.rb'
+end
+
+desc "Run RSpec's specs (a work in progress)"
+Opal::RSpec::RakeTask.new(:rspec_specs) do |server, task|
+  task.pattern = 'spec/rspec_provided/**/*_spec.rb'
+  Opal::RSpec::Stubbing.stub_requires
+  Opal::RSpec::Stubbing.append_paths server
 end
 
 # TODO: Test/support patterns from the browser runner

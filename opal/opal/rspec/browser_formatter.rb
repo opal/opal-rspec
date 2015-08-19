@@ -21,6 +21,10 @@ module Opal
       end
       
       def message(notification)
+        unless @example_group # Filter messages, etc. before specs start
+          puts notification.message
+          return
+        end
         @rspec_group  = Element.new(:div, class_name: "example_group passed")
         @rspec_dl     = Element.new(:dl)
         @rspec_dt     = Element.new(:dt, class_name: "passed", text: notification.message)
