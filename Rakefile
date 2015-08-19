@@ -17,14 +17,17 @@ task :generate_requires do
   sh 'ruby -Irspec/lib -Irspec-core/lib/rspec -Irspec-support/lib/rspec util/create_requires.rb'
 end
 
+desc 'Runs a test to test browser based specs'
 RSpec::Core::RakeTask.new :integration_specs do |t|
   t.pattern = 'spec/mri/integration/**/*_spec.rb'
 end
 
+desc 'Unit tests for MRI focused components of opal-rspec'
 RSpec::Core::RakeTask.new :unit_specs do |t|
   t.pattern = 'spec/mri/unit/**/*_spec.rb'
 end
 
+desc 'A more limited spec suite to test pattern usage'
 Opal::RSpec::RakeTask.new(:other_spec_dir_via_rake) do |server, task|
   task.pattern = 'spec/other/**/*_spec.rb'
 end
@@ -32,6 +35,7 @@ end
 # TODO: Test/support patterns from the browser runner
 task :verify_other_spec_dir => [:verify_other_spec_dir_rake]
 
+desc 'Verifies other_spec_dir_via_rake task ran correctly'
 task :verify_other_spec_dir_rake do
   test_output = `rake other_spec_dir_via_rake`
   unless /1 examples, 0 failures, 0 pending/.match(test_output)
