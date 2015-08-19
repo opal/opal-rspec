@@ -1,4 +1,5 @@
 require 'opal/rspec'
+require 'opal/rspec/sprockets_environment'
 
 module Opal
   module RSpec
@@ -8,19 +9,30 @@ module Opal
       RUNNER = File.expand_path('../../../../vendor/spec_runner.js', __FILE__)
       PORT = 9999
       URL = "http://localhost:9999/"
+      
+      attr_accessor :pattern
+                  
+      def launch_phantom
+        system %Q{phantomjs #{RUNNER} "#{URL}"}
+        success = $?.success?
+
+        exit 1 unless success
+      end
 
       def initialize(name = 'opal:rspec', &block)
         desc "Run opal specs in phantomjs"
-        task name do
+        task name do          
           require 'rack'
           require 'webrick'
 
-          app = Opal::Server.new { |s|
+          sprockets_env = Opal::RSpec::SprocketsEnvironment.new
+          app = Opal::Server.new(sprockets: sprockets_env) { |s|
             s.main = 'opal/rspec/sprockets_runner'
-            s.append_path 'spec'
             s.debug = false
 
-            block.call s if block
+            block.call s, self if block
+            sprockets_env.spec_pattern = self.pattern if self.pattern
+            sprockets_env.get_opal_spec_paths.each { |spec_path| s.append_path spec_path }
           }
 
           server = Thread.new do
@@ -45,10 +57,7 @@ module Opal
           end
 
           begin
-            system %Q{phantomjs #{RUNNER} "#{URL}"}
-            success = $?.success?
-
-            exit 1 unless success
+            launch_phantom
           ensure
             server.kill
           end

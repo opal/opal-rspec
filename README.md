@@ -30,18 +30,28 @@ Then, to run your specs inside phantomjs, just run the rake task:
 bundle exec rake
 ```
 
+You can also customize the pattern of specs used similiar to how RSpec's rake task works:
+```ruby
+require 'opal/rspec/rake_task'
+Opal::RSpec::RakeTask.new(:default) do |server, task|
+	# server is an instance of Opal::Server in case you want to add to the load path, customize, etc.
+	task.pattern = 'spec_alternate/**/*_spec.rb'
+end
+```
+
 ### Run specs in a browser
 
 `opal-rspec` can use sprockets to build and serve specs over a simple rack
-server. Add the following to a `config.ru` file:
+server. Add the following to a `config.ru` file (see config.ru in this GEM):
 
 ```ruby
 require 'bundler'
 Bundler.require
-
-run Opal::Server.new { |s|
+# or use Opal::RSpec::SprocketsEnvironment.new(spec_pattern='spec/opal/**/*_spec.{rb,opal}') to customize the pattern
+sprockets_env = Opal::RSpec::SprocketsEnvironment.new
+run Opal::Server.new(sprockets: sprockets_env) { |s|
   s.main = 'opal/rspec/sprockets_runner'
-  s.append_path 'spec'
+  sprockets_env.get_opal_spec_paths.each { |spec_path| s.append_path spec_path }
   s.debug = false
 }
 ```

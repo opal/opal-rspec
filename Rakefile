@@ -1,11 +1,15 @@
 require 'bundler'
 require 'rspec/core/rake_task'
-Bundler.require
 
 Bundler::GemHelper.install_tasks
 
 require 'opal/rspec/rake_task'
-Opal::RSpec::RakeTask.new(:specs_via_rake)
+
+task :default => [:unit_specs, :verify_rake_specs, :integration_specs, :verify_other_spec_dir]
+
+Opal::RSpec::RakeTask.new(:specs_via_rake) do |server, task|
+  task.pattern = 'spec/opal/**/*_spec.{rb,opal}'
+end
 
 desc 'Generates an RSpec requires file free of dynamic requires'
 task :generate_requires do
@@ -13,11 +17,32 @@ task :generate_requires do
   sh 'ruby -Irspec/lib -Irspec-core/lib/rspec -Irspec-support/lib/rspec util/create_requires.rb'
 end
 
-RSpec::Core::RakeTask.new :browser_specs do |t|
-  t.pattern = 'spec_mri/**/*_spec.rb'
+desc 'Runs a test to test browser based specs'
+RSpec::Core::RakeTask.new :integration_specs do |t|
+  t.pattern = 'spec/mri/integration/**/*_spec.rb'
 end
 
-task :default => [:verify_rake_specs, :browser_specs]
+desc 'Unit tests for MRI focused components of opal-rspec'
+RSpec::Core::RakeTask.new :unit_specs do |t|
+  t.pattern = 'spec/mri/unit/**/*_spec.rb'
+end
+
+desc 'A more limited spec suite to test pattern usage'
+Opal::RSpec::RakeTask.new(:other_spec_dir_via_rake) do |server, task|
+  task.pattern = 'spec/other/**/*_spec.rb'
+end
+
+# TODO: Test/support patterns from the browser runner
+task :verify_other_spec_dir => [:verify_other_spec_dir_rake]
+
+desc 'Verifies other_spec_dir_via_rake task ran correctly'
+task :verify_other_spec_dir_rake do
+  test_output = `rake other_spec_dir_via_rake`
+  unless /1 examples, 0 failures, 0 pending/.match(test_output)
+    raise "Expected 1 passing example, but got output #{test_output}"
+  end
+  puts 'Test successful'
+end
 
 desc 'Will run a spec suite (rake specs_via_rake) and check for expected combination of failures and successes'
 task :verify_rake_specs do

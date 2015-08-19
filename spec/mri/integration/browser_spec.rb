@@ -7,7 +7,7 @@ Capybara.app = Rack::Builder.new_from_string(File.read('config.ru'))
 
 describe 'browser formatter', type: :feature, js: true do
   RSpec.shared_examples :browser do
-    before do            
+    before do
       visit '/'
       # Specs should run in 12 seconds but in case Travis takes longer, provide some cushion
       Capybara.default_wait_time = 40
@@ -18,16 +18,19 @@ describe 'browser formatter', type: :feature, js: true do
     end    
   end
   
-  context 'Webkit' do
+  xcontext 'Webkit' do
     before do
       Capybara.javascript_driver = :webkit
-    end   
+    end
     
     include_examples :browser
+    
+    after do
+      puts "Javascript errors: #{page.driver.error_messages}"
+    end
   end
   
-  # TODO: This passes in my local tests (Firefox 40.0.2), but something in the Travis environment causes it to fail
-  xcontext 'Firefox' do
+  context 'Firefox' do
     before do
       Capybara.javascript_driver = :selenium
     end   

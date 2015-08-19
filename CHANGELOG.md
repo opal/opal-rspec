@@ -6,6 +6,8 @@
 
 *   Remove copy of source (and just rely on git submodule fetch)
 
+*   Support passing a test pattern besides 'spec/**/*_spec.rb_ using the Rake task
+
 ## 0.4.3 (2015-06-14)
 
 *   Allow the gem to be run under Opal 0.7 and 0.8
