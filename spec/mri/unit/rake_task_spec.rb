@@ -5,6 +5,20 @@ require 'rack'
 describe Opal::RSpec::RakeTask do  
   let(:captured_opal_server) { {} }
     
+  RSpec::Matchers.define :require_opal_specs do |matcher|
+    def actual
+      captured_opal_server[:server].sprockets.get_opal_relative_specs
+    end
+    
+    match do
+      matcher.matches? actual
+    end
+    
+    failure_message do
+      matcher.failure_message
+    end
+  end
+    
   RSpec::Matchers.define :append_opal_path do |expected_path|
     def actual      
       captured_opal_server[:server].sprockets.paths
@@ -55,14 +69,9 @@ describe Opal::RSpec::RakeTask do
       Opal::RSpec::RakeTask.new(task_name)
     end
     
-    it { is_expected.to have_attributes pattern: 'spec/**/*_spec.{rb,opal}' }
+    it { is_expected.to have_attributes pattern: nil }
     it { is_expected.to append_opal_path 'spec' }
-    
-    describe 'spec paths for runner' do
-      subject { Opal::RSpec::RakeTask.get_opal_relative_specs }
-      
-      it { is_expected.to include 'opal/after_hooks_spec', 'opal/around_hooks_spec', 'mri/integration/browser_spec' }
-    end
+    it { is_expected.to require_opal_specs include('opal/after_hooks_spec', 'opal/around_hooks_spec', 'mri/integration/browser_spec') }
   end
   
   context 'custom pattern' do
@@ -76,11 +85,6 @@ describe Opal::RSpec::RakeTask do
     it { is_expected.to have_attributes pattern: 'spec/other/**/*_spec.rb' }
     it { is_expected.to append_opal_path 'spec/other' }
     it { is_expected.to_not append_opal_path 'spec' }
-    
-    describe 'spec paths for runner' do
-      subject { Opal::RSpec::RakeTask.get_opal_relative_specs }
-      
-      it { is_expected.to eq ['dummy_spec'] }
-    end
+    it { is_expected.to require_opal_specs eq ['dummy_spec'] }   
   end
 end

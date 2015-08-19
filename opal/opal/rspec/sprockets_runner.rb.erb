@@ -5,9 +5,7 @@ require 'opal'
 require 'opal-rspec'
 
 <% 
-require 'opal/rspec/rake_task'
-
-Opal::RSpec::RakeTask.get_opal_relative_specs.each do |s| %>
+environment.get_opal_relative_specs.each do |s| %>
 require <%= s.inspect %>
 <% end %>
 
