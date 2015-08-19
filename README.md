@@ -31,11 +31,29 @@ bundle exec rake
 ```
 
 You can also customize the pattern of specs used similiar to how RSpec's rake task works:
+
 ```ruby
 require 'opal/rspec/rake_task'
 Opal::RSpec::RakeTask.new(:default) do |server, task|
 	# server is an instance of Opal::Server in case you want to add to the load path, customize, etc.
-	task.pattern = 'spec_alternate/**/*_spec.rb'
+	task.pattern = 'spec_alternate/**/*_spec.rb' # can also supply an array of patterns
+end
+```
+
+Excluding patterns can be setup this way:
+```ruby
+require 'opal/rspec/rake_task'
+Opal::RSpec::RakeTask.new(:default) do |server, task|
+	task.exclude_pattern = 'spec_alternate/**/*_spec.rb' # can also supply an array of patterns
+end
+```
+
+FileLists (as in Rake FileLists) can also be supplied:
+
+```ruby
+require 'opal/rspec/rake_task'
+Opal::RSpec::RakeTask.new(:default) do |server, task|
+	task.files = FileList['spec/**/something_spec.rb]
 end
 ```
 
@@ -154,6 +172,32 @@ Advantages:
 
 Disadvantages:
 * Requires different syntax for async specs vs. sync specs
+
+## Opal load path
+
+NOTE: Only the deepest directory specified will be added to the Opal load path.
+
+Example 1: For the example patterns above, only 'spec_alternate' will be added.
+
+Example 2: Single base path
+
+For a pattern of:
+```ruby
+'spec/other/**/*spec.rb'
+```
+
+'spec/other' will be added to the load path.
+
+Example 3: Different base paths
+
+Multiple patterns are specified that share the same parent:
+
+For a pattern of:
+```ruby
+['spec/opal/**/*hooks_spec.rb', 'spec/other/**/*_spec.rb']
+```
+
+Only 'spec' will be added to the load path.
 
 ## Contributing
 

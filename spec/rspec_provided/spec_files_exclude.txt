@@ -1,0 +1,14 @@
+# InSubProcess - requires forking
+**/dsl_spec.rb
+
+# opal does not like %W on line 107
+**/rspec/core/configuration_options_spec.rb
+
+# Nokogiri/filesystem heavy
+**/html_formatter_spec.rb
+
+# Coderay gem/opal
+**/snippet_extractor_spec.rb
+
+# Don't have Rake in Opal
+**/rake_task_spec.rb

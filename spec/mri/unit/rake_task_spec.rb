@@ -7,7 +7,7 @@ describe Opal::RSpec::RakeTask do
     
   RSpec::Matchers.define :require_opal_specs do |matcher|
     def actual
-      captured_opal_server[:server].sprockets.get_opal_relative_specs
+      captured_opal_server[:server].sprockets.cached.get_opal_spec_requires    
     end
     
     match do
@@ -16,6 +16,10 @@ describe Opal::RSpec::RakeTask do
     
     failure_message do
       matcher.failure_message
+    end
+    
+    failure_message_when_negated do
+      matcher.failure_message_when_negated
     end
   end
     
@@ -57,6 +61,8 @@ describe Opal::RSpec::RakeTask do
     allow(task_definition).to receive(:launch_phantom).and_return(nil) # don't actually call phantom
   end
   
+  let(:task_name) { :foobar }
+  
   subject do
     task = task_definition
     Rake::Task[task_name].invoke
@@ -64,7 +70,6 @@ describe Opal::RSpec::RakeTask do
   end
   
   context 'default' do
-    let(:task_name) { :foobar }  
     let(:task_definition) do
       Opal::RSpec::RakeTask.new(task_name)
     end
@@ -74,17 +79,190 @@ describe Opal::RSpec::RakeTask do
     it { is_expected.to require_opal_specs include('opal/after_hooks_spec', 'opal/around_hooks_spec', 'mri/integration/browser_spec') }
   end
   
-  context 'custom pattern' do
-    let(:task_name) { :bar }
+  context 'pattern' do
+    context 'single inclusion' do
+      let(:task_definition) do
+        Opal::RSpec::RakeTask.new(task_name) do |server, task|
+          task.pattern = 'spec/other/**/*_spec.rb'
+        end
+      end
+    
+      it { is_expected.to have_attributes pattern: 'spec/other/**/*_spec.rb' }
+      it { is_expected.to append_opal_path 'spec/other' }
+      it { is_expected.to_not append_opal_path 'spec' }
+      it { is_expected.to require_opal_specs eq ['dummy_spec'] }   
+    end
+  
+    context 'single exclusion' do
+      let(:task_definition) do
+        Opal::RSpec::RakeTask.new(task_name) do |server, task|
+          task.exclude_pattern = '**/*/*_hooks_spec.rb'
+        end
+      end
+    
+      it { is_expected.to have_attributes pattern: nil }
+      it { is_expected.to have_attributes exclude_pattern: '**/*/*_hooks_spec.rb' }
+      it { is_expected.to append_opal_path 'spec' }
+      it { is_expected.to require_opal_specs include('mri/integration/browser_spec') }
+      it { is_expected.to_not require_opal_specs include('opal/after_hooks_spec', 'opal/around_hooks_spec') }
+    end
+  
+    context 'multiple inclusion' do
+      context 'same base path' do
+        let(:task_definition) do
+          Opal::RSpec::RakeTask.new(task_name) do |server, task|
+            # implicit default inclusion pattern
+            task.pattern = ['spec/opal/**/*hooks_spec.rb', 'spec/opal/**/matchers_spec.rb']
+          end
+        end
+    
+        it { is_expected.to have_attributes pattern: ['spec/opal/**/*hooks_spec.rb', 'spec/opal/**/matchers_spec.rb'] }
+        it { is_expected.to append_opal_path 'spec/opal' }
+        it { is_expected.to_not append_opal_path 'spec' }
+        it { is_expected.to require_opal_specs eq ['after_hooks_spec', 'around_hooks_spec', 'before_hooks_spec', 'matchers_spec'] }   
+      end
+      
+      context 'multiple base paths, same root' do
+        let(:task_definition) do
+          Opal::RSpec::RakeTask.new(task_name) do |server, task|
+            # implicit default inclusion pattern
+            task.pattern = ['spec/opal/**/*hooks_spec.rb', 'spec/other/**/*_spec.rb']
+          end
+        end
+    
+        it { is_expected.to have_attributes pattern: ['spec/opal/**/*hooks_spec.rb', 'spec/other/**/*_spec.rb'] }
+        it { is_expected.to append_opal_path 'spec' }
+        it { is_expected.to require_opal_specs eq ['opal/after_hooks_spec', 'opal/around_hooks_spec', 'opal/before_hooks_spec', 'other/dummy_spec'] }   
+      end
+      
+      context 'multiple base paths, different root' do
+        let(:task_definition) do
+          Opal::RSpec::RakeTask.new(task_name) do |server, task|
+            # implicit default inclusion pattern
+            task.pattern = ['spec/other/**/*_spec.rb', 'util/**/*.rb']
+          end
+        end
+    
+        it { is_expected.to have_attributes pattern: ['spec/other/**/*_spec.rb', 'util/**/*.rb'] }
+        it { is_expected.to append_opal_path 'spec/other' }
+        it { is_expected.to append_opal_path 'util' }
+        it { is_expected.to_not append_opal_path 'spec' }
+        it { is_expected.to require_opal_specs eq ['dummy_spec', 'create_requires'] }
+      end
+      
+      context 'multiple base paths, same directory name in middle' do
+        let(:task_definition) do
+          Opal::RSpec::RakeTask.new(task_name) do |server, task|
+            task.pattern = ['rspec-core/spec/**/*_spec.rb', 'spec/rspec_provided/rspec_spec_fixes.rb']
+          end
+        end
+    
+        it { is_expected.to have_attributes pattern: ['rspec-core/spec/**/*_spec.rb', 'spec/rspec_provided/rspec_spec_fixes.rb'] }
+        it { is_expected.to append_opal_path 'rspec-core/spec' }
+        it { is_expected.to append_opal_path 'spec/rspec_provided' }
+        it { is_expected.to_not append_opal_path 'spec' }
+        it { is_expected.to require_opal_specs include('rspec_spec_fixes', 'rspec/core_spec') }
+      end
+    end
+  
+    context 'multiple exclusion' do
+      let(:task_definition) do
+        Opal::RSpec::RakeTask.new(task_name) do |server, task|
+          task.exclude_pattern = ['**/*/*_hooks_spec.rb', '**/*/a*_spec.rb']
+        end
+      end
+    
+      it { is_expected.to have_attributes exclude_pattern: ['**/*/*_hooks_spec.rb', '**/*/a*_spec.rb'] }
+      it { is_expected.to append_opal_path 'spec' }
+      it { is_expected.to require_opal_specs include('mri/integration/browser_spec') }
+      it { is_expected.to_not require_opal_specs include(/.*hooks/, /a.*/) }
+    end
+  end
+  
+  context 'files' do
+    context 'single file' do
+      let(:task_definition) do
+        Opal::RSpec::RakeTask.new(task_name) do |server, task|
+          task.files = FileList['spec/other/**/*_spec.rb']
+        end
+      end
+    
+      it { is_expected.to have_attributes files: FileList['spec/other/**/*_spec.rb'] }
+      it { is_expected.to_not append_opal_path 'spec' }
+      it { is_expected.to append_opal_path 'spec/other' }
+      it { is_expected.to require_opal_specs eq ['dummy_spec'] }
+    end
+    
+    context 'multiple files' do
+      let(:task_definition) do
+        Opal::RSpec::RakeTask.new(task_name) do |server, task|
+          task.files = FileList['spec/other/**/*_spec*']
+        end
+      end
+    
+      it { is_expected.to have_attributes files: FileList['spec/other/**/*_spec*'] }
+      it { is_expected.to_not append_opal_path 'spec' }
+      it { is_expected.to append_opal_path 'spec/other' }
+      it { is_expected.to require_opal_specs eq ['dummy_spec', 'ignored_spec'] }
+    end
+    
+    context 'multiple base paths, same root' do
+      let(:task_definition) do
+        Opal::RSpec::RakeTask.new(task_name) do |server, task|
+          task.files = FileList['spec/opal/**/*hooks_spec.rb', 'spec/other/**/*_spec.rb']
+        end
+      end
+  
+      it { is_expected.to have_attributes files: FileList['spec/opal/**/*hooks_spec.rb', 'spec/other/**/*_spec.rb'] }
+      it { is_expected.to append_opal_path 'spec' }
+      it { is_expected.to require_opal_specs eq ['opal/after_hooks_spec', 'opal/around_hooks_spec', 'opal/before_hooks_spec', 'other/dummy_spec'] }   
+    end
+    
+    context 'multiple base paths, different root' do
+      let(:task_definition) do
+        Opal::RSpec::RakeTask.new(task_name) do |server, task|
+          task.files = FileList['spec/other/**/*_spec.rb', 'util/**/*.rb']
+        end
+      end
+  
+      it { is_expected.to have_attributes files: FileList['spec/other/**/*_spec.rb', 'util/**/*.rb'] }
+      it { is_expected.to append_opal_path 'spec/other' }
+      it { is_expected.to append_opal_path 'util' }
+      it { is_expected.to_not append_opal_path 'spec' }
+      it { is_expected.to require_opal_specs eq ['dummy_spec', 'create_requires'] }
+    end
+    
+    context 'multiple base paths, same directory name in middle' do
+      let(:task_definition) do
+        Opal::RSpec::RakeTask.new(task_name) do |server, task|
+          task.files = FileList['spec/rspec_provided/rspec_spec_fixes.rb', 'rspec-core/spec/**/*_spec.rb']
+        end
+      end
+  
+      xit { is_expected.to have_attributes files: FileList['spec/rspec_provided/rspec_spec_fixes.rb', 'rspec-core/spec/**/*_spec.rb'] }
+      xit { is_expected.to append_opal_path 'rspec-core/spec' }
+      it { is_expected.to append_opal_path 'spec/rspec_provided' }
+      xit { is_expected.to_not append_opal_path 'spec' }
+      xit { is_expected.to require_opal_specs include('rspec_spec_fixes', 'core_spec') }
+    end
+  end
+  
+  context 'pattern and files' do
     let(:task_definition) do
       Opal::RSpec::RakeTask.new(task_name) do |server, task|
-        task.pattern = 'spec/other/**/*_spec.rb'
+        task.files = FileList['spec/other/**/*_spec.rb', 'util/**/*.rb']
+        task.pattern = 'spec/opal/**/*hooks_spec.rb'
       end
     end
     
-    it { is_expected.to have_attributes pattern: 'spec/other/**/*_spec.rb' }
-    it { is_expected.to append_opal_path 'spec/other' }
-    it { is_expected.to_not append_opal_path 'spec' }
-    it { is_expected.to require_opal_specs eq ['dummy_spec'] }   
+    subject do
+      lambda {
+        task = task_definition
+        Rake::Task[task_name].invoke
+        task
+      }
+    end
+    
+    it { is_expected.to raise_exception 'Cannot supply both a pattern and files!' }
   end
 end

@@ -27,5 +27,10 @@ RSpec.shared_examples_for "a library that issues no warnings when loaded" do |li
 end
 # end 'mocked' examples
 
-require 'rspec/core_spec'
-#require 'rspec/core/example_group_spec'
+# begin RSpec config
+require 'rspec/support/spec'
+RSpec.configure do |c|
+  # excludes
+  
+end
+# end RSpec config

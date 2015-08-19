@@ -6,7 +6,7 @@
 
 *   Remove copy of source (and just rely on git submodule fetch)
 
-*   Support passing a test pattern besides 'spec/**/*_spec.rb_ using the Rake task
+*   Support passing a test pattern (include and exclude) and FileLists besides 'spec/**/*_spec.rb_ using the Rake task
 
 ## 0.4.3 (2015-06-14)
 

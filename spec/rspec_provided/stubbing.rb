@@ -12,12 +12,14 @@ module Opal
         ].each {|f| Opal::Processor.stub_file f}
       end
       
-      def self.append_paths(server)
-        [
-          'rspec-core/spec',
-          'rspec-support/spec',
-          'rspec-support/lib'
-        ].each {|f| server.append_path f }
+      def self.get_file_list
+        exclude = File.read('spec/rspec_provided/spec_files_exclude.txt').split("\n").reject do |line|
+          line.empty? or line.start_with? '#'
+        end
+        files = FileList['spec/rspec_provided/rspec_spec_fixes.rb', 'rspec-core/spec/**/*_spec.rb'].exclude(*exclude)
+        puts "Running the following RSpec specs:"
+        files.sort.each {|f| puts f}
+        files
       end
     end
   end

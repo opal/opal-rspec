@@ -35,9 +35,8 @@ end
 
 desc "Run RSpec's specs (a work in progress)"
 Opal::RSpec::RakeTask.new(:rspec_specs) do |server, task|
-  task.pattern = 'spec/rspec_provided/**/*_spec.rb'
+  task.files = Opal::RSpec::Stubbing.get_file_list
   Opal::RSpec::Stubbing.stub_requires
-  Opal::RSpec::Stubbing.append_paths server
 end
 
 # TODO: Test/support patterns from the browser runner

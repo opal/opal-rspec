@@ -11,6 +11,8 @@ module Opal
       URL = "http://localhost:9999/"
       
       attr_accessor :pattern
+      attr_accessor :exclude_pattern
+      attr_accessor :files
                   
       def launch_phantom
         system %Q{phantomjs #{RUNNER} "#{URL}"}
@@ -32,6 +34,9 @@ module Opal
 
             block.call s, self if block
             sprockets_env.spec_pattern = self.pattern if self.pattern
+            sprockets_env.spec_exclude_pattern = self.exclude_pattern
+            sprockets_env.spec_files = self.files
+            raise 'Cannot supply both a pattern and files!' if self.files and self.pattern
             sprockets_env.get_opal_spec_paths.each { |spec_path| s.append_path spec_path }
           }
 
