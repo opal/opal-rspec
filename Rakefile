@@ -5,7 +5,7 @@ Bundler::GemHelper.install_tasks
 
 require 'opal/rspec/rake_task'
 
-task :default => [:unit_specs, :verify_rake_specs, :integration_specs, :clear_browser_spec_pattern, :verify_other_spec_dir]
+task :default => [:unit_specs, :verify_rake_specs, :integration_specs, :verify_other_spec_dir]
 
 Opal::RSpec::RakeTask.new(:specs_via_rake) do |server, task|
   task.pattern = 'spec/opal/**/*_spec.{rb,opal}'
@@ -17,15 +17,7 @@ task :generate_requires do
   sh 'ruby -Irspec/lib -Irspec-core/lib/rspec -Irspec-support/lib/rspec util/create_requires.rb'
 end
 
-task :force_browser_spec_pattern do
-  ENV[Opal::RSpec::RakeTask::PATTERN_ENV_OVERRIDE] = 'spec/opal/**/*_spec.{rb,opal}'
-end
-
-task :clear_browser_spec_pattern do
-  ENV[Opal::RSpec::RakeTask::PATTERN_ENV_OVERRIDE] = nil
-end
-
-RSpec::Core::RakeTask.new :integration_specs => :force_browser_spec_pattern do |t|
+RSpec::Core::RakeTask.new :integration_specs do |t|
   t.pattern = 'spec/mri/integration/**/*_spec.rb'
 end
 
