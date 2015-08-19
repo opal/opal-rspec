@@ -4,6 +4,7 @@ require 'pathname'
 module Opal
   module RSpec
     class RakeTask
+      PATTERN_ENV_OVERRIDE = 'ORSPEC_PATTERN'
       DEFAULT_PATTERN = 'spec/**/*_spec.{rb,opal}'
       include Rake::DSL if defined? Rake::DSL
 
@@ -15,16 +16,17 @@ module Opal
       
       # TODO: Way to pass this to ERB/sprockets runner inside Rack besides class vars?
       @@opal_runner_pattern = nil
-      @@opal_spec_paths = nil
       
-      def self.get_opal_spec_paths
-        @@opal_spec_paths ||= begin
-          Pathname.glob(RakeTask.get_opal_runner_pattern).map {|p| p.dirname.to_s}.uniq
-        end
+      def self.get_opal_spec_paths        
+        pattern = RakeTask.get_opal_runner_pattern
+        glob_portion = /[\*\?\[\{].*/.match pattern
+        path = glob_portion ? pattern.sub(glob_portion.to_s, '') : pattern
+        raise "Unable to identify a single root directory/file in the pattern #{RakeTask.get_opal_runner_pattern}. Please adjust glob" unless File.exist?(path)
+        [path]        
       end
       
       def self.get_opal_runner_pattern
-        @@opal_runner_pattern || DEFAULT_PATTERN
+        ENV[PATTERN_ENV_OVERRIDE] || @@opal_runner_pattern || DEFAULT_PATTERN
       end
       
       def self.get_opal_relative_specs
@@ -51,12 +53,18 @@ module Opal
         raise "Unable to find matching base path for #{spec_file} inside #{spec_paths}" unless matching
         matching.to_s
       end
+      
+      def launch_phantom
+        system %Q{phantomjs #{RUNNER} "#{URL}"}
+        success = $?.success?
+
+        exit 1 unless success
+      end
 
       def initialize(name = 'opal:rspec', &block)
         @pattern = DEFAULT_PATTERN
-        @@opal_spec_paths = nil # avoid testing issues
         desc "Run opal specs in phantomjs"
-        task name do
+        task name do          
           require 'rack'
           require 'webrick'
 
@@ -92,10 +100,7 @@ module Opal
           end
 
           begin
-            system %Q{phantomjs #{RUNNER} "#{URL}"}
-            success = $?.success?
-
-            exit 1 unless success
+            launch_phantom
           ensure
             server.kill
           end

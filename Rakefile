@@ -5,9 +5,11 @@ Bundler::GemHelper.install_tasks
 
 require 'opal/rspec/rake_task'
 
-task :default => [:unit_specs, :verify_rake_specs, :integration_specs, :verify_other_spec_dir]
+task :default => [:unit_specs, :verify_rake_specs, :integration_specs, :clear_browser_spec_pattern, :verify_other_spec_dir]
 
-Opal::RSpec::RakeTask.new(:specs_via_rake)
+Opal::RSpec::RakeTask.new(:specs_via_rake) do |server, task|
+  task.pattern = 'spec/opal/**/*_spec.{rb,opal}'
+end
 
 desc 'Generates an RSpec requires file free of dynamic requires'
 task :generate_requires do
@@ -15,16 +17,24 @@ task :generate_requires do
   sh 'ruby -Irspec/lib -Irspec-core/lib/rspec -Irspec-support/lib/rspec util/create_requires.rb'
 end
 
-RSpec::Core::RakeTask.new :integration_specs do |t|
-  t.pattern = 'spec_mri/integration/**/*_spec.rb'
+task :force_browser_spec_pattern do
+  ENV[Opal::RSpec::RakeTask::PATTERN_ENV_OVERRIDE] = 'spec/opal/**/*_spec.{rb,opal}'
+end
+
+task :clear_browser_spec_pattern do
+  ENV[Opal::RSpec::RakeTask::PATTERN_ENV_OVERRIDE] = nil
+end
+
+RSpec::Core::RakeTask.new :integration_specs => :force_browser_spec_pattern do |t|
+  t.pattern = 'spec/mri/integration/**/*_spec.rb'
 end
 
 RSpec::Core::RakeTask.new :unit_specs do |t|
-  t.pattern = 'spec_mri/unit/**/*_spec.rb'
+  t.pattern = 'spec/mri/unit/**/*_spec.rb'
 end
 
 Opal::RSpec::RakeTask.new(:other_spec_dir_via_rake) do |server, task|
-  task.pattern = 'spec_other/**/*_spec.rb'
+  task.pattern = 'spec/other/**/*_spec.rb'
 end
 
 # TODO: Test/support patterns from the browser runner
