@@ -21,23 +21,31 @@ module Opal
       
       def self.get_file_list
         line_num = 0
-        exclude = File.read('spec/rspec_provided/spec_files_exclude.txt').split("\n").map do |line|
+        exclude_these_specs = File.read('spec/rspec_provided/spec_files_exclude.txt').split("\n").map do |line|
           line_num += 1
-          {filename: line, line_number: line_num}
+          {
+            filename: line, 
+            line_number: line_num
+          }
         end.reject do |line|
           filename = line[:filename]
           filename.empty? or filename.start_with? '#'
         end
-        missing = exclude.map do |f|
+        missing_exclusions = exclude_these_specs.map do |f|
           result = SPEC_DIRECTORIES.any? do |spec_dir|
             FileList[File.join(spec_dir, f[:filename])].any?
           end
           result ? nil : f
         end.compact
-        raise "Expected to exclude #{missing} as noted in spec_files_exclude.txt but we didn't find these files. Has RSpec been upgraded?" if missing.any?
-        exclude_globs_only = exclude.map {|f| f[:filename]}
-        globs = SPEC_DIRECTORIES.map {|g| File.join(g, '**/*_spec.rb')}
-        files = FileList['spec/rspec_provided/rspec_spec_fixes.rb', *globs].exclude(*exclude_globs_only)        
+        if missing_exclusions.any?
+          raise "Expected to exclude #{missing_exclusions} as noted in spec_files_exclude.txt but we didn't find these files. Has RSpec been upgraded?"
+        end
+        exclude_globs_only = exclude_these_specs.map {|f| f[:filename]}
+        include_globs = SPEC_DIRECTORIES.map {|g| File.join(g, '**/*_spec.rb')}
+        files = FileList[
+          'spec/rspec_provided/rspec_spec_fixes.rb', 
+          *include_globs
+        ].exclude(*exclude_globs_only)
         puts "Running the following RSpec specs:"
         files.sort.each {|f| puts f}
         files
