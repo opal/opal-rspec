@@ -2,7 +2,7 @@ require 'tmpdir'
 
 module Opal
   module RSpec
-    class Stubbing
+    class OpalSpecLoader
       def self.stub_requires
         [
           'rubygems',
