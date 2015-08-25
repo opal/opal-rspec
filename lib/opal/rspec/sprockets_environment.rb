@@ -1,5 +1,6 @@
 require 'sprockets'
 require 'pathname'
+require 'opal/rspec/cached_environment'
 
 module Opal
   module RSpec   
@@ -15,7 +16,6 @@ module Opal
       end
       
       def spec_exclude_pattern=(pattern)
-        reset_paths
         @spec_exclude_pattern = pattern
       end
       
@@ -41,8 +41,7 @@ module Opal
           base_paths = spec_files ? get_files_directories : strip_globs_from_patterns
           # Want to get the smallest # of load paths that's common between our patterns
           array_or_single = base_paths.inject do |path1, path2|
-            common_paths = with_common_paths_replaced path1, path2
-            common_paths
+            with_common_paths_replaced path1, path2            
           end
           [*array_or_single]          
         end
@@ -83,8 +82,12 @@ module Opal
             end
             break if match
           end
-          new_path_covered = true if match
-          match || path
+          if match
+            new_path_covered = true
+            match
+          else
+            path
+          end
         end
         replaced << new_path unless new_path_covered
         replaced.uniq
