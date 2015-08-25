@@ -106,8 +106,9 @@ module Opal
         files.map do |file|
           relative_path = get_relative_spec_path file
           # These will go directly into require '...' statements in Opal, so need to trim extensions
-          relative_path.sub File.extname(relative_path), ''
-        end
+          without_extension = relative_path.sub File.extname(relative_path), ''
+          self[without_extension].logical_path # Let sprockets provide the path to ensure the module name matches the require
+        end        
       end
       
       private

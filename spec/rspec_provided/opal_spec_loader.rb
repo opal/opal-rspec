@@ -4,7 +4,7 @@ module Opal
   module RSpec
     class OpalSpecLoader
       FILES_WITH_LINE_CONTINUE = [/core\/example_spec.rb/, /pending_spec.rb/]
-      # will have a glob appended
+      # will have a glob appended to each element in the array
       SPEC_DIRECTORIES = %w{rspec-core/spec}
       REQUIRE_STUBS = [
           'rubygems',
@@ -42,14 +42,14 @@ module Opal
         end
         exclude_globs_only = exclude_these_specs.map {|f| f[:filename]}
         include_globs = SPEC_DIRECTORIES.map {|g| File.join(g, '**/*_spec.rb')}
-        files = FileList[
-          'spec/rspec_provided/rspec_spec_fixes.rb', 
+        files = FileList[          
+          'spec/rspec_provided/rspec_spec_fixes.rb', # need our code to go in first
           *include_globs
         ].exclude(*exclude_globs_only)
         puts "Running the following RSpec specs:"
         files.sort.each {|f| puts f}
         files
-      end
+      end      
       
       def self.append_additional_load_paths(server)
         [
