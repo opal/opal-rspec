@@ -206,6 +206,30 @@ describe Opal::RSpec::RakeTask do
       it { is_expected.to require_opal_specs eq ['dummy_spec', 'ignored_spec'] }
     end
     
+    context 'absolute path and relative path that are not in the same tree' do
+      let(:tmp_spec_dir) { Dir.mktmpdir }
+      
+      let(:dummy_spec) do
+        fake_spec = File.join tmp_spec_dir, 'junk_spec.rb'
+        FileUtils.touch fake_spec
+        fake_spec
+      end
+      
+      after do
+        FileUtils.remove_entry tmp_spec_dir
+      end
+      
+      let(:task_definition) do
+        Opal::RSpec::RakeTask.new(task_name) do |server, task|
+          task.files = FileList['spec/other/**/*_spec.rb', dummy_spec]
+        end
+      end
+      
+      it { is_expected.to append_opal_path 'spec/other' }
+      it { is_expected.to append_opal_path tmp_spec_dir }
+      it { is_expected.to require_opal_specs eq ['dummy_spec', 'junk_spec'] }
+    end
+    
     context 'multiple base paths, same root' do
       let(:task_definition) do
         Opal::RSpec::RakeTask.new(task_name) do |server, task|

@@ -116,7 +116,7 @@ module Opal
       def get_relative_spec_path(spec_file)
         spec_file = Pathname.new spec_file
         matching = @opal_spec_load_paths.map do |spec_base_path|
-          spec_file.relative_path_from spec_base_path
+          spec_file.expand_path.relative_path_from spec_base_path.expand_path
         end.find {|rel| !rel.to_s.include? '..'}
         raise "Unable to find matching base path for #{spec_file} inside #{@opal_spec_load_paths}" unless matching
         matching.to_s
