@@ -24,5 +24,8 @@
 # We have to use our own runner anyways
 **/runner_spec.rb
 
-# uses heavy IO
+# uses heavy I/O
 **/order_spec.rb
+
+# I/O heavy test
+**/backtrace_formatter_spec.rb
