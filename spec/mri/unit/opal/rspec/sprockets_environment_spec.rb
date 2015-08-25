@@ -85,6 +85,26 @@ describe Opal::RSpec::SprocketsEnvironment do
       let(:pattern) { ['rspec-core/spec/**/*_spec.rb', 'spec/rspec_provided/rspec_spec_fixes.rb'] }
       
       it { is_expected.to eq ['rspec-core/spec/', 'spec/rspec_provided'] }
-    end 
+    end
+    
+    context 'absolute path and relative path that are not in the same tree' do
+      let(:tmp_spec_dir) { Dir.mktmpdir }
+      
+      let(:dummy_spec) do
+        fake_spec = File.join tmp_spec_dir, 'junk_spec.rb'
+        FileUtils.touch fake_spec
+        fake_spec
+      end
+      
+      let(:files) { FileList['spec/other/**/*_spec.rb', dummy_spec] }
+      
+      after do
+        FileUtils.remove_entry tmp_spec_dir
+      end      
+
+      let(:args) { [nil, nil, files] }    
+      
+      it { is_expected.to eq ['spec/other', tmp_spec_dir] }      
+    end   
   end
 end
