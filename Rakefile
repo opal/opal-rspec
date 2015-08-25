@@ -35,8 +35,12 @@ end
 
 desc "Run RSpec's specs (a work in progress)"
 Opal::RSpec::RakeTask.new(:rspec_specs) do |server, task|
-  task.files = Opal::RSpec::Stubbing.get_file_list
   Opal::RSpec::Stubbing.stub_requires
+  files = Opal::RSpec::Stubbing.get_file_list
+  with_sub = Opal::RSpec::Stubbing.sub_in_end_of_line files
+  task.files = with_sub
+  Opal::RSpec::Stubbing.append_additional_load_paths s
+  puts "Opal load path is #{server.sprockets.paths}"    
 end
 
 # TODO: Test/support patterns from the browser runner
