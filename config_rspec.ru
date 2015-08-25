@@ -13,5 +13,5 @@ run Opal::Server.new(sprockets: sprockets_env) { |s|
   sprockets_env.get_opal_spec_paths.each { |spec_path| s.append_path spec_path }
   Opal::RSpec::Stubbing.append_additional_load_paths s
   puts "Opal load path is #{s.sprockets.paths}"
-  s.debug = true
+  s.debug = false
 }
