@@ -29,3 +29,7 @@
 
 # I/O heavy test
 **/backtrace_formatter_spec.rb
+
+# Random - RSpec::Core::Backports::Random locks up the browser
+**/ordering_spec.rb
+**/random_spec.rb
