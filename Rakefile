@@ -39,8 +39,7 @@ Opal::RSpec::RakeTask.new(:rspec_specs) do |server, task|
   files = Opal::RSpec::Stubbing.get_file_list
   with_sub = Opal::RSpec::Stubbing.sub_in_end_of_line files
   task.files = with_sub
-  Opal::RSpec::Stubbing.append_additional_load_paths s
-  puts "Opal load path is #{server.sprockets.paths}"    
+  Opal::RSpec::Stubbing.append_additional_load_paths server  
 end
 
 # TODO: Test/support patterns from the browser runner
