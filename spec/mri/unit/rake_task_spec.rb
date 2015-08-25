@@ -239,11 +239,11 @@ describe Opal::RSpec::RakeTask do
         end
       end
   
-      xit { is_expected.to have_attributes files: FileList['spec/rspec_provided/rspec_spec_fixes.rb', 'rspec-core/spec/**/*_spec.rb'] }
-      xit { is_expected.to append_opal_path 'rspec-core/spec' }
+      it { is_expected.to have_attributes files: FileList['spec/rspec_provided/rspec_spec_fixes.rb', 'rspec-core/spec/**/*_spec.rb'] }
+      it { is_expected.to append_opal_path 'rspec-core/spec' }
       it { is_expected.to append_opal_path 'spec/rspec_provided' }
-      xit { is_expected.to_not append_opal_path 'spec' }
-      xit { is_expected.to require_opal_specs include('rspec_spec_fixes', 'core_spec') }
+      it { is_expected.to_not append_opal_path 'spec' }
+      it { is_expected.to require_opal_specs include('rspec_spec_fixes', 'rspec/core_spec') }
     end
   end
   
