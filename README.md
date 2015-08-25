@@ -205,13 +205,13 @@ Install required gems at required versions:
 
     $ bundle install
 
-opal-rspec uses a prebuilt version of rspec to fix the areas where
+opal-rspec uses a bundled copy of rspec to fix the areas where
 opal cannot handle certain features of rspec. To build that file,
 which is needed to run specs, use:
 
-    $ bundle exec rake build
+    $ git submodule update --init
 
-This should build `opal/opal/rspec/rspec.js` ready to use.
+When updating the RSpec versions, after updating the submodule revisions, you may need to use the generate_requires Rake task in order to pre-resolve RSpec's dynamic requires
 
 ### Run on command line
 
