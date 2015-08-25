@@ -1,5 +1,10 @@
 # InSubProcess - requires forking
 **/dsl_spec.rb
+**/core/configuration_spec.rb
+**/shared_example_group_spec.rb
+
+# requires running services
+**/drb_spec.rb
 
 # opal does not like %W on line 107
 **/rspec/core/configuration_options_spec.rb
