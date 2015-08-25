@@ -17,3 +17,12 @@
 
 # Don't have Rake in Opal
 **/rake_task_spec.rb
+
+# Do not have the option parser std lib
+**/option_parser_spec.rb
+
+# We have to use our own runner anyways
+**/runner_spec.rb
+
+# uses heavy IO
+**/order_spec.rb
