@@ -33,3 +33,6 @@
 # Random - RSpec::Core::Backports::Random locks up the browser
 **/ordering_spec.rb
 **/random_spec.rb
+
+# I/O heavy and opal-rspec has to do its own initializing anyways
+**/project_initializer_spec.rb
