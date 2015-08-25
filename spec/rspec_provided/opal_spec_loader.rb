@@ -3,15 +3,20 @@ require 'tmpdir'
 module Opal
   module RSpec
     class OpalSpecLoader
-      def self.stub_requires
-        [
+      FILES_WITH_LINE_CONTINUE = [/core\/example_spec.rb/, /pending_spec.rb/]
+      # will have a glob appended
+      SPEC_DIRECTORIES = %w{rspec-core/spec}
+      REQUIRE_STUBS = [
           'rubygems',
           'aruba/api', # Cucumber lib that supports file creation during testing, N/A for us
           'simplecov', # hooks aren't available on Opal
           'tmpdir',
           'rspec/support/spec/shell_out', # only does stuff Opal can't support anyways
           'rspec/support/spec/prevent_load_time_warnings'
-        ].each {|f| Opal::Processor.stub_file f}
+        ]
+      
+      def self.stub_requires
+        REQUIRE_STUBS.each {|f| Opal::Processor.stub_file f}
       end
       
       def self.get_file_list
@@ -24,12 +29,15 @@ module Opal
           filename.empty? or filename.start_with? '#'
         end
         missing = exclude.map do |f|
-          result = FileList[File.join('rspec-core/spec', f[:filename])]
-          result.any? ? nil : f
+          result = SPEC_DIRECTORIES.any? do |spec_dir|
+            FileList[File.join(spec_dir, f[:filename])].any?
+          end
+          result ? nil : f
         end.compact
         raise "Expected to exclude #{missing} as noted in spec_files_exclude.txt but we didn't find these files. Has RSpec been upgraded?" if missing.any?
         exclude_globs_only = exclude.map {|f| f[:filename]}
-        files = FileList['spec/rspec_provided/rspec_spec_fixes.rb', 'rspec-core/spec/**/*_spec.rb'].exclude(*exclude_globs_only)        
+        globs = SPEC_DIRECTORIES.map {|g| File.join(g, '**/*_spec.rb')}
+        files = FileList['spec/rspec_provided/rspec_spec_fixes.rb', *globs].exclude(*exclude_globs_only)        
         puts "Running the following RSpec specs:"
         files.sort.each {|f| puts f}
         files
@@ -38,14 +46,13 @@ module Opal
       def self.append_additional_load_paths(server)
         [
           'rspec-core/spec' # a few spec support files live outside of rspec-core/spec/rspec and live in support
-        ].each {|p| server.append_path p}        
+        ].each {|p| server.append_path p}
       end
       
       # https://github.com/opal/opal/issues/821
-      def self.sub_in_end_of_line(files)
-        files_with_line_continue = [/core\/example_spec.rb/, /pending_spec.rb/]
+      def self.sub_in_end_of_line(files)        
         bad_regex = /^(.*)\\$/
-        fix_these_files = files.select {|f| files_with_line_continue.any? {|regex| regex.match(f)}}
+        fix_these_files = files.select {|f| FILES_WITH_LINE_CONTINUE.any? {|regex| regex.match(f)}}
         dir = Dir.mktmpdir
         missing = []
         fixed_temp_files = fix_these_files.map do |path|
