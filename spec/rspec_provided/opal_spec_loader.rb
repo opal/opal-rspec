@@ -15,10 +15,21 @@ module Opal
       end
       
       def self.get_file_list
-        exclude = File.read('spec/rspec_provided/spec_files_exclude.txt').split("\n").reject do |line|
-          line.empty? or line.start_with? '#'
+        line_num = 0
+        exclude = File.read('spec/rspec_provided/spec_files_exclude.txt').split("\n").map do |line|
+          line_num += 1
+          {filename: line, line_number: line_num}
+        end.reject do |line|
+          filename = line[:filename]
+          filename.empty? or filename.start_with? '#'
         end
-        files = FileList['spec/rspec_provided/rspec_spec_fixes.rb', 'rspec-core/spec/**/*_spec.rb'].exclude(*exclude)
+        missing = exclude.map do |f|
+          result = FileList[File.join('rspec-core/spec', f[:filename])]
+          result.any? ? nil : f
+        end.compact
+        raise "Expected to exclude #{missing} as noted in spec_files_exclude.txt but we didn't find these files. Has RSpec been upgraded?" if missing.any?
+        exclude_globs_only = exclude.map {|f| f[:filename]}
+        files = FileList['spec/rspec_provided/rspec_spec_fixes.rb', 'rspec-core/spec/**/*_spec.rb'].exclude(*exclude_globs_only)        
         puts "Running the following RSpec specs:"
         files.sort.each {|f| puts f}
         files
@@ -36,14 +47,17 @@ module Opal
         bad_regex = /^(.*)\\$/
         fix_these_files = files.select {|f| files_with_line_continue.any? {|regex| regex.match(f)}}
         dir = Dir.mktmpdir
+        missing = []
         fixed_temp_files = fix_these_files.map do |path|
           temp_filename = File.join dir, File.basename(path)
-          File.open path, 'r' do |input_file|
+          found_blackslash = false
+          File.open path, 'r' do |input_file|            
             File.open temp_filename, 'w' do |output_file|
               last_line_has_slash = false
               fixed_lines = input_file.inject do |line1, line2|
                 existing_lines = [*line1]
                 if (a_match = bad_regex.match existing_lines.last)
+                  found_blackslash = true
                   line_num = existing_lines.length
                   puts "Replacing trailing backlash, line #{line_num} in #{path} in new temp file #{temp_filename}"
                   without_last_line = existing_lines[0..-2]
@@ -54,13 +68,15 @@ module Opal
                 end
               end
               fixed_lines.each {|l| output_file << l}
-            end
+            end            
           end
+          missing << path unless found_blackslash
           temp_filename
-        end                
+        end                     
         at_exit do
           FileUtils.remove_entry dir
         end
+        raise "Expected to fix blackslash continuation in #{fix_these_files} but we didn't find any backslashes in #{missing}. Check if RSpec has been upgraded (maybe those blackslashes are gone??)" if missing.any?
         files_we_left_alone = files - fix_these_files
         files_we_left_alone + fixed_temp_files
       end
