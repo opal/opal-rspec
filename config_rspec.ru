@@ -1,4 +1,4 @@
-require 'opal/rspec/rake_task'
+require 'opal/rspec/cached_environment'
 require 'opal/rspec/sprockets_environment'
 require_relative 'spec/rspec_provided/opal_spec_loader'
 

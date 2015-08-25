@@ -63,8 +63,8 @@ end
 server. Add the following to a `config.ru` file (see config.ru in this GEM):
 
 ```ruby
-require 'bundler'
-Bundler.require
+require 'opal/rspec/cached_environment'
+require 'opal/rspec/sprockets_environment'
 # or use Opal::RSpec::SprocketsEnvironment.new(spec_pattern='spec/opal/**/*_spec.{rb,opal}') to customize the pattern
 sprockets_env = Opal::RSpec::SprocketsEnvironment.new
 run Opal::Server.new(sprockets: sprockets_env) { |s|
