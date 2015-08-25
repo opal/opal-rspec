@@ -40,6 +40,7 @@ Opal::RSpec::RakeTask.new(:rspec_specs) do |server, task|
   with_sub = Opal::RSpec::OpalSpecLoader.sub_in_end_of_line files
   task.files = with_sub
   Opal::RSpec::OpalSpecLoader.append_additional_load_paths server  
+  server.debug = ENV['OPAL_DEBUG']
 end
 
 # TODO: Test/support patterns from the browser runner
