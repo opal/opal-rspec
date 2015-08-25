@@ -1,4 +1,3 @@
-require 'opal/rspec/cached_environment'
 require 'opal/rspec/sprockets_environment'
 
 Opal::Processor.source_map_enabled = false

@@ -1,5 +1,4 @@
 require 'opal/rspec'
-require 'opal/rspec/cached_environment'
 require 'opal/rspec/sprockets_environment'
 
 module Opal
