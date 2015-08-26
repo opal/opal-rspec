@@ -20,15 +20,16 @@ module RSpec::ExampleGroups
     name = name.gsub(/^([^A-Z]|\z)/, 'Nested\1')
 
     name
-  end
+  end 
 
   # opal cannot use mutable strings
   def self.disambiguate(name, const_scope)
-    return name unless const_scope.const_defined?(name)
+    return name unless const_defined_on?(const_scope, name)
 
     # Add a trailing number if needed to disambiguate from an existing constant.
     name = name + "_2"
-    while const_scope.const_defined?(name)
+    
+    while const_defined_on?(const_scope, name)
       name = name.next
     end
 
