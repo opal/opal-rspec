@@ -18,7 +18,7 @@ describe Opal::RSpec::CachedEnvironment do
   end
   
   describe '#get_opal_spec_requires' do
-    subject { env.get_opal_spec_requires }
+    subject { env.get_opal_spec_requires.sort }
     
     context '1 path' do
       before do
@@ -57,7 +57,7 @@ describe Opal::RSpec::CachedEnvironment do
       
       let(:pattern) { ['foobar/spec/**/*_spec.rb', 'spec/foobar/other_spec.rb'] }
       
-      it { is_expected.to eq ['something/dummy_spec', 'other_spec'] }
+      it { is_expected.to eq ['other_spec', 'something/dummy_spec'] }
     end
     
     context 'absolute path and relative path that are not in the same tree' do

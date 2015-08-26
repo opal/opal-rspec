@@ -27,7 +27,7 @@ describe Opal::RSpec::SprocketsEnvironment do
     subject do
       # in subject to allow contexts to execute before logic
       env.add_spec_paths_to_sprockets
-      env.paths
+      env.paths.sort
     end
         
     context 'specs all 1 in path' do
@@ -67,7 +67,7 @@ describe Opal::RSpec::SprocketsEnvironment do
       
       let(:pattern) { ['spec/foobar/**/*_spec.rb', 'other_path/**/*.rb'] }
       
-      it { is_expected.to have_pathnames ['spec/foobar/', 'other_path/'] }
+      it { is_expected.to have_pathnames ['other_path/', 'spec/foobar/'] }
     end
     
     context 'specs in different paths, same name in middle dirs' do
