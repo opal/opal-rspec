@@ -1,0 +1,2 @@
+# Spec uses File I/O and opal-rspec customizes the IO class anyways (see NoCarriageReturnIO)
+BaseTextFormatter when closing the formatter does not close an already closed output stream

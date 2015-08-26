@@ -43,7 +43,38 @@ Opal::RSpec::RakeTask.new(:rspec_specs) do |server, task|
   server.debug = ENV['OPAL_DEBUG']
 end
 
-# TODO: Test/support patterns from the browser runner
+desc "Verifies RSpec's specs perform as they should on Opal"
+task :verify_rspec_specs do
+  # POINTS :EXAMPLE_GROUP TO THE SAME HASH OBJECT AS OTHER EXAMPLES IN THE SAME GROUP (PENDING: Cannot maintain this and provide full `:example_group` backwards compatibility (see GH #1490):()
+  EXPECTED_PENDING_COUNT = 1
+  test_output = `rake rspec_specs`
+  count_match = /(\d+) examples, (\d+) failures, (\d+) pending/.match(test_output)
+  raise 'Expected a finished count of test failures/success/etc. but did not see it' unless count_match
+  total, failed, pending = count_match.captures
+  actual_failures = []
+  test_output.scan /\d+\) (.*)/ do |match|
+    actual_failures << match[0].strip
+  end
+  actual_failures.sort!
+  expected_failures = Opal::RSpec::OpalSpecLoader.get_ignored_spec_failures
+  remaining_failures = actual_failures.reject do |actual|
+    expected_failures.any? do |expected|
+      Regexp.new(expected[:exclusion]).match actual
+    end
+  end
+  if remaining_failures.empty? and pending == EXPECTED_PENDING_COUNT.to_s
+    puts 'Test successful!'
+  else
+    puts "Raw output: #{test_output}"
+    puts "Unexpected failures:\n\n#{remaining_failures.join("\n")}\n"
+    puts '-----------Summary-----------'
+    puts "Expected pending count #{EXPECTED_PENDING_COUNT}, actual pending count #{pending}"
+    puts "Unexpected failure count #{remaining_failures.length}"
+    raise 'Test failed!'
+  end
+end
+
+# TODO: Test patterns using the browser/rack setup
 task :verify_other_spec_dir => [:verify_other_spec_dir_rake]
 
 desc 'Verifies other_spec_dir_via_rake task ran correctly'
