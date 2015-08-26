@@ -89,7 +89,7 @@ task :verify_rake_specs do
                       'promise non-assertion failure in promise no args',
                       'promise non-assertion failure in promise string arg',
                       'promise non-assertion failure in promise exception arg',
-                      'pending in example no promise would not fail otherwise, thus fails properly',
+                      'pending in example no promise would not fail otherwise, thus fails properly FIXED',
                       'async/sync mix fails properly if a sync test is among async tests',
                       'async/sync mix can finish running after a long delay and fail properly',
                       'be_truthy fails properly with truthy values',
