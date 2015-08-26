@@ -14,4 +14,5 @@ require 'opal/rspec/fixes/random'
 require 'opal/rspec/fixes/notifications'
 require 'opal/rspec/fixes/encoded_string'
 require 'opal/rspec/fixes/example_group'
-
+require 'opal/rspec/fixes/support'
+require 'opal/rspec/fixes/class'

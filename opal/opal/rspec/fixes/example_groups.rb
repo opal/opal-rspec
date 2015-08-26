@@ -5,14 +5,19 @@ module RSpec::ExampleGroups
 
     # convert to CamelCase
     name = ' ' + group.description
-    name = name.gsub(/[^0-9a-zA-Z]+([0-9a-zA-Z])/) { |m| m[1].upcase }
 
+    # replaced gsub! with name = name.gsub (mutable strings)
+    name = name.gsub(/[^0-9a-zA-Z]+([0-9a-zA-Z])/) { Regexp.last_match[1].upcase }
+
+    # mutable strings on these 2
     name = name.lstrip         # Remove leading whitespace
     name = name.gsub(/\W/, '') # JRuby, RBX and others don't like non-ascii in const names
 
     # Ruby requires first const letter to be A-Z. Use `Nested`
     # as necessary to enforce that.
-    name = name.gsub(/^([^A-Z]|$)/, 'Nested\1')
+    # name.gsub!(/\A([^A-Z]|\z)/, 'Nested\1')
+    # opal-rspec, mutable strings, also substituted in ^ for \A since \A is not supported in JS regex
+    name = name.gsub(/^([^A-Z]|\z)/, 'Nested\1')
 
     name
   end

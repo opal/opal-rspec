@@ -1,0 +1,2 @@
+# no private methods in Opal, __memoized shows up here
+ExampleGroup minimizes the number of methods that users could inadvertantly overwrite
