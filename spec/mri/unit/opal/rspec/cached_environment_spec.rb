@@ -1,89 +1,103 @@
 require 'rspec'
 require 'opal/rspec/cached_environment'
 require 'opal/rspec/sprockets_environment'
+require_relative 'temp_dir_helper'
 
 describe Opal::RSpec::CachedEnvironment do
   let(:pattern) { nil }
   let(:exclude_pattern) { nil }
   let(:files) { nil }
+  include_context :temp_dir
   
   let(:original_env) { Opal::RSpec::SprocketsEnvironment.new pattern, exclude_pattern, files }
-  
-  before do
+    
+  subject(:env) do
+    # in subject to allow contexts to execute before logic
     original_env.add_spec_paths_to_sprockets
+    original_env.cached 
   end
-  
-  subject(:env) { original_env.cached }
   
   describe '#get_opal_spec_requires' do
     subject { env.get_opal_spec_requires }
     
     context '1 path' do
-      let(:pattern) { 'spec/other/**/*_spec.rb' }
+      before do
+        create_dummy_spec_files 'spec/foobar/dummy_spec.rb', 'spec/foobar/ignored_spec.opal'
+      end
+      
+      let(:pattern) { 'spec/foobar/**/*_spec.rb' }
       
       it { is_expected.to eq ['dummy_spec'] }
     end
     
-    context '2 paths, same root' do    
-      let(:pattern) { ['spec/opal/**/*hooks_spec.rb', 'spec/other/**/*_spec.rb'] }
+    context '2 paths, same root' do      
+      before do
+        create_dummy_spec_files 'spec/foobar/dummy_spec.rb', 'spec/noway/other_spec.rb'
+      end
       
-      it { is_expected.to eq ['opal/after_hooks_spec', 'opal/around_hooks_spec', 'opal/before_hooks_spec', 'other/dummy_spec'] }
+      let(:pattern) { ['spec/foobar/**/*y_spec.rb', 'spec/noway/**/*_spec.rb'] }
+      
+      it { is_expected.to eq ['foobar/dummy_spec', 'noway/other_spec'] }
     end
     
     context '2 paths, different root' do
-      let(:pattern) { ['spec/other/**/*_spec.rb', 'util/**/*.rb'] }
+      before do
+        create_dummy_spec_files 'spec/foobar/dummy_spec.rb', 'other_path/other_spec.rb'
+      end
       
-      it { is_expected.to eq ['dummy_spec', 'create_requires'] }
+      let(:pattern) { ['spec/foobar/**/*_spec.rb', 'other_path/**/*.rb'] }
+      
+      it { is_expected.to eq ['dummy_spec', 'other_spec'] }
     end    
     
     context 'specs in different paths, same name in middle dirs' do
-      let(:pattern) { ['rspec-core/spec/**/*_spec.rb', 'spec/rspec_provided/rspec_spec_fixes.rb'] }
+      before do
+        create_dummy_spec_files 'foobar/spec/something/dummy_spec.rb', 'spec/foobar/other_spec.rb'
+      end
       
-      it { is_expected.to include('rspec_spec_fixes', 'rspec/core_spec') }
+      let(:pattern) { ['foobar/spec/**/*_spec.rb', 'spec/foobar/other_spec.rb'] }
+      
+      it { is_expected.to eq ['something/dummy_spec', 'other_spec'] }
     end
     
     context 'absolute path and relative path that are not in the same tree' do
-      let(:tmp_spec_dir) { Dir.mktmpdir }
-      
-      let(:dummy_spec) do
-        fake_spec = File.join tmp_spec_dir, 'junk_spec.rb'
-        FileUtils.touch fake_spec
-        fake_spec
+      before do
+        create_dummy_spec_files 'spec/foobar/dummy_spec.rb', 'stuff/bar/other_spec.rb'
       end
       
-      let(:files) { FileList['spec/other/**/*_spec.rb', dummy_spec] }
+      let(:files) { FileList['spec/foobar/**/*_spec.rb', 'stuff/bar/other_spec.rb'] }
       
-      after do
-        FileUtils.remove_entry tmp_spec_dir
-      end      
-      
-      it { is_expected.to eq ['dummy_spec', 'junk_spec'] }
+      it { is_expected.to eq ['dummy_spec', 'other_spec'] }
     end
     
     context 'exclude pattern' do
+      before do
+        create_dummy_spec_files 'spec/foobar/hello1_spec.rb', 'spec/foobar/hello2_spec.rb', 'spec/foobar/bye1_spec.rb', 'spec/foobar/bye2_spec.rb'
+      end
+      
       let(:pattern) { 'spec/**/*_spec.rb' }
       
       context 'single' do        
-        let(:exclude_pattern) { '**/*/*_hooks_spec.rb' }
+        let(:exclude_pattern) { '**/*/*1_spec.rb' }
         
-        it { is_expected.to include 'mri/integration/browser_spec' }
-        it { is_expected.to include 'opal/async_spec' }
-        it { is_expected.to_not include('opal/after_hooks_spec', 'opal/around_hooks_spec') }
+        it { is_expected.to eq ['foobar/bye2_spec', 'foobar/hello2_spec'] }
       end
       
       context 'multiple' do      
-        let(:exclude_pattern) { ['**/*/*_hooks_spec.rb', '**/*/a*_spec.rb'] }
+        let(:exclude_pattern) { ['**/*/*1_spec.rb', '**/*/bye*_spec.rb' ] }
         
-        it { is_expected.to include 'mri/integration/browser_spec' }
-        it { is_expected.to_not include 'opal/async_spec' }
-        it { is_expected.to_not include('opal/after_hooks_spec', 'opal/around_hooks_spec') }
+        it { is_expected.to eq ['foobar/hello2_spec'] }
       end
     end
     
     context 'files' do
-      let(:files) { FileList['spec/other/**/*_spec.rb'] }
+      before do
+        create_dummy_spec_files 'spec/foobar/hello1_spec.rb', 'spec/foobar/hello2_spec.rb', 'spec/foobar/bye1_spec.rb', 'spec/foobar/bye2_spec.rb'
+      end
       
-      it { is_expected.to eq ['dummy_spec'] }
+      let(:files) { FileList['spec/**/h*_spec.rb'] }
+      
+      it { is_expected.to eq ['hello1_spec', 'hello2_spec'] }
     end
   end  
 end

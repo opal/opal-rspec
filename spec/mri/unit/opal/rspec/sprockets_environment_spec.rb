@@ -1,10 +1,10 @@
 require 'rspec'
 require 'opal/rspec/sprockets_environment'
+require_relative 'temp_dir_helper'
 
 describe Opal::RSpec::SprocketsEnvironment do
+  include_context :temp_dir
   let(:args) { [] }
-  let(:pattern_with_some_specs) { 'spec/other/**/*_spec.rb' }
-  let(:different_directory_specs) { 'spec/opal/**/*_spec.rb' }
   subject(:env) { Opal::RSpec::SprocketsEnvironment.new *args }
   
   RSpec::Matchers.define :have_pathnames do |expected|
@@ -24,60 +24,71 @@ describe Opal::RSpec::SprocketsEnvironment do
   describe '#add_spec_paths_to_sprockets' do
     let(:args) { [pattern] }
     
-    subject { env.paths }
-    
-    before do
+    subject do
+      # in subject to allow contexts to execute before logic
       env.add_spec_paths_to_sprockets
-    end  
-    
+      env.paths
+    end
+        
     context 'specs all 1 in path' do
-      let(:pattern) { 'spec/opal/**/*_spec.rb' }
+      before do
+        create_dummy_spec_files 'spec/foobar/dummy_spec.rb', 'spec/foobar/ignored_spec.opal'
+      end
       
-      it { is_expected.to have_pathnames ['spec/opal/'] }
+      let(:pattern) { 'spec/foobar/**/*_spec.rb' }
+      
+      it { is_expected.to have_pathnames ['spec/foobar/'] }
     end
     
     context 'multiple patterns' do
-      let(:pattern) { ['spec/opal/**/*hooks_spec.rb', 'spec/opal/**/matchers_spec.rb'] }
+      before do
+        create_dummy_spec_files 'spec/foobar/dummy_spec.rb', 'spec/foobar/ignored_spec.opal'
+      end
       
-      it { is_expected.to have_pathnames ['spec/opal/'] }
+      let(:pattern) { ['spec/foobar/**/*_spec.rb', 'spec/foobar/**/*_spec.opal'] }
+      
+      it { is_expected.to have_pathnames ['spec/foobar/'] }
     end
     
     context 'specs in different paths, same root' do
-      let(:pattern) { ['spec/opal/**/*hooks_spec.rb', 'spec/other/**/*_spec.rb'] }
+      before do
+        create_dummy_spec_files 'spec/foobar/dummy_spec.rb', 'spec/noway/other_spec.rb'
+      end
+      
+      let(:pattern) { ['spec/foobar/**/*y_spec.rb', 'spec/noway/**/*_spec.rb'] }      
       
       it { is_expected.to have_pathnames ['spec'] }
     end
     
     context 'specs in different paths, different root' do
-      let(:pattern) { ['spec/other/**/*_spec.rb', 'util/**/*.rb'] }
+      before do
+        create_dummy_spec_files 'spec/foobar/dummy_spec.rb', 'other_path/other_spec.rb'
+      end
       
-      it { is_expected.to have_pathnames ['spec/other/', 'util/'] }
+      let(:pattern) { ['spec/foobar/**/*_spec.rb', 'other_path/**/*.rb'] }
+      
+      it { is_expected.to have_pathnames ['spec/foobar/', 'other_path/'] }
     end
     
     context 'specs in different paths, same name in middle dirs' do
-      let(:pattern) { ['rspec-core/spec/**/*_spec.rb', 'spec/rspec_provided/rspec_spec_fixes.rb'] }
+      before do
+        create_dummy_spec_files 'foobar/spec/something/dummy_spec.rb', 'spec/foobar/other_spec.rb'
+      end
       
-      it { is_expected.to have_pathnames ['rspec-core/spec/', 'spec/rspec_provided'] }
+      let(:pattern) { ['foobar/spec/**/*_spec.rb', 'spec/foobar/other_spec.rb'] }
+      
+      it { is_expected.to have_pathnames ['foobar/spec/', 'spec/foobar'] }
     end
     
     context 'absolute path and relative path that are not in the same tree' do
-      let(:tmp_spec_dir) { Dir.mktmpdir }
-      
-      let(:dummy_spec) do
-        fake_spec = File.join tmp_spec_dir, 'junk_spec.rb'
-        FileUtils.touch fake_spec
-        fake_spec
+      before do
+        create_dummy_spec_files 'spec/foobar/dummy_spec.rb', 'stuff/bar/other_spec.rb'
       end
       
-      let(:files) { FileList['spec/other/**/*_spec.rb', dummy_spec] }
-      
-      after do
-        FileUtils.remove_entry tmp_spec_dir
-      end      
-
+      let(:files) { FileList['spec/foobar/**/*_spec.rb', 'stuff/bar/other_spec.rb'] }
       let(:args) { [nil, nil, files] }    
       
-      it { is_expected.to have_pathnames ['spec/other', tmp_spec_dir] }      
+      it { is_expected.to have_pathnames ['spec/foobar', 'stuff/bar'] }      
     end   
   end
 end

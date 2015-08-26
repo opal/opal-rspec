@@ -1,8 +1,10 @@
 require 'rspec'
 require 'opal/rspec/rake_task'
 require 'rack'
+require_relative 'temp_dir_helper'
 
-describe Opal::RSpec::RakeTask do  
+describe Opal::RSpec::RakeTask do
+  include_context :temp_dir 
   let(:captured_opal_server) { {} }
     
   RSpec::Matchers.define :require_opal_specs do |matcher|
@@ -74,9 +76,13 @@ describe Opal::RSpec::RakeTask do
       Opal::RSpec::RakeTask.new(task_name)
     end
     
+    before do
+      create_dummy_spec_files 'spec/something/dummy_spec.rb'
+    end
+    
     it { is_expected.to have_attributes pattern: nil }
     it { is_expected.to append_opal_path 'spec' }
-    it { is_expected.to require_opal_specs include('opal/after_hooks_spec', 'opal/around_hooks_spec', 'mri/integration/browser_spec') }
+    it { is_expected.to require_opal_specs eq ['something/dummy_spec'] }
   end
   
   context 'pattern' do
@@ -84,6 +90,10 @@ describe Opal::RSpec::RakeTask do
       Opal::RSpec::RakeTask.new(task_name) do |server, task|
         task.pattern = 'spec/other/**/*_spec.rb'
       end
+    end
+    
+    before do
+      create_dummy_spec_files 'spec/other/dummy_spec.rb'
     end
   
     it { is_expected.to have_attributes pattern: 'spec/other/**/*_spec.rb' }
@@ -97,6 +107,10 @@ describe Opal::RSpec::RakeTask do
       Opal::RSpec::RakeTask.new(task_name) do |server, task|
         task.files = FileList['spec/other/**/*_spec.rb']
       end
+    end
+    
+    before do
+      create_dummy_spec_files 'spec/other/dummy_spec.rb'
     end
   
     it { is_expected.to have_attributes files: FileList['spec/other/**/*_spec.rb'] }
