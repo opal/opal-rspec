@@ -9,6 +9,10 @@ describe Opal::RSpec::CachedEnvironment do
   
   let(:original_env) { Opal::RSpec::SprocketsEnvironment.new pattern, exclude_pattern, files }
   
+  before do
+    original_env.add_spec_paths_to_sprockets
+  end
+  
   subject(:env) { original_env.cached }
   
   describe '#get_opal_spec_requires' do
@@ -30,11 +34,7 @@ describe Opal::RSpec::CachedEnvironment do
       let(:pattern) { ['spec/other/**/*_spec.rb', 'util/**/*.rb'] }
       
       it { is_expected.to eq ['dummy_spec', 'create_requires'] }
-    end
-    
-    context 'weird issue' do
-      pending 'write this'
-    end
+    end    
     
     context 'specs in different paths, same name in middle dirs' do
       let(:pattern) { ['rspec-core/spec/**/*_spec.rb', 'spec/rspec_provided/rspec_spec_fixes.rb'] }

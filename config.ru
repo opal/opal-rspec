@@ -1,4 +1,4 @@
-require 'opal/rspec/sprockets_environment'
+require 'opal/rspec'
 
 Opal::Processor.source_map_enabled = false
 

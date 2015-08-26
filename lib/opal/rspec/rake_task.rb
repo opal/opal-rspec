@@ -1,5 +1,4 @@
 require 'opal/rspec'
-require 'opal/rspec/sprockets_environment'
 
 module Opal
   module RSpec
@@ -36,8 +35,8 @@ module Opal
             sprockets_env.spec_pattern = self.pattern if self.pattern
             sprockets_env.spec_exclude_pattern = self.exclude_pattern
             sprockets_env.spec_files = self.files
-            raise 'Cannot supply both a pattern and files!' if self.files and self.pattern
-            sprockets_env.get_opal_spec_paths.each { |spec_path| s.append_path spec_path }
+            raise 'Cannot supply both a pattern and files!' if self.files and self.pattern            
+            sprockets_env.add_spec_paths_to_sprockets
           }
 
           server = Thread.new do

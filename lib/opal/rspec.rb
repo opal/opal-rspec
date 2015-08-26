@@ -1,6 +1,7 @@
 require 'opal'
 require 'opal/rspec/version'
 require 'opal/minitest'
+require 'opal/rspec/sprockets_environment'
 
 # Just register our opal code path with opal build tools
 Opal.append_path File.expand_path('../../../opal', __FILE__)

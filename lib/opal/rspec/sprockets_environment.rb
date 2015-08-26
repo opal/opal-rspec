@@ -8,43 +8,17 @@ module Opal
       DEFAULT_PATTERN = 'spec/**/*_spec.{rb,opal}'
       # this class accessible from config.ru and the rask task initializer
       
-      attr_reader :spec_pattern, :spec_exclude_pattern, :spec_files
-      
-      def spec_pattern=(pattern)
-        reset_paths
-        @spec_pattern = pattern
-      end
-      
-      def spec_exclude_pattern=(pattern)
-        @spec_exclude_pattern = pattern
-      end
-      
-      def spec_files=(files)
-        reset_paths
-        @spec_files = files
-      end
+      attr_accessor :spec_pattern, :spec_exclude_pattern, :spec_files      
       
       def initialize(spec_pattern=DEFAULT_PATTERN, spec_exclude_pattern=nil, spec_files=nil)
         @spec_pattern = spec_pattern
         @spec_exclude_pattern = spec_exclude_pattern
         @spec_files = spec_files
         super()
-      end
+      end     
       
-      def reset_paths
-        @opal_spec_load_paths = nil
-      end
-      
-      def get_opal_spec_paths
-        # we can hold onto this since it's set by the time Opal::Server starts up
-        @opal_spec_load_paths ||= begin
-          base_paths = spec_files ? get_files_directories : strip_globs_from_patterns
-          # Want to get the smallest # of load paths that's common between our patterns
-          array_or_single = base_paths.inject do |path1, path2|
-            with_common_paths_replaced path1, path2            
-          end
-          [*array_or_single]          
-        end
+      def add_spec_paths_to_sprockets
+        get_spec_load_paths.each {|p| append_path p }        
       end
       
       def cached
@@ -52,6 +26,15 @@ module Opal
       end
       
       private
+      
+      def get_spec_load_paths
+        base_paths = spec_files ? get_files_directories : strip_globs_from_patterns
+        # Want to get the smallest # of load paths that's common between our patterns
+        array_or_single = base_paths.inject do |path1, path2|
+          with_common_paths_replaced path1, path2            
+        end
+        [*array_or_single]
+      end
       
       def strip_globs_from_patterns
         # only using spec_pattern here since we only need paths for inclusion
