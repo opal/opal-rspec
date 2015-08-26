@@ -9,7 +9,7 @@ sprockets_env = Opal::RSpec::SprocketsEnvironment.new(spec_pattern=nil,spec_excl
 run Opal::Server.new(sprockets: sprockets_env) { |s|
   s.main = 'opal/rspec/sprockets_runner'
   Opal::RSpec::OpalSpecLoader.stub_requires
-  sprockets_env.add_spec_paths_to_sprockets  
+  sprockets_env.add_spec_paths_to_sprockets
   Opal::RSpec::OpalSpecLoader.append_additional_load_paths s
   s.debug = ENV['OPAL_DEBUG']
 }
