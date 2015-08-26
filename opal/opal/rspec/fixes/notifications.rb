@@ -46,16 +46,6 @@ module ::RSpec::Core::Notifications
       end
       formatted
     end
-    
-    private   
-    
-    def add_shared_group_line(lines, colorizer)
-      unless shared_group_line == ""
-        # string mutation        
-        lines = lines + colorizer.wrap(shared_group_line, RSpec.configuration.default_color)
-      end
-      lines
-    end    
   end
   
   # SummaryNotification is a Struct
