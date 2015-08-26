@@ -1,2 +1,8 @@
 # Spec uses File I/O and opal-rspec customizes the IO class anyways (see NoCarriageReturnIO)
 BaseTextFormatter when closing the formatter does not close an already closed output stream
+
+# Deprecation formatter uses this, will trigger File I/O
+with a File deprecation_stream
+
+# Profiling within JSON formatter not supported either (profiling and Opal do not work yet)
+RSpec::Core::Formatters::JsonFormatter#dump_profile

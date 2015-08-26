@@ -1,0 +1,8 @@
+# Uses I/O
+RSpec::Core::Metadata :file_path
+
+# location, file path, line number
+RSpec::Core::Metadata for an example extracts .* caller
+
+# We can't figure this out in JS yet
+RSpec::Core::Metadata :line_number

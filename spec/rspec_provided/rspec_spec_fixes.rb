@@ -35,7 +35,7 @@ RSpec.configure do |c|
   # will make it easier to exclude certain specs
   c.default_formatter = ::RSpec::Core::Formatters::DocumentationFormatter if Opal::RSpec::Runner.phantom?
   
-  c.full_description = 'disambiguates name collisions by appending a number'
+  #c.full_description = 'ExampleGroup'
   
   # excludes
   

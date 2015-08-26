@@ -36,3 +36,6 @@
 
 # I/O heavy and opal-rspec has to do its own initializing anyways
 **/project_initializer_spec.rb
+
+# profiling isn't supported on Opal
+**/profile_formatter_spec.rb
