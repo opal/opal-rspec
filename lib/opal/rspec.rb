@@ -11,7 +11,8 @@ Opal.append_path File.expand_path('../../../opal', __FILE__)
   Opal.append_path File.expand_path("../../../#{gem}/lib", __FILE__)
 end
 
-Opal::Processor.dynamic_require_severity = :warning
+# Since we have better specs than before (and a script to deal with this), ignoring
+Opal::Processor.dynamic_require_severity = :ignore
 
 stubs = [
   'mutex_m', # Used with some threading operations but seems to run OK without this
