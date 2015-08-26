@@ -36,3 +36,12 @@ module RSpec::ExampleGroups
     name
   end
 end
+
+# # https://github.com/opal/opal/issues/1080
+module RSpec::ExampleGroups
+  original_constants = method(:constants)
+
+  self.class.send(:define_method, :constants) do
+    original_constants.call().dup
+  end
+end

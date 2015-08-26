@@ -1,2 +1,5 @@
 # delay methods defined for async testing cause this to fail
 ExampleGroup minimizes the number of methods that users could inadvertantly overwrite
+
+# There is a carve out for Rubinius, but not for Opal
+ExampleGroup disambiguates name collisions by appending a number

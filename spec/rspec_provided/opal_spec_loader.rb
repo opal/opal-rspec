@@ -5,7 +5,7 @@ module Opal
     class OpalSpecLoader
       FILES_WITH_LINE_CONTINUE = [/core\/example_spec.rb/, /pending_spec.rb/]
       # will have a glob appended to each element in the array
-      SPEC_DIRECTORIES = %w{rspec-core/spec}
+      SPEC_DIRECTORIES = %w{rspec-core/spec spec/rspec_provided/opal_alternates}
       REQUIRE_STUBS = [
           'rubygems',
           'aruba/api', # Cucumber lib that supports file creation during testing, N/A for us
