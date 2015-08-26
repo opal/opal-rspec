@@ -1,7 +1,6 @@
 module Opal
   module RSpec
     class Runner
-
       class << self
         def browser?
           `typeof(document) !== "undefined"`
@@ -12,15 +11,11 @@ module Opal
         end
 
         def default_formatter
-          if phantom?
-            TextFormatter
-          else # browser
-            BrowserFormatter
-          end
+          phantom? ? ::RSpec::Core::Formatters::ProgressFormatter : BrowserFormatter
         end
 
         def autorun          
-            Runner.new.run          
+          Runner.new.run          
         end
       end
 
@@ -30,23 +25,32 @@ module Opal
         @configuration = ::RSpec.configuration
       end
 
-      def run(err=$stdout, out=$stdout)
-        @configuration.error_stream = err
-        @configuration.output_stream ||= out
+      def run()
+        # see NoCarriageReturnIO source for why this is being done
+        no_cr = NoCarriageReturnIO.new
+        @configuration.error_stream = no_cr
+        @configuration.output_stream = no_cr
         @world.announce_filters
 
         self.start
-        run_examples.then do          
+        run_examples.then do |result|          
           self.finish
+          finish_with_code(result ? 0 : 1)
         end        
       end
 
       def run_examples
-        @world.example_groups.inject(Promise.value) do |previous_promise, group|
-          previous_promise.then do
+        results = []
+        last_promise = @world.example_groups.inject(Promise.value) do |previous_promise, group|
+          previous_promise.then do |result|
+            results << result
             group.run @reporter
           end
-        end        
+        end
+        last_promise.then do |result|
+          results << result
+          results.all?
+        end
       end    
 
       def config_hook(hook_when)
@@ -68,6 +72,17 @@ module Opal
       def finish
         config_hook :after
         @reporter.finish
+      end
+      
+      def finish_with_code(code)
+        %x{
+          if (typeof(phantom) !== "undefined") {
+            phantom.exit(code);
+          }
+          else {
+            Opal.global.OPAL_SPEC_CODE = code;
+          }
+        }
       end
     end
   end

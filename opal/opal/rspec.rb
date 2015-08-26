@@ -1,7 +1,6 @@
 require 'opal/rspec/pre_require_fixes'
 require 'opal/rspec/requires'
 require 'opal/rspec/fixes'
-require 'opal/rspec/text_formatter'
 require 'opal/rspec/browser_formatter'
 require 'opal/rspec/runner'
 require 'opal/rspec/async'

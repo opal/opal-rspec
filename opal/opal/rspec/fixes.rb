@@ -11,3 +11,7 @@ require 'opal/rspec/fixes/formatter'
 require 'opal/rspec/fixes/example'
 require 'opal/rspec/fixes/expectations'
 require 'opal/rspec/fixes/random'
+require 'opal/rspec/fixes/notifications'
+require 'opal/rspec/fixes/encoded_string'
+require 'opal/rspec/fixes/example_group'
+
