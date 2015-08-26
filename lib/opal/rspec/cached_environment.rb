@@ -1,5 +1,4 @@
 require 'sprockets'
-require 'pathname'
 
 module Opal
   module RSpec    
