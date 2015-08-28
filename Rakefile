@@ -6,9 +6,10 @@ Bundler::GemHelper.install_tasks
 require 'opal/rspec/rake_task'
 require_relative 'spec/rspec_provided/opal_spec_loader'
 
-task :default => [:unit_specs, :verify_rake_specs, :integration_specs, :verify_other_spec_dir]
+task :default => [:unit_specs, :verify_opal_specs, :integration_specs, :verify_other_specs]
 
-Opal::RSpec::RakeTask.new(:specs_via_rake) do |server, task|
+desc 'Runs a set of specs in opal'
+Opal::RSpec::RakeTask.new(:opal_specs) do |server, task|
   task.pattern = 'spec/opal/**/*_spec.{rb,opal}'
 end
 
@@ -18,7 +19,7 @@ task :generate_requires do
   sh 'ruby -Irspec/lib -Irspec-core/lib/rspec -Irspec-support/lib/rspec util/create_requires.rb'
 end
 
-desc 'Runs a test to test browser based specs'
+desc 'Runs a test to test browser based specs using Opal specs in spec/opal'
 RSpec::Core::RakeTask.new :integration_specs do |t|
   t.pattern = 'spec/mri/integration/**/*_spec.rb'
 end
@@ -29,7 +30,7 @@ RSpec::Core::RakeTask.new :unit_specs do |t|
 end
 
 desc 'A more limited spec suite to test pattern usage'
-Opal::RSpec::RakeTask.new(:other_spec_dir_via_rake) do |server, task|
+Opal::RSpec::RakeTask.new(:other_specs) do |server, task|
   task.pattern = 'spec/other/**/*_spec.rb'
 end
 
@@ -43,7 +44,7 @@ Opal::RSpec::RakeTask.new(:rspec_specs) do |server, task|
   server.debug = ENV['OPAL_DEBUG']
 end
 
-desc "Verifies RSpec's specs perform as they should on Opal"
+desc "Verifies rspec_specs runs correctly"
 task :verify_rspec_specs do
   # POINTS :EXAMPLE_GROUP TO THE SAME HASH OBJECT AS OTHER EXAMPLES IN THE SAME GROUP (PENDING: Cannot maintain this and provide full `:example_group` backwards compatibility (see GH #1490):()
   EXPECTED_PENDING_COUNT = 1
@@ -64,6 +65,7 @@ task :verify_rspec_specs do
   end
   if remaining_failures.empty? and pending == EXPECTED_PENDING_COUNT.to_s
     puts 'Test successful!'
+    puts "#{total} total specs, #{failed} expected failures, #{pending} expected pending"
   else
     puts "Raw output: #{test_output}"
     puts "Unexpected failures:\n\n#{remaining_failures.join("\n")}\n"
@@ -74,21 +76,18 @@ task :verify_rspec_specs do
   end
 end
 
-# TODO: Test patterns using the browser/rack setup
-task :verify_other_spec_dir => [:verify_other_spec_dir_rake]
-
-desc 'Verifies other_spec_dir_via_rake task ran correctly'
-task :verify_other_spec_dir_rake do
-  test_output = `rake other_spec_dir_via_rake`
-  unless /1 examples, 0 failures, 0 pending/.match(test_output)
-    raise "Expected 1 passing example, but got output #{test_output}"
+desc 'Verifies other_spec_dir task ran correctly'
+task :verify_other_specs do
+  test_output = `rake other_specs`
+  unless /1 example, 0 failures/.match(test_output)
+    raise "Expected 1 passing example, but got output '#{test_output}'"
   end
   puts 'Test successful'
 end
 
-desc 'Will run a spec suite (rake specs_via_rake) and check for expected combination of failures and successes'
-task :verify_rake_specs do
-  test_output = `rake specs_via_rake`
+desc 'Will run a spec suite (rake opal_specs) and check for expected combination of failures and successes'
+task :verify_opal_specs do
+  test_output = `rake opal_specs`
   raise "Expected test runner to fail due to failed tests, but got return code of #{$?.exitstatus}" if $?.success?
   count_match = /(\d+) examples, (\d+) failures, (\d+) pending/.match(test_output)
   raise 'Expected a finished count of test failures/success/etc. but did not see it' unless count_match
@@ -127,6 +126,7 @@ task :verify_rake_specs do
 
   if failure_messages.empty?
     puts 'Test successful!'
+    puts "#{total} total specs, #{failed} expected failures, #{pending} expected pending"
   else
     raise "Test failed, reasons:\n\n#{failure_messages.join("\n")}\n"
   end
