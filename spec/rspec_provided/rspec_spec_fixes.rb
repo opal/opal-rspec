@@ -7,6 +7,7 @@ require 'rspec/support/spec/formatting_support'
 require 'rspec/support/spec/with_isolated_directory'
 require 'rspec/support/ruby_features'
 require 'support/shared_example_groups'
+require 'sandboxing'
 
 # begin mocks
 class ::Dir
@@ -34,11 +35,6 @@ require 'rspec/support/spec'
 RSpec.configure do |c|
   # will make it easier to exclude certain specs
   c.default_formatter = ::RSpec::Core::Formatters::DocumentationFormatter if Opal::RSpec::Runner.phantom?
-  
-  #c.full_description = 'ExampleGroup'
-  
-  # excludes
-  
 end
 # end RSpec config
 
@@ -63,7 +59,7 @@ end
 # Since our call site (locating which line a test is on does not yet work, we don't want to fail all of these mocks)
 module RSpecHelpers
   def expect_deprecation_with_call_site(file, line, snippet=//)
-    expect(RSpec.configuration.reporter).to receive(:deprecation) do |options|      
+    expect(RSpec.configuration.reporter).to receive(:deprecation) do |options|
       #expect(options[:call_site]).to include([file, line].join(':'))
       expect(options[:deprecated]).to match(snippet)
     end
@@ -89,5 +85,5 @@ module RSpecHelpers
       expect(message).to match expected
       #expect(message).to match(/Called from #{file}:#{line}/)
     end
-  end  
+  end
 end

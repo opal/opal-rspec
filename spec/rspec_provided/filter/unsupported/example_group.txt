@@ -3,3 +3,6 @@ ExampleGroup minimizes the number of methods that users could inadvertantly over
 
 # There is a carve out for Rubinius, but not for Opal
 ExampleGroup disambiguates name collisions by appending a number
+
+# location, file path, line number
+ExampleGroup ordering when tagged with an unrecognized ordering prints a warning so users are notified of their mistake
