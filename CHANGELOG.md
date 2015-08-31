@@ -8,6 +8,11 @@
 
 *   Support passing a test pattern (include and exclude) and FileLists besides 'spec/**/*_spec.rb_ using the Rake task
 
+*   Fixed issues with RSpec's BaseTextFormatter and made ProgressFormatter the default when run via the Rake task
+
+*   Fixed issues with constants/example group naming
+
+
 ## 0.4.3 (2015-06-14)
 
 *   Allow the gem to be run under Opal 0.7 and 0.8
