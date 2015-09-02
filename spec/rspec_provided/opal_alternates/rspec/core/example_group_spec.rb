@@ -52,5 +52,35 @@ module RSpec::Core
         expect(example.execution_result.exception.message).to eq("error in before all")
       end
     end
+
+    describe "#run_examples" do
+      let(:reporter) { double("reporter").as_null_object }
+
+      it "returns false if any of the examples fail" do
+        group = ExampleGroup.describe('group') do
+          example('ex 1') { expect(1).to eq(1) }
+          example('ex 2') { expect(1).to eq(2) }
+        end
+        allow(group).to receive(:filtered_examples) { group.examples }
+        # expect(group.run(reporter)).to be_falsey
+        # Promise
+        result = group.run(reporter)
+        expect(group.run(reporter).value).to be_falsey
+      end
+
+      it "runs all examples, regardless of any of them failing" do
+        group = ExampleGroup.describe('group') do
+          example('ex 1') { expect(1).to eq(2) }
+          example('ex 2') { expect(1).to eq(1) }
+        end
+        allow(group).to receive(:filtered_examples) { group.examples }
+        group.filtered_examples.each do |example|
+          expect(example).to receive(:run)
+        end
+        # expect(group.run(reporter)).to be_falsey
+        # Promise
+        expect(group.run(reporter).value).to be_falsey
+      end
+    end
   end
 end

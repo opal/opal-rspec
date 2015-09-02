@@ -3,3 +3,5 @@ ExampleGroup minimizes the number of methods that users could inadvertantly over
 
 # Invokes ExampleGroup#run directly, so of course it gets a promise back rather than false
 ExampleGroup #before, after, and around hooks treats an error in before.* as a failure
+ExampleGroup#run_examples returns false if any of the examples fail
+ExampleGroup#run_examples runs all examples, regardless of any of them failing

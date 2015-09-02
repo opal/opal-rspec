@@ -80,8 +80,10 @@ class ::RSpec::Core::Example
       end
     end.then do
       finish(reporter)
-    end.ensure do
+    end.ensure do |result|
       RSpec.current_example = nil
+      # promise always/ensure do not behave exactly like ensure, need to be explicit about value being returned
+      result
     end
   end
 end
