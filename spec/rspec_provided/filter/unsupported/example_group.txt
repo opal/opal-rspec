@@ -6,3 +6,11 @@ ExampleGroup disambiguates name collisions by appending a number
 
 # location, file path, line number
 ExampleGroup ordering when tagged with an unrecognized ordering prints a warning so users are notified of their mistake
+
+# File path, line number
+ExampleGroup#metadata adds the the file_path to metadata
+ExampleGroup#metadata has a reader for file_path
+ExampleGroup#metadata adds the line_number to metadata
+
+# Back trace, line number
+ExampleGroup.pending sets the backtrace to the example definition so it can be located by the user

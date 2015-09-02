@@ -1,2 +1,5 @@
 # no private methods in Opal, __memoized shows up here
 ExampleGroup minimizes the number of methods that users could inadvertantly overwrite
+
+# Invokes ExampleGroup#run directly, so of course it gets a promise back rather than false
+ExampleGroup #before, after, and around hooks treats an error in before.* as a failure
