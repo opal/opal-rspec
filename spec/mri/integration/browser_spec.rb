@@ -13,18 +13,18 @@ describe 'browser formatter', type: :feature do
         # Specs should run in 12 seconds but in case Travis takes longer, provide some cushion
         Capybara.default_wait_time = 40
       end
-      
+
       after do
         js_errors = error_fetcher[page]
         puts "Javascript errors: #{js_errors}" if js_errors.any?
       end
-    
+
       it 'matches test results' do
-        expect(page).to have_content '182 examples, 65 failures, 22 pending'
-      end      
+        expect(page).to have_content '142 examples, 40 failures, 12 pending'
+      end
     end
   end
-  
+
   # Travis version (4.x QT) might be causing this to fail
   #include_examples :browser, :webkit, lambda {|page| page.driver.error_messages}
   include_examples :browser, :selenium, lambda {|page| page.evaluate_script('window.jsErrors') }

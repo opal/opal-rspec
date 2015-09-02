@@ -141,8 +141,9 @@ end
 Advantages:
 * Assuming your subject under test (or matchers) return/use promises, the syntax is the same for sync or async specs
 
-Limitations:
+Limitations (apply to both async approaches):
 * Right now, async `before(:context)` and `after(:context)` hooks cannot be async
+* You cannot use an around hooks on any example where before(:each)/after(:each) hooks are async or with an async implicit subject
 * `let` dependencies cannot be async, only subject
 * Opal-rspec will not timeout while waiting for your async code to finish
 

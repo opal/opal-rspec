@@ -44,7 +44,7 @@ Opal::RSpec::RakeTask.new(:rspec_specs) do |server, task|
   server.debug = ENV['OPAL_DEBUG']
 end
 
-desc "Verifies rspec_specs runs correctly"
+desc 'Verifies rspec_specs runs correctly'
 task :verify_rspec_specs do
   # POINTS :EXAMPLE_GROUP TO THE SAME HASH OBJECT AS OTHER EXAMPLES IN THE SAME GROUP (PENDING: Cannot maintain this and provide full `:example_group` backwards compatibility (see GH #1490):()
   EXPECTED_PENDING_COUNT = 1
@@ -112,9 +112,9 @@ task :verify_opal_specs do
     end
   end
 
-  expected_pending_count = 22
+  expected_pending_count = 12
   expected_failures = File.read('spec/opal/expected_failures.txt').split("\n").compact.sort
-  
+
   if actual_failures != expected_failures
     unexpected = actual_failures - expected_failures
     missing = expected_failures - actual_failures
