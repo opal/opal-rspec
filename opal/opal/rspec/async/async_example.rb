@@ -10,15 +10,21 @@ class ::RSpec::Core::Example
     end
   end
 
+  # Might be a better way to do this, but then you end up with promises around the expectation handlers, which could get ugly
   def resolve_subject
-    if example_group_instance.respond_to? :subject and example_group_instance.subject.is_a?(Promise)
-      example_group_instance.subject.then do |resolved_subject|
-        # This is a private method, but we're using Opal
-        example_group_instance.__memoized[:subject] = resolved_subject
+    begin
+      subj = example_group_instance.subject
+      if subj.is_a? Promise
+        return subj.then do |resolved_subject|
+          # This is a private method, but we're using Opal
+          example_group_instance.__memoized[:subject] = resolved_subject
+        end
       end
-    else
-      Promise.value
+    rescue
+      # Exception occurred while checking the subject, might be that the example group had a described class, was not intending on using it as the subject,
+      # and the initializer for that described class failed
     end
+    Promise.value
   end
 
   def run_after_example

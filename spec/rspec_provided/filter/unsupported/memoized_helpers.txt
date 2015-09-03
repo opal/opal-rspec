@@ -1,0 +1,5 @@
+# Expected errors have line numbers in them, which is not supported on Opal right now
+.let raises an error when referenced from.*
+
+# No private methods in Opal
+Module#define_method is still a private method

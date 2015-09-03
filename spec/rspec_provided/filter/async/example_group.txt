@@ -1,7 +1,12 @@
 # no private methods in Opal, __memoized shows up here
-ExampleGroup minimizes the number of methods that users could inadvertantly overwrite
+RSpec::Core::ExampleGroup minimizes the number of methods that users could inadvertantly overwrite
 
-# Invokes ExampleGroup#run directly, so of course it gets a promise back rather than false
-ExampleGroup #before, after, and around hooks treats an error in before.* as a failure
-ExampleGroup#run_examples returns false if any of the examples fail
-ExampleGroup#run_examples runs all examples, regardless of any of them failing
+# Invokes RSpec::Core::ExampleGroup#run directly, so of course it gets a promise back rather than false
+RSpec::Core::ExampleGroup#before, after, and around hooks treats an error in before.* as a failure
+RSpec::Core::ExampleGroup#run_examples returns false if any of the examples fail
+RSpec::Core::ExampleGroup#run_examples runs all examples, regardless of any of them failing
+
+# Run return value is a promise, so we put our own spec in alternates
+RSpec::Core::ExampleGroup#run with fail_fast\? => true sets RSpec.world.wants_to_quit flag if encountering an exception in before\(:all\)
+RSpec::Core::ExampleGroup#run with nested example failing returns true
+RSpec::Core::ExampleGroup#run with top level example failing returns false

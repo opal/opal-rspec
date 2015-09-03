@@ -68,10 +68,11 @@ task :verify_rspec_specs do
     puts 'Test successful!'
     puts "#{total} total specs, #{failed} expected failures, #{pending} expected pending"
   else
-    puts "Raw output: #{test_output}"
+    puts "Raw output: #{test_output}" if ENV['RAW_OUTPUT']
     puts "Unexpected failures:\n\n#{remaining_failures.join("\n")}\n"
     puts '-----------Summary-----------'
     puts "Expected pending count #{EXPECTED_PENDING_COUNT}, actual pending count #{pending}"
+    puts "Total 'failure' count: #{actual_failures.length}"
     puts "Unexpected failure count #{remaining_failures.length}"
     raise 'Test failed!'
   end

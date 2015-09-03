@@ -69,6 +69,7 @@ class ::RSpec::Core::ExampleGroup
     return Promise.value true if examples.empty?
 
     example_promise = lambda do |example|
+      next Promise.value(nil) if RSpec.world.wants_to_quit
       instance = new
       set_ivars(instance, before_context_ivars)
       # Always returns a promise since we modified the Example class

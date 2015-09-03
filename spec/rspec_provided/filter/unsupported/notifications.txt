@@ -1,0 +1,5 @@
+# Uses #{__FILE__}:#{__LINE__} and backtrace
+FailedExampleNotification #message_lines.*
+
+# Uses File IO to find the failed line
+FailedExampleNotification #read_failed_line.*

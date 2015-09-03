@@ -82,5 +82,64 @@ module RSpec::Core
         expect(group.run(reporter).value).to be_falsey
       end
     end
+
+    describe "#run" do
+      let(:reporter) { double("reporter").as_null_object }
+
+      context "with fail_fast? => true" do
+        let(:group) do
+          group = RSpec::Core::ExampleGroup.describe
+          allow(group).to receive(:fail_fast?) { true }
+          group
+        end
+
+        it "sets RSpec.world.wants_to_quit flag if encountering an exception in before(:all)" do
+          group.before(:all) { raise "error in before all" }
+          group.example("equality") { expect(1).to eq(2) }
+          # This method returns a promise in Opal
+          #expect(group.run).to be_falsey
+          expect(group.run.value).to be_falsey
+          expect(RSpec.world.wants_to_quit).to be_truthy
+        end
+      end
+
+      context "with top level example failing" do
+        it "returns false" do
+          group = RSpec::Core::ExampleGroup.describe("something") do
+            it "does something (wrong - fail)" do
+              raise "fail"
+            end
+            describe "nested" do
+              it "does something else" do
+                # pass
+              end
+            end
+          end
+
+          #expect(group.run(reporter)).to be_falsey
+          # Promise
+          expect(group.run(reporter).value).to be_falsey
+        end
+      end
+
+      context "with nested example failing" do
+        it "returns true" do
+          group = RSpec::Core::ExampleGroup.describe("something") do
+            it "does something" do
+              # pass
+            end
+            describe "nested" do
+              it "does something else (wrong -fail)" do
+                raise "fail"
+              end
+            end
+          end
+
+          #expect(group.run(reporter)).to be_falsey
+          # Promise
+          expect(group.run(reporter).value).to be_falsey
+        end
+      end
+    end
   end
 end

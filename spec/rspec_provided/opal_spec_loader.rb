@@ -14,23 +14,23 @@ module Opal
           'rspec/support/spec/shell_out', # only does stuff Opal can't support anyways
           'rspec/support/spec/prevent_load_time_warnings'
         ]
-      
+
       def self.stub_requires
         REQUIRE_STUBS.each {|f| Opal::Processor.stub_file f}
       end
-      
+
       def self.get_ignored_spec_failures
         FileList['spec/rspec_provided/filter/**/*.txt'].map do |filename|
           get_exclusions_compact filename
         end.flatten
       end
-      
+
       def self.get_exclusions_compact(filename)
         line_num = 0
-        exclude_these_specs = File.read(filename).split("\n").map do |line|
+        File.read(filename).split("\n").map do |line|
           line_num += 1
           {
-            exclusion: line, 
+            exclusion: line,
             line_number: line_num
           }
         end.reject do |line|
@@ -38,7 +38,7 @@ module Opal
           exclusion.empty? or exclusion.start_with? '#'
         end
       end
-      
+
       def self.get_file_list
         exclude_these_specs = get_exclusions_compact 'spec/rspec_provided/spec_files_exclude.txt'
         missing_exclusions = exclude_these_specs.map do |f|
@@ -52,23 +52,23 @@ module Opal
         end
         exclude_globs_only = exclude_these_specs.map {|f| f[:exclusion]}
         include_globs = SPEC_DIRECTORIES.map {|g| File.join(g, '**/*_spec.rb')}
-        files = FileList[          
+        files = FileList[
           'spec/rspec_provided/rspec_spec_fixes.rb', # need our code to go in first
           *include_globs
         ].exclude(*exclude_globs_only)
         puts "Running the following RSpec specs:"
         files.sort.each {|f| puts f}
         files
-      end      
-      
+      end
+
       def self.append_additional_load_paths(server)
         [
           'rspec-core/spec' # a few spec support files live outside of rspec-core/spec/rspec and live in support
         ].each {|p| server.append_path p}
       end
-      
+
       # https://github.com/opal/opal/issues/821
-      def self.sub_in_end_of_line(files)        
+      def self.sub_in_end_of_line(files)
         bad_regex = /^(.*)\\$/
         fix_these_files = files.select {|f| FILES_WITH_LINE_CONTINUE.any? {|regex| regex.match(f)}}
         dir = Dir.mktmpdir
@@ -76,7 +76,7 @@ module Opal
         fixed_temp_files = fix_these_files.map do |path|
           temp_filename = File.join dir, File.basename(path)
           found_blackslash = false
-          File.open path, 'r' do |input_file|            
+          File.open path, 'r' do |input_file|
             File.open temp_filename, 'w' do |output_file|
               last_line_has_slash = false
               fixed_lines = input_file.inject do |line1, line2|
@@ -87,17 +87,17 @@ module Opal
                   puts "Replacing trailing backlash, line #{line_num} in #{path} in new temp file #{temp_filename}"
                   without_last_line = existing_lines[0..-2]
                   without_backlash = a_match.captures[0]
-                  without_last_line << (without_backlash + ' ' + line2)                  
+                  without_last_line << (without_backlash + ' ' + line2)
                 else
                   existing_lines << line2
                 end
               end
               fixed_lines.each {|l| output_file << l}
-            end            
+            end
           end
           missing << path unless found_blackslash
           temp_filename
-        end                     
+        end
         at_exit do
           FileUtils.remove_entry dir
         end

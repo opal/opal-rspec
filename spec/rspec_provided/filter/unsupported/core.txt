@@ -1,0 +1,5 @@
+# Launches a new Ruby process
+RSpec loads mocks and expectations when the constants are referenced
+
+# Can't do file paths in Opal
+RSpec::Core.path_to_executable.*
