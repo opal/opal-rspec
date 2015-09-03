@@ -46,14 +46,15 @@ end
 
 desc 'Verifies rspec_specs runs correctly'
 task :verify_rspec_specs do
-  # POINTS :EXAMPLE_GROUP TO THE SAME HASH OBJECT AS OTHER EXAMPLES IN THE SAME GROUP (PENDING: Cannot maintain this and provide full `:example_group` backwards compatibility (see GH #1490):()
   EXPECTED_PENDING_COUNT = 1
   test_output = `rake rspec_specs`
+  test_output.force_encoding 'UTF-8'
   count_match = /(\d+) examples, (\d+) failures, (\d+) pending/.match(test_output)
   raise 'Expected a finished count of test failures/success/etc. but did not see it' unless count_match
   total, failed, pending = count_match.captures
   actual_failures = []
-  test_output.scan /\d+\) (.*)/ do |match|
+  all_failed_examples = Regexp.new('Failed examples:\s(.*)', Regexp::MULTILINE).match(test_output).captures[0]
+  all_failed_examples.scan /.*# (.*)/ do |match|
     actual_failures << match[0].strip
   end
   actual_failures.sort!
