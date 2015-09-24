@@ -1,10 +1,27 @@
 language: ruby
 sudo: false
 
-rvm:
-  - 1.9.3
-  - 2.0.0
-  - 2.1.0
+cache:
+  bundler: true
+
+matrix:
+  fast_finish: true
+
+  include:
+    - rvm: 1.9.3
+      env: RUN=default
+    - rvm: 2.0.0
+      env: RUN=default
+    - rvm: 2.1.0
+      env: RUN=default
+    - rvm: 2.2
+      env: RUN=default
+    - rvm: 2.2
+      env: RUN=verify_rspec_specs
+
+  allow_failures:
+    - rvm: 2.2
+      env: RUN=verify_rspec_specs
 
 before_install:
   - git submodule update --init
@@ -15,3 +32,6 @@ before_script:
 
 notifications:
   irc: "irc.freenode.org#opal"
+
+script:
+  - "bundle exec rake $RUN"
