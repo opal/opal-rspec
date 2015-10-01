@@ -5,7 +5,7 @@ module Opal
     class OpalSpecLoader
       FILES_WITH_LINE_CONTINUE = [/core\/example_spec.rb/, /pending_spec.rb/]
       # will have a glob appended to each element in the array
-      SPEC_DIRECTORIES = %w{rspec-core/spec spec/rspec_provided/opal_alternates}
+      SPEC_DIRECTORIES = %w{rspec-core/spec spec/rspec/opal_alternates}
       REQUIRE_STUBS = [
           'rubygems',
           'aruba/api', # Cucumber lib that supports file creation during testing, N/A for us
@@ -20,7 +20,7 @@ module Opal
       end
 
       def self.get_ignored_spec_failures
-        FileList['spec/rspec_provided/filter/**/*.txt'].map do |filename|
+        FileList['spec/rspec/filter/**/*.txt'].map do |filename|
           get_exclusions_compact filename
         end.flatten
       end
@@ -40,7 +40,7 @@ module Opal
       end
 
       def self.get_file_list
-        exclude_these_specs = get_exclusions_compact 'spec/rspec_provided/spec_files_exclude.txt'
+        exclude_these_specs = get_exclusions_compact 'spec/rspec/spec_files_exclude.txt'
         missing_exclusions = exclude_these_specs.map do |f|
           result = SPEC_DIRECTORIES.any? do |spec_dir|
             FileList[File.join(spec_dir, f[:exclusion])].any?
@@ -53,7 +53,7 @@ module Opal
         exclude_globs_only = exclude_these_specs.map {|f| f[:exclusion]}
         include_globs = SPEC_DIRECTORIES.map {|g| File.join(g, '**/*_spec.rb')}
         files = FileList[
-          'spec/rspec_provided/rspec_spec_fixes.rb', # need our code to go in first
+          'spec/rspec/require_specs.rb', # need our code to go in first
           *include_globs
         ].exclude(*exclude_globs_only)
         puts "Running the following RSpec specs:"

@@ -1,5 +1,5 @@
 require 'opal/rspec'
-require_relative 'spec/rspec_provided/opal_spec_loader'
+require_relative 'spec/rspec/opal_spec_loader'
 
 Opal::Processor.source_map_enabled = false
 

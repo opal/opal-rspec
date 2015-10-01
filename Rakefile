@@ -4,7 +4,7 @@ require 'rspec/core/rake_task'
 Bundler::GemHelper.install_tasks
 
 require 'opal/rspec/rake_task'
-require_relative 'spec/rspec_provided/opal_spec_loader'
+require_relative 'spec/rspec/opal_spec_loader'
 
 task :default => [:unit_specs, :verify_opal_specs, :integration_specs, :verify_other_specs]
 
