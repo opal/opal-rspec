@@ -14,6 +14,8 @@
 
 *   Basic nodejs runner support
 
+*   Colors can be enabled from the command line via environment variables
+
 
 ## 0.4.3 (2015-06-14)
 

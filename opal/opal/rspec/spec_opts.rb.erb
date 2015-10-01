@@ -1,0 +1,13 @@
+<%
+    spec_opts = ENV['SPEC_OPTS']
+    if spec_opts && !spec_opts.empty?
+%>
+<%
+        if spec_opts.include? '--colors'
+%>
+            RSpec.configure do |config|
+              config.color = true
+              config.tty = true
+            end
+    <% end %>
+<% end%>

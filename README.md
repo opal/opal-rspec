@@ -30,6 +30,12 @@ Then, to run your specs inside phantomjs (the default runner), just run the rake
 bundle exec rake
 ```
 
+If you want to enable colors in the output
+
+```
+SPEC_OPTS="--colors" bundle exec rake
+```
+
 You can also customize the pattern of specs used similiar to how RSpec's rake task works:
 
 ```ruby
@@ -217,7 +223,6 @@ Only 'spec' will be added to the load path.
 * Backtrace info on specs is buggy ([no Kernel::caller method in Opal](https://github.com/opal/opal/issues/894))
 * Not all RSpec runner options are supported yet
 * Random order does not work yet due to lack of [srand/Random support](https://github.com/opal/opal/issues/639) and RSpec's bundled Random implementation (RSpec::Core::Backports::Random) locks the browser/Phantom. If you specify random order, it will be ignored.
-* Console colors do not yet work for the Progress/Documentation formatters
 * nodejs runner
   * debug mode + source map support not there yet (see source map support - https://github.com/evanw/node-source-map-support)
   * currently running a lot slower than phantomjs, might need optimization
