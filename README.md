@@ -24,7 +24,7 @@ require 'opal/rspec/rake_task'
 Opal::RSpec::RakeTask.new(:default)
 ```
 
-Then, to run your specs inside phantomjs, just run the rake task:
+Then, to run your specs inside phantomjs (the default runner), just run the rake task:
 
 ```
 bundle exec rake
@@ -56,6 +56,19 @@ Opal::RSpec::RakeTask.new(:default) do |server, task|
 	task.files = FileList['spec/**/something_spec.rb]
 end
 ```
+
+### Run specs in nodejs
+
+Same options as above, you can use the RUNNER=node environment variable or use the Rake task like so:
+
+```ruby
+require 'opal/rspec/rake_task'
+Opal::RSpec::RakeTask.new(:default) do |server, task|
+  task.runner = :node
+end
+```
+
+NOTE: nodejs runner does not yet work with source maps or debug mode
 
 ### Run specs in a browser
 
@@ -205,6 +218,9 @@ Only 'spec' will be added to the load path.
 * Not all RSpec runner options are supported yet
 * Random order does not work yet due to lack of [srand/Random support](https://github.com/opal/opal/issues/639) and RSpec's bundled Random implementation (RSpec::Core::Backports::Random) locks the browser/Phantom. If you specify random order, it will be ignored.
 * Console colors do not yet work for the Progress/Documentation formatters
+* nodejs runner
+  * debug mode + source map support not there yet (see source map support - https://github.com/evanw/node-source-map-support)
+  * currently running a lot slower than phantomjs, might need optimization
 
 ## Contributing
 

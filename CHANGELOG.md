@@ -12,6 +12,8 @@
 
 *   Fixed issues with constants/example group naming
 
+*   Basic nodejs runner support
+
 
 ## 0.4.3 (2015-06-14)
 

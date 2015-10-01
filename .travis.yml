@@ -18,10 +18,16 @@ matrix:
       env: RUN=default
     - rvm: 2.2
       env: RUN=verify_rspec_specs
+    - rvm: 2.2
+      env: RUN=default RUNNER=node
+    - rvm: 2.2
+      env: RUN=verify_rspec_specs RUNNER=node
 
   allow_failures:
     - rvm: 2.2
       env: RUN=verify_rspec_specs
+    - rvm: 2.2
+      env: RUN=verify_rspec_specs RUNNER=node
 
 before_install:
   - git submodule update --init

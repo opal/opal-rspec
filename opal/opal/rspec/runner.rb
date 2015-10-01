@@ -10,12 +10,20 @@ module Opal
           `typeof(phantom) !== 'undefined' || typeof(OPAL_SPEC_PHANTOM) !== 'undefined'`
         end
 
-        def default_formatter
-          phantom? ? ::RSpec::Core::Formatters::ProgressFormatter : BrowserFormatter
+        def node?
+          `typeof(process) !== 'undefined' && typeof(process.versions) !== 'undefined'`
         end
 
-        def autorun          
-          Runner.new.run          
+        def non_browser?
+          phantom? || node?
+        end
+
+        def default_formatter
+          non_browser? ? ::RSpec::Core::Formatters::ProgressFormatter : BrowserFormatter
+        end
+
+        def autorun
+          Runner.new.run
         end
       end
 
@@ -33,10 +41,10 @@ module Opal
         @world.announce_filters
 
         self.start
-        run_examples.then do |result|          
+        run_examples.then do |result|
           self.finish
           finish_with_code(result ? 0 : 1)
-        end        
+        end
       end
 
       def run_examples
@@ -51,11 +59,6 @@ module Opal
           results << result
           results.all?
         end
-      end    
-
-      def config_hook(hook_when)
-        hook_context = ::RSpec::Core::SuiteHookContext.new
-        @configuration.hooks.run(hook_when, :suite, hook_context)
       end
 
       def config_hook(hook_when)
@@ -73,16 +76,16 @@ module Opal
         config_hook :after
         @reporter.finish
       end
-      
+
       def finish_with_code(code)
-        %x{
-          if (typeof(phantom) !== "undefined") {
-            phantom.exit(code);
-          }
-          else {
-            Opal.global.OPAL_SPEC_CODE = code;
-          }
-        }
+        # have to ignore OPAL_SPEC_PHANTOM for this one
+        if `typeof(phantom) !== "undefined"`
+          `phantom_exit(#{code})`
+        elsif self.class.node?
+          `process.exit(#{code})`
+        else
+          `Opal.global.OPAL_SPEC_CODE = #{code}`
+        end
       end
     end
   end
