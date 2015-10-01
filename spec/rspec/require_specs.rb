@@ -1,3 +1,8 @@
+class ::RSpec::Core::Ordering::Random
+  # there are a lot of these in the RSpec specs that create noise
+  HIDE_RANDOM_WARNINGS = true
+end
+
 # dealing with dynamic requires
 require 'rspec/support'
 require 'rspec/support/spec/deprecation_helpers'

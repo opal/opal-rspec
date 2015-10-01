@@ -10,3 +10,10 @@ RSpec::Core::Formatters::JsonFormatter#dump_profile.*
 # location, file path, line number
 RSpec::Core::Formatters::BaseTextFormatter#dump_failures for #shared_examples outputs the name and location
 RSpec::Core::Formatters::BaseTextFormatter#dump_failures for #shared_examples that contains nested example groups outputs the name and location
+
+# backtrace, line_number related
+RSpec::Core::Formatters::BaseTextFormatter#dump_failures.*does not show the error class
+RSpec::Core::Formatters::BaseTextFormatter#dump_summary includes command to re-run each failed example
+
+# Encoding related
+RSpec::Core::Formatters::BaseTextFormatter#dump_failures with an exception that has a differently encoded message.*

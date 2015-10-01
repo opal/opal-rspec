@@ -1,5 +1,5 @@
-module ::RSpec::Core::Notifications  
-  # SummaryNotification is a Struct
+module ::RSpec::Core::Notifications
+  # SummaryNotification is a Struct, SummaryNotification.define_method wasn't working
   SummaryNotification = Class.new(SummaryNotification) do
     def totals_line
       summary = Formatters::Helpers.pluralize(example_count, "example")
@@ -9,7 +9,7 @@ module ::RSpec::Core::Notifications
       summary = summary + ", #{pending_count} pending" if pending_count > 0
       summary
     end
-    
+
     def fully_formatted(colorizer=::RSpec::Core::Formatters::ConsoleCodes)
       formatted = "\nFinished in #{formatted_duration} " \
                   "(files took #{formatted_load_time} to load)\n" \
