@@ -4,7 +4,7 @@ require 'rspec/core/rake_task'
 Bundler::GemHelper.install_tasks
 
 require 'opal/rspec/rake_task'
-require_relative 'spec/rspec/opal_spec_loader'
+require_relative 'spec/rspec/core/core_spec_loader'
 
 task :default => [:unit_specs, :verify_opal_specs, :integration_specs, :verify_other_specs]
 
@@ -34,50 +34,7 @@ Opal::RSpec::RakeTask.new(:other_specs) do |server, task|
   task.pattern = 'spec/other/**/*_spec.rb'
 end
 
-desc "Run RSpec's specs (a work in progress)"
-Opal::RSpec::RakeTask.new(:rspec_specs) do |server, task|
-  Opal::RSpec::OpalSpecLoader.stub_requires
-  files = Opal::RSpec::OpalSpecLoader.get_file_list
-  with_sub = Opal::RSpec::OpalSpecLoader.sub_in_end_of_line files
-  task.files = with_sub
-  Opal::RSpec::OpalSpecLoader.append_additional_load_paths server
-  server.debug = ENV['OPAL_DEBUG']
-end
-
-desc 'Verifies rspec_specs runs correctly'
-task :verify_rspec_specs do
-  EXPECTED_PENDING_COUNT = 1
-  test_output = `rake rspec_specs`
-  test_output.force_encoding 'UTF-8'
-  count_match = /(\d+) examples, (\d+) failures, (\d+) pending/.match(test_output)
-  raise 'Expected a finished count of test failures/success/etc. but did not see it' unless count_match
-  total, failed, pending = count_match.captures
-  actual_failures = []
-  all_failed_examples = Regexp.new('Failed examples:\s(.*)', Regexp::MULTILINE).match(test_output).captures[0]
-  all_failed_examples.scan /rspec \S+ # (.*)/ do |match|
-    actual_failures << match[0].strip
-  end
-  actual_failures.sort!
-  expected_failures = Opal::RSpec::OpalSpecLoader.get_ignored_spec_failures
-  remaining_failures = actual_failures.reject do |actual|
-    expected_failures.any? do |expected|
-      Regexp.new(expected[:exclusion]).match actual
-    end
-  end
-  if remaining_failures.empty? and pending == EXPECTED_PENDING_COUNT.to_s
-    puts 'Test successful!'
-    puts "#{total} total specs, #{failed} expected failures, #{pending} expected pending"
-  else
-    puts "Raw output: #{test_output}" if ENV['RAW_OUTPUT']
-    puts "Unexpected failures:\n\n#{remaining_failures.join("\n")}\n"
-    puts '-----------Summary-----------'
-    puts "Total passed count #{total.to_i - failed.to_i - pending.to_i}"
-    puts "Expected pending count #{EXPECTED_PENDING_COUNT}, actual pending count #{pending}"
-    puts "Total 'failure' count: #{actual_failures.length}"
-    puts "Unexpected failure count #{remaining_failures.length}"
-    raise 'Test failed!'
-  end
-end
+Opal::RSpec::CoreSpecLoader.rake_tasks_for(:rspec_specs)
 
 desc 'Verifies other_spec_dir task ran correctly'
 task :verify_other_specs do
