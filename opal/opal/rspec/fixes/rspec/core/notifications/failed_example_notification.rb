@@ -16,11 +16,5 @@ module ::RSpec::Core::Notifications
       end
       formatted
     end
-
-    def formatted_backtrace
-      # Javascript stack traces include the message on the 1st line, but we already have that
-      # backtrace_formatter.format_backtrace(exception.backtrace, example.metadata)
-      backtrace_formatter.format_backtrace(exception.backtrace.drop(1), example.metadata)
-    end
   end
 end
