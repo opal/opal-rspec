@@ -1,6 +1,6 @@
 module ::RSpec::Core::Notifications
-  # SummaryNotification is a Struct, SummaryNotification.define_method wasn't working
-  SummaryNotification = Class.new(SummaryNotification) do
+  # SummaryNotification is a Struct
+  SummaryNotification.class_eval do
     def totals_line
       summary = Formatters::Helpers.pluralize(example_count, "example")
       # 2 string mutations

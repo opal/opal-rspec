@@ -1,0 +1,57 @@
+# Follow up
+
+OptionParser/stock runner:
+
+RSpec::Core::Formatters::DocumentationFormatter produces the expected full output
+RSpec::Core::Formatters::ProgressFormatter produces the expected full output
+
+These use mocking (as_stubbed_const), which isn't working, might be easier to figure out in the mocks specs:
+
+RSpec::Core::Formatters::Loader#add(formatter) when a legacy formatter is added with RSpec::LegacyFormatters loads formatters from the external gem
+RSpec::Core::Formatters::Loader#add(formatter) when a legacy formatter is added with RSpec::LegacyFormatters subscribes the formatter to the notifications the adaptor implements
+
+# This works right in Opal 0.9 (see ../subject_issue_test), might be something with the class scoping PR I did that requires compiler changes to fix
+RSpec::Core::MemoizedHelpers explicit subject with a name yields the example in which it is eval'd
+
+# This works right in Opal 0.9 (Class === Enumerable), might be https://github.com/opal/opal/commit/304ab9c464754ca54ab03f1f31d5c137ae8e995d but not sure
+RSpec::Core::MemoizedHelpers implicit subject with a Module returns the Module
+
+# todo
+
+RSpec::Core::FilterManager#exclusions#description includes an overriden :if filter
+RSpec::Core::FilterManager#exclusions#description includes an overriden :unless filter
+RSpec::Core::FilterManager#exclusions#description includes other filters
+RSpec::Core::Hooks when an error happens in `after(:suite)` allows the error to propagate to the user
+RSpec::Core::Hooks when an error happens in `before(:suite)` allows the error to propagate to the user
+RSpec::Core::Hooks#around considers the hook to have run when passed as a block to a method that yields
+RSpec::Core::Hooks#around when it does not run the example indicates which around hook did not run the example in the pending message
+# splat problem? something isn't right here, same issue for the following 3
+RSpec::Core::Metadata :description on a group with a non-string and a string concats the args
+RSpec::Core::Metadata :full_description with a 2nd arg starting with . removes the space
+RSpec::Core::Metadata :full_description with a 2nd arg starting with :: removes the space
+# end underlying
+
+RSpec::Core::Notifications::FailedExampleNotification uses the default color for the shared example backtrace line
+RSpec::Core::Reporter finish dumps the failure summary after the deprecation summary so failures don't scroll off the screen and get missed
+RSpec::Core::Reporter finish sends close to the formatter(s) that respond to message
+RSpec::Core::Reporter finish sends dump_failures to the formatter(s) that respond to message
+RSpec::Core::Reporter finish sends dump_pending to the formatter(s) that respond to message
+RSpec::Core::Reporter finish sends dump_summary to the formatter(s) that respond to message
+RSpec::Core::Reporter finish sends start_dump to the formatter(s) that respond to message
+RSpec::Core::Reporter given an example group with no examples does not pass example_group_started or example_group_finished to formatter
+RSpec::Core::Reporter given multiple formatters passes messages to all formatters
+RSpec::Core::Reporter given one formatter passes example_group_started and example_group_finished messages to that formatter in that order
+RSpec::Core::Reporter given one formatter passes messages to that formatter
+RSpec::Core::Reporter start notifies the formatter of start with example count
+RSpec::Core::Reporter timing captures the load time so it can report it later
+RSpec::Core::Reporter timing uses RSpec::Core::Time as to not be affected by changes to time in examples
+RSpec::Core::Reporter#register_listener will ignore duplicated listeners
+RSpec::Core::Reporter#register_listener will match string notification names
+RSpec::Core::Reporter#register_listener will register the listener to specified notifications
+RSpec::Core::Reporter#register_listener will send notifications when a subscribed event is triggered
+RSpec::Core::World#preceding_declaration_line (again) with one example returns line number of an example that immediately precedes the argument line
+RSpec::Core::World#preceding_declaration_line (again) with one example returns the argument line number if an example starts on that line
+removes the space
+rspec warnings and deprecations #warn_with when :use_spec_location_as_call_site => true is passed adds the source location of spec
+rspec warnings and deprecations #warn_with when :use_spec_location_as_call_site => true is passed appends a period to the supplied message if one is not present
+rspec warnings and deprecations #warn_with when :use_spec_location_as_call_site => true is passed when there is no current example adds no message about the spec location

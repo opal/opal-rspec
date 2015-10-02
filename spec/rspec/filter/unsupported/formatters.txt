@@ -3,6 +3,9 @@ RSpec::Core::Formatters::BaseTextFormatter when closing the formatter does not c
 
 # Will trigger File I/O
 RSpec::Core::Formatters::DeprecationFormatter.* with a File deprecation_stream.*
+RSpec::Core::Formatters::Loader#add\(formatter\) when a duplicate formatter exists adds the formatter for different output targets
+RSpec::Core::Formatters::Loader#add\(formatter\) with a 2nd arg defining the output accepts Pathname objects for file paths
+RSpec::Core::Formatters::Loader#add\(formatter\) with a 2nd arg defining the output creates a file at that path and sets it as the output
 
 # Profiling within JSON formatter not supported either (profiling and Opal do not work yet)
 RSpec::Core::Formatters::JsonFormatter#dump_profile.*
@@ -14,6 +17,7 @@ RSpec::Core::Formatters::BaseTextFormatter#dump_failures for #shared_examples th
 # backtrace, line_number related
 RSpec::Core::Formatters::BaseTextFormatter#dump_failures.*does not show the error class
 RSpec::Core::Formatters::BaseTextFormatter#dump_summary includes command to re-run each failed example
+RSpec::Core::Formatters::JsonFormatter outputs json \(brittle high level functional test\)
 
 # Encoding related
 RSpec::Core::Formatters::BaseTextFormatter#dump_failures with an exception that has a differently encoded message.*

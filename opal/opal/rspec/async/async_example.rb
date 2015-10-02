@@ -10,6 +10,7 @@ class ::RSpec::Core::Example
     end
   end
 
+  # TODO: Use subject! to create a before hook on the fly, might be cleaner than this
   # Might be a better way to do this, but then you end up with promises around the expectation handlers, which could get ugly
   def resolve_subject
     begin
