@@ -16,11 +16,11 @@ module RSpec::ExampleGroups
     # Ruby requires first const letter to be A-Z. Use `Nested`
     # as necessary to enforce that.
     # name.gsub!(/\A([^A-Z]|\z)/, 'Nested\1')
-    # opal-rspec, mutable strings, also substituted in ^ for \A since \A is not supported in JS regex
-    name = name.gsub(/^([^A-Z]|\z)/, 'Nested\1')
+    # opal-rspec, mutable strings, also substituted in ^ for \A since \A and $ for \z is not supported in JS regex
+    name = name.gsub(/^([^A-Z]|$)/, 'Nested\1')
 
     name
-  end 
+  end
 
   # opal cannot use mutable strings
   def self.disambiguate(name, const_scope)
@@ -28,7 +28,7 @@ module RSpec::ExampleGroups
 
     # Add a trailing number if needed to disambiguate from an existing constant.
     name = name + "_2"
-    
+
     while const_defined_on?(const_scope, name)
       name = name.next
     end

@@ -20,6 +20,8 @@
 
 *   Browser formatter now works w/ progress bar
 
+*   More matchers enabled
+
 
 ## 0.4.3 (2015-06-14)
 

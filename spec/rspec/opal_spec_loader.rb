@@ -5,6 +5,14 @@ module Opal
     module OpalSpecLoader
       include Rake::DSL
 
+      def files_with_line_continue
+        []
+      end
+
+      def files_with_multiline_regex
+        []
+      end
+
       def get_ignored_spec_failures
         FileList[File.join(base_dir, 'filter/**/*.txt')].map do |filename|
           get_exclusions_compact filename
@@ -41,10 +49,52 @@ module Opal
         additional_load_paths.each { |p| server.append_path p }
       end
 
+      # TODO: Use the progress formatter if we can swing their errors
+
+      # https://github.com/opal/opal/issues/1125
+      def remove_multiline_regexes(files)
+        bad_regex = /(%r%$.*%)$/m
+        fix_these_files = files.select { |f| files_with_multiline_regex.any? { |regex| regex.match(f) } }
+        return files unless fix_these_files.any?
+        dir = Dir.mktmpdir
+        missing = []
+        fixed_temp_files = fix_these_files.map do |path|
+          temp_filename = File.join dir, File.basename(path)
+          input = File.read path
+          found_regex = false
+          input.gsub!(bad_regex) do |_|
+            found_regex = true
+            multi_line_regex = Regexp
+                                   .last_match
+                                   .captures[0]
+                                   .gsub("\n", '')
+            parsed = instance_eval multi_line_regex # can just have ruby do this for us
+            escaped = parsed
+                          .source
+                          .gsub('/', '\/')
+            replace = "/#{escaped}/m"
+            puts "Replacing multiline regex with #{replace} in new temp file #{temp_filename}"
+            replace
+          end
+          File.open temp_filename, 'w' do |output_file|
+            output_file.write input
+          end
+          missing << path unless found_regex
+          temp_filename
+        end
+        at_exit do
+          FileUtils.remove_entry dir
+        end
+        raise "Expected to fix multiline regex in #{fix_these_files} but we didn't find any expressions in #{missing}. Check if RSpec has been upgraded" if missing.any?
+        files_we_left_alone = files - fix_these_files
+        files_we_left_alone + fixed_temp_files
+      end
+
       # https://github.com/opal/opal/issues/821
       def sub_in_end_of_line(files)
         bad_regex = /^(.*)\\$/
         fix_these_files = files.select { |f| files_with_line_continue.any? { |regex| regex.match(f) } }
+        return files unless fix_these_files.any?
         dir = Dir.mktmpdir
         missing = []
         fixed_temp_files = fix_these_files.map do |path|
@@ -52,7 +102,6 @@ module Opal
           found_blackslash = false
           File.open path, 'r' do |input_file|
             File.open temp_filename, 'w' do |output_file|
-              last_line_has_slash = false
               fixed_lines = input_file.inject do |line1, line2|
                 existing_lines = [*line1]
                 if (a_match = bad_regex.match existing_lines.last)
@@ -130,14 +179,15 @@ module Opal
 
         files = get_file_list
         with_sub = sub_in_end_of_line files
-        sprockets_env = Opal::RSpec::SprocketsEnvironment.new(spec_pattern=nil, spec_exclude_pattern=nil, spec_files=with_sub)
+        multi_regex = remove_multiline_regexes with_sub
+        sprockets_env = Opal::RSpec::SprocketsEnvironment.new(spec_pattern=nil, spec_exclude_pattern=nil, spec_files=multi_regex)
         rack.run Opal::Server.new(sprockets: sprockets_env) { |s|
-              s.main = 'opal/rspec/sprockets_runner'
-              stub_requires
-              sprockets_env.add_spec_paths_to_sprockets
-              append_additional_load_paths s
-              s.debug = ENV['OPAL_DEBUG']
-            }
+                   s.main = 'opal/rspec/sprockets_runner'
+                   stub_requires
+                   sprockets_env.add_spec_paths_to_sprockets
+                   append_additional_load_paths s
+                   s.debug = ENV['OPAL_DEBUG']
+                 }
       end
 
       private
