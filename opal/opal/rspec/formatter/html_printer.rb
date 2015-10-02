@@ -1,0 +1,100 @@
+require_relative 'noop_flush_string_io'
+require_relative 'element'
+
+module Opal
+  module RSpec
+    class HtmlPrinter < ::RSpec::Core::Formatters::HtmlPrinter
+      def initialize(output)
+        super
+      end
+
+      def print_html_start
+        # Will output the header
+        super
+        # Now close out the doc so we can use DOM manipulation for the rest
+        @output.puts "</div>"
+        @output.puts "</div>"
+        @output.puts "</body>"
+        @output.puts "</html>"
+        @output.close
+        # From here, we'll do more direct DOM manipulation
+        reset_output
+        @results = Element.klass 'results'
+      end
+
+      def flush_output
+        @results.append Element.from_string(@output.string)
+        reset_output
+      end
+
+      def reset_output
+        @output = NoopFlushStringIO.new
+      end
+
+      def print_example_group_start(group_id, description, number_of_parents)
+        super
+        # We won't have this in the DOM until group ends, so need to queue up yellow/red updates
+        @pending_group_updates = []
+      end
+
+      def print_example_group_end
+        super
+        flush_output
+        @pending_group_updates.each(&:call)
+      end
+
+      def print_example_passed(description, run_time)
+        super
+        flush_output
+      end
+
+      def print_example_failed(pending_fixed, description, run_time, failure_id, exception, extra_content, escape_backtrace=false)
+        super
+        flush_output
+      end
+
+      def print_example_pending(description, pending_message)
+        super
+        flush_output
+      end
+
+      def print_summary(duration, example_count, failure_count, pending_count)
+        # string mutation
+        totals = "#{example_count} example#{'s' unless example_count == 1}, "
+        totals += "#{failure_count} failure#{'s' unless failure_count == 1}"
+        totals += ", #{pending_count} pending" if pending_count > 0
+
+        formatted_duration = "%.5f" % duration
+        Element.id('duration').html = "Finished in <strong>#{formatted_duration} seconds</strong>"
+        Element.id('totals').html = totals
+      end
+
+      # Directly manipulate scripts here
+      def move_progress(percent_done)
+        `moveProgressBar(#{percent_done})`
+      end
+
+      def make_header_red
+        `makeRed('rspec-header')`
+      end
+
+      def make_header_yellow
+        `makeYellow('rspec-header')`
+      end
+
+      def make_example_group_header_red(group_id)
+        @pending_group_updates << lambda do
+          `makeRed(#{"div_group_#{group_id}"})`
+          `makeRed(#{"example_group_#{group_id}"})`
+        end
+      end
+
+      def make_example_group_header_yellow(group_id)
+        @pending_group_updates << lambda do
+          `makeYellow(#{"div_group_#{group_id}"})`
+          `makeYellow(#{"example_group_#{group_id}"})`
+        end
+      end
+    end
+  end
+end

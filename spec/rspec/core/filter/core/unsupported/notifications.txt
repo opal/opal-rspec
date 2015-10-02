@@ -1,0 +1,8 @@
+# Uses #{__FILE__}:#{__LINE__} and backtrace
+FailedExampleNotification #message_lines.*
+
+# Uses File IO to find the failed line
+FailedExampleNotification #read_failed_line.*
+
+# Need special Javascript console code work, so have an alternate spec for this
+RSpec::Core::Notifications::FailedExampleNotification uses the default color for the shared example backtrace line

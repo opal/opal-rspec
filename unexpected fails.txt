@@ -1,10 +1,5 @@
 # Follow up
 
-OptionParser/stock runner:
-
-RSpec::Core::Formatters::DocumentationFormatter produces the expected full output
-RSpec::Core::Formatters::ProgressFormatter produces the expected full output
-
 These use mocking (as_stubbed_const), which isn't working, might be easier to figure out in the mocks specs:
 
 RSpec::Core::Formatters::Loader#add(formatter) when a legacy formatter is added with RSpec::LegacyFormatters loads formatters from the external gem
@@ -35,5 +30,3 @@ RSpec::Core::FilterManager#exclusions#description includes an overriden :if filt
 RSpec::Core::FilterManager#exclusions#description includes an overriden :unless filter
 RSpec::Core::FilterManager#exclusions#description includes other filters
 # end 2nd splat
-
-RSpec::Core::Notifications::FailedExampleNotification uses the default color for the shared example backtrace line

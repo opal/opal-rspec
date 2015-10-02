@@ -1,90 +1,68 @@
-module Opal
-  module RSpec
-    class Runner
-      class << self
-        def browser?
-          `typeof(document) !== "undefined"`
-        end
+module ::RSpec::Core
+  class Runner
+    class << self
+      def browser?
+        `typeof(document) !== "undefined"`
+      end
 
-        def phantom?
-          `typeof(phantom) !== 'undefined' || typeof(OPAL_SPEC_PHANTOM) !== 'undefined'`
-        end
+      def phantom?
+        `typeof(phantom) !== 'undefined' || typeof(OPAL_SPEC_PHANTOM) !== 'undefined'`
+      end
 
-        def node?
-          `typeof(process) !== 'undefined' && typeof(process.versions) !== 'undefined'`
-        end
+      def node?
+        `typeof(process) !== 'undefined' && typeof(process.versions) !== 'undefined'`
+      end
 
-        def non_browser?
-          phantom? || node?
-        end
+      def non_browser?
+        phantom? || node?
+      end
 
-        def default_formatter
-          non_browser? ? ::RSpec::Core::Formatters::ProgressFormatter : BrowserFormatter
-        end
-
-        def autorun
-          Runner.new.run
+      def autorun
+        run(ARGV, $stderr, $stdout).then do |status|
+          exit_with_code status.to_i
         end
       end
 
-      def initialize(options = {})
-        @options = options
-        @world = ::RSpec.world
-        @configuration = ::RSpec.configuration
-      end
-
-      def run()
-        # see NoCarriageReturnIO source for why this is being done
-        no_cr = NoCarriageReturnIO.new
-        @configuration.error_stream = no_cr
-        @configuration.output_stream = no_cr
-        @world.announce_filters
-
-        self.start
-        run_examples.then do |result|
-          self.finish
-          finish_with_code(result ? 0 : 1)
-        end
-      end
-
-      def run_examples
-        results = []
-        last_promise = @world.example_groups.inject(Promise.value) do |previous_promise, group|
-          previous_promise.then do |result|
-            results << result
-            group.run @reporter
-          end
-        end
-        last_promise.then do |result|
-          results << result
-          results.all?
-        end
-      end
-
-      def config_hook(hook_when)
-        hook_context = ::RSpec::Core::SuiteHookContext.new
-        @configuration.hooks.run(hook_when, :suite, hook_context)
-      end
-
-      def start
-        @reporter = @configuration.reporter
-        @reporter.start(@world.example_count)
-        config_hook :before
-      end
-
-      def finish
-        config_hook :after
-        @reporter.finish
-      end
-
-      def finish_with_code(code)
+      def exit_with_code(code)
         # have to ignore OPAL_SPEC_PHANTOM for this one
         if `typeof(phantom) !== "undefined"`
           `phantom_exit(#{code})`
-        elsif self.class.node?
+        elsif node?
           `process.exit(#{code})`
         else
           `Opal.global.OPAL_SPEC_CODE = #{code}`
+        end
+      end
+
+      def run(args, err=$stderr, out=$stdout)
+        options = ConfigurationOptions.new(args)
+        new(options).run(err, out)
+      end
+    end
+
+    def run_groups_async(example_groups, reporter)
+      results = []
+      last_promise = example_groups.inject(Promise.value) do |previous_promise, group|
+        previous_promise.then do |result|
+          results << result
+          group.run reporter
+        end
+      end
+      last_promise.then do |result|
+        results << result
+        results.all? ? 0 : @configuration.failure_exit_code
+      end
+    end
+
+    def run_specs(example_groups)
+      @configuration.reporter.report_async(@world.example_count(example_groups)) do |reporter|
+        hook_context = SuiteHookContext.new
+        Promise.value.then do
+          @configuration.hooks.run(:before, :suite, hook_context)
+          run_groups_async example_groups, reporter
+        end.ensure do |result|
+          @configuration.hooks.run(:after, :suite, hook_context)
+          result
         end
       end
     end

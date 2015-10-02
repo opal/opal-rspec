@@ -8,7 +8,6 @@ require 'opal-rspec'
 environment.get_opal_spec_requires.each do |s| %>
 require <%= s.inspect %>
 <% end %>
-`// brady comment`
 require 'opal/rspec/spec_opts'
 
-Opal::RSpec::Runner.autorun
+::RSpec::Core::Runner.autorun

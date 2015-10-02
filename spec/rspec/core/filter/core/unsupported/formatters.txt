@@ -21,3 +21,7 @@ RSpec::Core::Formatters::JsonFormatter outputs json \(brittle high level functio
 
 # Encoding related
 RSpec::Core::Formatters::BaseTextFormatter#dump_failures with an exception that has a differently encoded message.*
+
+# option parser
+RSpec::Core::Formatters::DocumentationFormatter produces the expected full output
+RSpec::Core::Formatters::ProgressFormatter produces the expected full output
