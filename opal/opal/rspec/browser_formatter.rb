@@ -1,229 +1,209 @@
-require 'erb'
-
 module Opal
   module RSpec
-    class BrowserFormatter < ::RSpec::Core::Formatters::BaseFormatter
-      include ERB::Util
-      
-      ::RSpec::Core::Formatters.register self, :dump_summary, :example_group_finished, :example_failed, :example_passed, :example_pending, :message
+    class DocumentIO < IO
+      include IO::Writable
 
-      CSS_STYLES = ::RSpec::Core::Formatters::HtmlPrinter::GLOBAL_STYLES
+      def initialize
+        `document.open();`
+      end
 
-      def start(example_count)
+      def close
+        @closed = true
+        `document.close()`
+      end
+
+      def write(html)
+        if @closed
+          `console.error(#{"DOC closed, can't write #{html}" })`
+        else
+          `document.write(#{html})`
+        end
+      end
+
+      def flush
+      end
+    end
+
+    class Element
+      attr_reader :native
+
+      def self.id(id)
+        new(`document.getElementById(id)`)
+      end
+
+      def self.klass(klass)
+        new(`document.getElementsByClassName(#{klass})[0]`)
+      end
+
+      def self.from_string(str)
+        dummy_div = `document.createElement('div')`
+        `#{dummy_div}.innerHTML = #{str}`
+        new(`#{dummy_div}.firstChild`)
+      end
+
+      def initialize(el, attrs={})
+        if String === el
+          @native = `document.createElement(el)`
+        else
+          @native = el
+        end
+
+        attrs.each { |name, val| __send__ "#{name}=", val }
+      end
+
+      def class_name
+        `#@native.className`
+      end
+
+      def class_name=(name)
+        `#@native.className = #{name}`
+      end
+
+      def html=(html)
+        `#@native.innerHTML = #{html}`
+      end
+
+      def text=(text)
+        self.html = text.gsub(/</, '&lt').gsub(/>/, '&gt')
+      end
+
+      def type=(type)
+        `#@native.type = #{type}`
+      end
+
+      def append(child)
+        `#@native.appendChild(#{child.native})`
+      end
+
+      alias << append
+
+      def css_text=(text)
+        %x{
+                if (#@native.styleSheet) {
+                  #@native.styleSheet.cssText = #{text};
+                }
+                else {
+                  #@native.appendChild(document.createTextNode(#{text}));
+                }
+              }
+      end
+
+      def style(name, value)
+        `#@native.style[#{name}] = value`
+      end
+
+      def append_to_head
+        `document.getElementsByTagName('head')[0].appendChild(#@native)`
+      end
+    end
+
+    class OurStringIO < StringIO
+      # make printer happy
+      def flush
+      end
+    end
+
+    class HtmlPrinter < ::RSpec::Core::Formatters::HtmlPrinter
+      def initialize(output)
         super
-        target = Element.new(`document.body`)
-        target << Element.new(:div, html: REPORT_TEMPLATE)
-        @rspec_results = Element.id('rspec-results')
-
-        css_text = CSS_STYLES + "\n body { padding: 0; margin: 0 }"
-        styles = Element.new(:style, type: 'text/css', css_text: css_text)
-        styles.append_to_head
-      end
-      
-      def message(notification)
-        unless @example_group # Filter messages, etc. before specs start
-          puts notification.message
-          return
-        end
-        @rspec_group  = Element.new(:div, class_name: "example_group passed")
-        @rspec_dl     = Element.new(:dl)
-        @rspec_dt     = Element.new(:dt, class_name: "passed", text: notification.message)
-        @rspec_group << @rspec_dl
-        @rspec_dl << @rspec_dt
-
-        parents = @example_group.parent_groups.size
-        @rspec_dl.style 'margin-left', "#{(parents - 2) * 15}px"
-
-        @rspec_results << @rspec_group
       end
 
-      def example_group_started(notification)
+      def print_html_start
         super
-
-        @example_group_failed = false
-        parents = @example_group.parent_groups.size
-
-        @rspec_group  = Element.new(:div, class_name: "example_group passed")
-        @rspec_dl     = Element.new(:dl)
-        @rspec_dt     = Element.new(:dt, class_name: "passed", text: example_group.description)
-        @rspec_group << @rspec_dl
-        @rspec_dl << @rspec_dt
-
-        @rspec_dl.style 'margin-left', "#{(parents - 2) * 15}px"
-
-        @rspec_results << @rspec_group
+        @output.puts "</div>"
+        @output.puts "</div>"
+        @output.puts "</body>"
+        @output.puts "</html>"
+        @output.close
+        # From here, we'll do more direct DOM manipulation
+        reset_output
+        @results = Element.klass 'results'
       end
 
-      def example_group_finished(_notification)
-        if @example_group_failed
-          @rspec_group.class_name = "example_group failed"
-          @rspec_dt.class_name = "failed"
-          Element.id('rspec-header').class_name = 'failed'
-        end
-        
-        if @example_group_pending
-          @rspec_group.class_name = "example_group not_implemented"
-          @rspec_dt.class_name = "pending"          
-          header = Element.id('rspec-header')
-          # Don't want to override failed with pending, which is less important
-          header.class_name = 'not_implemented' unless header.class_name == 'failed'
-        end
-      end
-      
-      def example_pending(notification)
-        example = notification.example
-        duration = sprintf("%0.5f", example.execution_result.run_time)
-        
-        pending_message = example.execution_result.pending_message
-
-        @example_group_pending = true
-
-        @rspec_dl << Element.new(:dd, class_name: "example not_implemented", html: <<-HTML)
-          <span class="not_implemented_spec_name">#{h example.description} (PENDING: #{h(pending_message)})</span>          
-        HTML
+      def flush_output
+        @results.append Element.from_string(@output.string)
+        reset_output
       end
 
-      def example_failed(notification)
-        example = notification.example
-        duration = sprintf("%0.5f", example.execution_result.run_time)
-
-        error = example.execution_result.exception
-        error_name = error.class.name.to_s
-        output = "#{short_padding}#{error_name}:\n"
-        error.message.to_s.split("\n").each { |line| output += "#{long_padding}  #{line}\n" }
-        error.backtrace.each {|trace| output += "#{long_padding}  #{trace}\n"}
-
-        @example_group_failed = true
-
-        @rspec_dl << Element.new(:dd, class_name: "example failed", html: <<-HTML)
-          <span class="failed_spec_name">#{h example.description}</span>
-          <span class="duration">#{duration}s</span>
-          <div class="failure">
-            <div class="message"><pre>#{h output}</pre></div>
-          </div>
-        HTML
+      def reset_output
+        @output = OurStringIO.new
       end
 
-      def example_passed(notification)
-        example = notification.example      
-        duration = sprintf("%0.5f", example.execution_result.run_time)
+      def print_example_group_end
+        super
+        flush_output
+      end
 
-        @rspec_dl << Element.new(:dd, class_name: "example passed", html: <<-HTML)
-          <span class="passed_spec_name">#{h example.description}</span>
-          <span class="duration">#{duration}s</span>
-        HTML
-      end     
+      def print_example_passed(description, run_time)
+        puts "ex passed #{description}"
+        super
+        flush_output
+      end
 
-      def dump_summary(notification)
-        totals = "#{notification.example_count} examples, #{notification.failure_count} failures, #{notification.pending_count} pending"
+      def print_example_failed(pending_fixed, description, run_time, failure_id, exception, extra_content, escape_backtrace=false)
+        puts "ex failed #{description}"
+        super
+        flush_output
+      end
+
+      def print_example_pending(description, pending_message)
+        puts "ex pending #{description}"
+        super
+        flush_output
+      end
+
+      def print_summary(duration, example_count, failure_count, pending_count)
+        # string mutation
+        totals = "#{example_count} example#{'s' unless example_count == 1}, "
+        totals += "#{failure_count} failure#{'s' unless failure_count == 1}"
+        totals += ", #{pending_count} pending" if pending_count > 0
+
+        formatted_duration = "%.5f" % duration
+        Element.id('duration').html = "Finished in <strong>#{formatted_duration} seconds</strong>"
         Element.id('totals').html = totals
-
-        duration = "Finished in <strong>#{sprintf("%.5f", notification.duration)} seconds</strong>"
-        Element.id('duration').html = duration
-
-        add_scripts
       end
 
-      def add_scripts
-        content = ::RSpec::Core::Formatters::HtmlPrinter::GLOBAL_SCRIPTS
-        `window.eval(#{content})`
+      # Directly manipulate scripts here
+      def move_progress(percent_done)
+        `moveProgressBar(#{percent_done})`
       end
 
-      def short_padding
-        '  '
+      def make_header_red
+        `makeRed('rspec-header')`
       end
 
-      def long_padding
-        '     '
+      def make_header_yellow
+        `makeYellow('rspec-header')`
       end
 
-      class Element
-        attr_reader :native
-
-        def self.id(id)
-          new(`document.getElementById(id)`)
-        end
-
-        def initialize(el, attrs={})
-          if String === el
-            @native = `document.createElement(el)`
-          else
-            @native = el
-          end
-
-          attrs.each { |name, val| __send__ "#{name}=", val }
-        end
-        
-        def class_name
-          `#@native.className`
-        end
-
-        def class_name=(name)
-          `#@native.className = #{name}`
-        end
-
-        def html=(html)
-          `#@native.innerHTML = #{html}`
-        end
-
-        def text=(text)
-          self.html = text.gsub(/</, '&lt').gsub(/>/, '&gt')
-        end
-
-        def type=(type)
-          `#@native.type = #{type}`
-        end
-
-        def append(child)
-          `#@native.appendChild(#{child.native})`
-        end
-
-        alias << append
-
-        def css_text=(text)
-          %x{
-            if (#@native.styleSheet) {
-              #@native.styleSheet.cssText = #{text};
-            }
-            else {
-              #@native.appendChild(document.createTextNode(#{text}));
-            }
-          }
-        end
-
-        def style(name, value)
-          `#@native.style[#{name}] = value`
-        end
-
-        def append_to_head
-          `document.getElementsByTagName('head')[0].appendChild(#@native)`
-        end
+      def make_example_group_header_red(group_id)
+        `makeRed(#{"div_group_#{group_id}"})`
+        `makeRed(#{"example_group_#{group_id}"})`
       end
 
-      REPORT_TEMPLATE = <<-EOF
-<div class="rspec-report">
+      def make_example_group_header_yellow(group_id)
+        `makeYellow(#{"div_group_#{group_id}"})`
+        `makeYellow(#{"example_group_#{group_id}"})`
+      end
+    end
 
-  <div id="rspec-header">
-    <div id="label">
-      <h1>RSpec Code Examples</h1>
-    </div>
+    class BrowserFormatter < ::RSpec::Core::Formatters::HtmlFormatter
+      include ERB::Util
 
-    <div id="display-filters">
-      <input id="passed_checkbox"  name="passed_checkbox"  type="checkbox" checked="checked" onchange="apply_filters()" value="1" /> <label for="passed_checkbox">Passed</label>
-      <input id="failed_checkbox"  name="failed_checkbox"  type="checkbox" checked="checked" onchange="apply_filters()" value="2" /> <label for="failed_checkbox">Failed</label>
-      <input id="pending_checkbox" name="pending_checkbox" type="checkbox" checked="checked" onchange="apply_filters()" value="3" /> <label for="pending_checkbox">Pending</label>
-    </div>
+      ::RSpec::Core::Formatters.register self, :start, :example_group_started, :start_dump,
+                                         :example_started, :example_passed, :example_failed,
+                                         :example_pending, :dump_summary
 
-    <div id="summary">
-      <p id="totals">&#160;</p>
-      <p id="duration">&#160;</p>
-    </div>
-  </div>
+      def initialize(output)
+        super DocumentIO.new
+        @printer = Opal::RSpec::HtmlPrinter.new(@output)
+      end
 
-  <div id="rspec-results" class="results">
-  </div>
-</div>
-EOF
+      def extra_failure_content(failure)
+        backtrace = failure.exception.backtrace.map { |line| ::RSpec.configuration.backtrace_formatter.backtrace_line(line) }
+        # No snippet extractor due to code ray dependency
+        "    <pre class=\"ruby\"><code>#{backtrace.compact}</code></pre>"
+      end
     end
   end
 end

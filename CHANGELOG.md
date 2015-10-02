@@ -16,6 +16,10 @@
 
 *   Colors can be enabled from the command line via environment variables
 
+*   Fix redundant messages with expectation fails
+
+*   Browser formatter now works w/ progress bar
+
 
 ## 0.4.3 (2015-06-14)
 
