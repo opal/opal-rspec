@@ -54,7 +54,7 @@ task :verify_rspec_specs do
   total, failed, pending = count_match.captures
   actual_failures = []
   all_failed_examples = Regexp.new('Failed examples:\s(.*)', Regexp::MULTILINE).match(test_output).captures[0]
-  all_failed_examples.scan /.*# (.*)/ do |match|
+  all_failed_examples.scan /rspec \S+ # (.*)/ do |match|
     actual_failures << match[0].strip
   end
   actual_failures.sort!
