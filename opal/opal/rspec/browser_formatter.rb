@@ -109,7 +109,9 @@ module Opal
       end
 
       def print_html_start
+        # Will output the header
         super
+        # Now close out the doc so we can use DOM manipulation for the rest
         @output.puts "</div>"
         @output.puts "</div>"
         @output.puts "</body>"
@@ -129,25 +131,29 @@ module Opal
         @output = OurStringIO.new
       end
 
+      def print_example_group_start(group_id, description, number_of_parents)
+        super
+        # We won't have this in the DOM until group ends, so need to queue up yellow/red updates
+        @pending_group_updates = []
+      end
+
       def print_example_group_end
         super
         flush_output
+        @pending_group_updates.each(&:call)
       end
 
       def print_example_passed(description, run_time)
-        puts "ex passed #{description}"
         super
         flush_output
       end
 
       def print_example_failed(pending_fixed, description, run_time, failure_id, exception, extra_content, escape_backtrace=false)
-        puts "ex failed #{description}"
         super
         flush_output
       end
 
       def print_example_pending(description, pending_message)
-        puts "ex pending #{description}"
         super
         flush_output
       end
@@ -177,13 +183,17 @@ module Opal
       end
 
       def make_example_group_header_red(group_id)
-        `makeRed(#{"div_group_#{group_id}"})`
-        `makeRed(#{"example_group_#{group_id}"})`
+        @pending_group_updates << lambda do
+          `makeRed(#{"div_group_#{group_id}"})`
+          `makeRed(#{"example_group_#{group_id}"})`
+        end
       end
 
       def make_example_group_header_yellow(group_id)
-        `makeYellow(#{"div_group_#{group_id}"})`
-        `makeYellow(#{"example_group_#{group_id}"})`
+        @pending_group_updates << lambda do
+          `makeYellow(#{"div_group_#{group_id}"})`
+          `makeYellow(#{"example_group_#{group_id}"})`
+        end
       end
     end
 
