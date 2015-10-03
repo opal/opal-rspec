@@ -18,7 +18,14 @@ module ::RSpec::Core
       end
 
       def autorun
-        run(ARGV, $stderr, $stdout).then do |status|
+        # see NoCarriageReturnIO source for why this is being done (not on Node though)
+        err, out = unless node?
+                     no_cr = NoCarriageReturnIO.new
+                     [no_cr, no_cr]
+                   else
+                     [$stderr, $stdout]
+                   end
+        run(ARGV, err, out).then do |status|
           exit_with_code status.to_i
         end
       end
