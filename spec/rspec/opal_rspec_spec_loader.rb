@@ -2,7 +2,7 @@ require 'tmpdir'
 
 module Opal
   module RSpec
-    module OpalSpecLoader
+    module OpalRSpecSpecLoader
       include Rake::DSL
 
       def files_with_line_continue
@@ -154,6 +154,7 @@ module Opal
           output_log = []
           # Color makes it harder to parse
           command_line = "SPEC_OPTS=\"--no-color\" rake #{name}"
+          # TODO: Filter out failure details for stuff we're ignoring and only show details for unexpected failures
           puts "Running #{command_line}"
           IO.popen(command_line).each do |line|
             puts line

@@ -1,9 +1,9 @@
-require_relative '../opal_spec_loader'
+require_relative '../opal_rspec_spec_loader'
 
 module Opal
   module RSpec
     module CoreSpecLoader
-      extend Opal::RSpec::OpalSpecLoader
+      extend Opal::RSpec::OpalRSpecSpecLoader
 
       def self.expected_pending_count
         1

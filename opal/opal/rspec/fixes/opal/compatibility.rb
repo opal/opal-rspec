@@ -95,6 +95,20 @@ module Opal
       def self.class_within_class_new_works?
         TEST_CLASS.does_class_exist?
       end
+
+      # Fixed in Opal 0.9
+      def self.undef_within_exec_works?
+        klass = Class.new do
+          def bar
+          end
+        end
+
+        klass.class_exec do
+          undef bar
+        end
+
+        !klass.new.respond_to? :bar
+      end
     end
   end
 end

@@ -10,9 +10,4 @@ RSpec.configure do |config|
 
   # Legacy helpers
   config.include Opal::RSpec::AsyncHelpers
-
-  # Always support expect() and .should syntax (we should not do this really..)
-  config.expect_with :rspec do |c|
-    c.syntax = [:should, :expect]
-  end
 end
