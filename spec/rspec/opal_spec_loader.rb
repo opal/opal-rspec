@@ -143,7 +143,16 @@ module Opal
 
         desc "Verifies that #{name} work correctly"
         task "verify_#{name}" do
-          test_output = `rake #{name}`
+          output_log = []
+          # Color makes it harder to parse
+          command_line = "SPEC_OPTS=\"--no-color\" rake #{name}"
+          puts "Running #{command_line}"
+          IO.popen(command_line).each do |line|
+            puts line
+            output_log << line
+          end.close
+          rake_success = $?.success?
+          test_output = output_log.join "\n"
           test_output.force_encoding 'UTF-8'
           count_match = /(\d+) examples, (\d+) failures/.match(test_output)
           raise 'Expected a finished count of test failures/success/etc. but did not see it' unless count_match
@@ -151,29 +160,33 @@ module Opal
           pending = if (match = /(\d+) pending/.match(test_output))
                       match.captures[0]
                     else
-                      0
+                      '0'
                     end
           actual_failures = []
-          all_failed_examples = Regexp.new('Failed examples:\s(.*)', Regexp::MULTILINE).match(test_output).captures[0]
-          all_failed_examples.scan /rspec \S+ # (.*)/ do |match|
-            actual_failures << match[0].strip
+          failed_match = Regexp.new('Failed examples:\s(.*)', Regexp::MULTILINE).match(test_output)
+          if failed_match
+            all_failed_examples = failed_match.captures[0]
+            all_failed_examples.scan /rspec \S+ # (.*)/ do |match|
+              actual_failures << match[0].strip
+            end
+            actual_failures.sort!
           end
-          actual_failures.sort!
           expected_failures = get_ignored_spec_failures
           remaining_failures = actual_failures.reject do |actual|
             expected_failures.any? do |expected|
               Regexp.new(expected[:exclusion]).match actual
             end
           end
-          if remaining_failures.empty? and pending == expected_pending_count.to_s
+          puts "reasons #{remaining_failures.empty?} #{pending == expected_pending_count.to_s} #{rake_success}"
+          if remaining_failures.empty? && pending == expected_pending_count.to_s && rake_success
             puts 'Test successful!'
             puts "#{total} total specs, #{failed} expected failures, #{pending} expected pending"
           else
             puts "Raw output: #{test_output}" if ENV['RAW_OUTPUT']
             puts "Unexpected failures:\n\n#{remaining_failures.join("\n")}\n"
             puts '-----------Summary-----------'
-            puts "Total passed count #{total.to_i - failed.to_i - pending.to_i}"
-            puts "Expected pending count #{expected_pending_count}, actual pending count #{pending}"
+            puts "Total passed count: #{total.to_i - failed.to_i - pending.to_i}"
+            puts "Expected pending count: #{expected_pending_count}, actual pending count #{pending}"
             puts "Total 'failure' count: #{actual_failures.length}"
             puts "Unexpected failure count: #{remaining_failures.length}"
             raise 'Test failed!'

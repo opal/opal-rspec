@@ -1,3 +1,5 @@
+require_relative 'formatter/opal_closed_tty_io'
+
 module ::RSpec::Core
   class Runner
     class << self
@@ -17,14 +19,24 @@ module ::RSpec::Core
         phantom? || node?
       end
 
+      def get_opal_closed_tty_io
+        runner_type = if phantom?
+                        :phantom
+                      elsif node?
+                        :node
+                      else
+                        :browser
+                      end
+        std_out = OpalClosedTtyIO.new runner_type,
+                                      :stdout
+        std_err = OpalClosedTtyIO.new runner_type,
+                                      :stderr
+        [std_err, std_out]
+      end
+
       def autorun
         # see NoCarriageReturnIO source for why this is being done (not on Node though)
-        err, out = unless node?
-                     no_cr = NoCarriageReturnIO.new
-                     [no_cr, no_cr]
-                   else
-                     [$stderr, $stdout]
-                   end
+        err, out = get_opal_closed_tty_io
         run(ARGV, err, out).then do |status|
           exit_with_code status.to_i
         end
@@ -49,7 +61,7 @@ module ::RSpec::Core
 
     def run_groups_async(example_groups, reporter)
       results = []
-      last_promise = example_groups.inject(Promise.value) do |previous_promise, group|
+      last_promise = example_groups.inject(Promise.value(true)) do |previous_promise, group|
         previous_promise.then do |result|
           results << result
           group.run reporter

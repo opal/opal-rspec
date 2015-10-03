@@ -10,7 +10,7 @@ require_relative 'spec/rspec/expectations/expectation_spec_loader'
 task :default => [:unit_specs, :verify_opal_specs, :integration_specs, :verify_other_specs]
 
 desc 'Runs a set of specs in opal'
-Opal::RSpec::RakeTask.new(:opal_specs) do |server, task|
+Opal::RSpec::RakeTask.new(:opal_specs) do |_, task|
   task.pattern = 'spec/opal/**/*_spec.{rb,opal}'
 end
 
@@ -31,8 +31,12 @@ RSpec::Core::RakeTask.new :unit_specs do |t|
 end
 
 desc 'A more limited spec suite to test pattern usage'
-Opal::RSpec::RakeTask.new(:other_specs) do |server, task|
-  task.pattern = 'spec/other/**/*_spec.rb'
+Opal::RSpec::RakeTask.new(:other_specs) do |_, task|
+  task.pattern = 'spec/other/dummy_spec.rb'
+end
+
+Opal::RSpec::RakeTask.new(:color_on_by_default) do |_, task|
+  task.pattern = 'spec/other/color_on_by_default_spec.rb'
 end
 
 Opal::RSpec::CoreSpecLoader.rake_tasks_for(:rspec_core_specs)

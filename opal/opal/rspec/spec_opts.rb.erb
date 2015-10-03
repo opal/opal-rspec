@@ -3,11 +3,13 @@
     if spec_opts && !spec_opts.empty?
 %>
 <%
-        if spec_opts.include? '--colors'
+        if (match = /--(no-)?color\b/.match(spec_opts))
+            color_value = !match.captures[0]
+            # Have to use instance_variable_set because config.color= is designed to not allow overriding color once it's set, but
+            # we do not yet have true SPEC_OPTS parsing via RSpec config to get it initially set
 %>
             RSpec.configure do |config|
-              config.color = true
-              config.tty = true
+              config.instance_variable_set(:@color, <%=color_value.to_s%>)
             end
     <% end %>
 <% end%>

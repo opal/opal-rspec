@@ -20,8 +20,9 @@ module Opal
 
         stdout = $stdout
         $stdout = StringIO.new
-        PP.pp 'pp check'
-        $stdout.string == "\"pp check\"\n"
+        msg = 'opal-rspec - checking pp/pretty print features'
+        PP.pp msg
+        $stdout.string == "\"#{msg}\"\n"
       ensure
         $stdout = stdout
       end
