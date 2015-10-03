@@ -1,10 +1,3 @@
-# the safety method is defined in helper_methods and uses threads
-module RSpecHelpers
-  def safely
-    yield
-  end
-end
-
 # Since our call site (locating which line a test is on does not yet work, we don't want to fail all of these mocks)
 module RSpecHelpers
   def expect_deprecation_with_call_site(file, line, snippet=//)

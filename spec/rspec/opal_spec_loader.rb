@@ -46,7 +46,8 @@ module Opal
       end
 
       def append_additional_load_paths(server)
-        additional_load_paths.each { |p| server.append_path p }
+        baseline = ['spec/rspec/shared']
+        (baseline + additional_load_paths).each { |p| server.append_path p }
       end
 
       # TODO: Use the progress formatter if we can swing their errors

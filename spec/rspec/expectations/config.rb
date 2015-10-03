@@ -2,6 +2,7 @@ RSpec::configure do |config|
   config.color = true
 
   config.include FormattingSupport
+  config.include RSpecHelpers
 
   config.expect_with :rspec do |expectations|
     $default_expectation_syntax = expectations.syntax
