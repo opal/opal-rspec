@@ -10,7 +10,7 @@ module RSpec::ExampleGroups
     name = name.gsub(/[^0-9a-zA-Z]+([0-9a-zA-Z])/) { Regexp.last_match[1].upcase }
 
     # mutable strings on these 2
-    name = name.lstrip         # Remove leading whitespace
+    name = name.lstrip # Remove leading whitespace
     name = name.gsub(/\W/, '') # JRuby, RBX and others don't like non-ascii in const names
 
     # Ruby requires first const letter to be A-Z. Use `Nested`
@@ -37,11 +37,13 @@ module RSpec::ExampleGroups
   end
 end
 
-# # https://github.com/opal/opal/issues/1080
-module RSpec::ExampleGroups
-  original_constants = method(:constants)
+# https://github.com/opal/opal/issues/1080, fixed in Opal 0.9
+unless Opal::RSpec::Compatibility.is_constants_a_clone?
+  module RSpec::ExampleGroups
+    original_constants = method(:constants)
 
-  self.class.send(:define_method, :constants) do
-    original_constants.call().dup
+    self.class.send(:define_method, :constants) do
+      original_constants.call().dup
+    end
   end
 end
