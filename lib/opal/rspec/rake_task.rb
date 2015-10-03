@@ -25,40 +25,24 @@ module Opal
         ((via_env = ENV['RUNNER']) && via_env.to_sym) || @runner || :phantom
       end
 
-      OTHER_JUNK = <<-JS
-           if (typeof(Opal) !== 'undefined') {
-              Opal.mark_as_loaded("opal");
-      Opal.mark_as_loaded("corelib/runtime.self");
-      Opal.mark_as_loaded("mutex_m");
-      Opal.mark_as_loaded("prettyprint");
-      Opal.mark_as_loaded("tempfile");
-      Opal.mark_as_loaded("diff/lcs");
-      Opal.mark_as_loaded("diff/lcs/block");
-      Opal.mark_as_loaded("diff/lcs/callbacks");
-      Opal.mark_as_loaded("diff/lcs/change");
-      Opal.mark_as_loaded("diff/lcs/hunk");
-      Opal.mark_as_loaded("diff/lcs/internals");
-      Opal.mark_as_loaded("test/unit/assertions");
-      Opal.mark_as_loaded("optparse");
-      Opal.mark_as_loaded("shellwords");
-      Opal.mark_as_loaded("socket");
-      Opal.mark_as_loaded("uri");
-      Opal.mark_as_loaded("drb/drb");
-      Opal.mark_as_loaded("minitest/unit");
-      Opal.mark_as_loaded("cgi/util");
-              Opal.load("opal/rspec/sprockets_runner");
-            }
-      JS
+      def get_load_asset_code(server)
+        sprockets = server.sprockets
+        name = server.main
+        asset = sprockets[name]
+        raise "Cannot find asset: #{name}" if asset.nil?
+        Opal::Processor.load_asset_code(sprockets, name)
+      end
 
-      def launch_node
+      # TODO: Avoid the Rack server and compile directly
+      def launch_node(server)
         compiled = Tempfile.new 'opal_rspec.js'
         begin
-          # TODO: URL constant
-          Net::HTTP.start 'localhost', 9999 do |http|
-            # TODO: Supply the main runner path in here and just append to /assets/
-            resp = http.get '/assets/opal/rspec/sprockets_runner.js'
+          uri = URI(URL)
+          Net::HTTP.start uri.hostname, uri.port do |http|
+            resp = http.get File.join('/assets', server.main)
             compiled.write resp.body
-            compiled.write OTHER_JUNK
+            load_asset_code = get_load_asset_code server
+            compiled.write load_asset_code
             compiled.close
           end
           command_line = "node #{compiled.path} 2>&1"
@@ -135,7 +119,7 @@ module Opal
           end
 
           begin
-            is_phantom ? launch_phantom : launch_node
+            is_phantom ? launch_phantom : launch_node(app)
           ensure
             server.kill
           end

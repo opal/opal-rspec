@@ -19,7 +19,7 @@ matrix:
     - rvm: 2.2
       env: RUN=verify_rspec_specs_without_fail
     - rvm: 2.2
-      env: RUN=default RUNNER=node
+      env: RUN="verify_opal_specs verify_other_specs" RUNNER=node
     - rvm: 2.2
       env: RUN=verify_rspec_specs_without_fail RUNNER=node
 
