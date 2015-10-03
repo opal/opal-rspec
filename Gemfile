@@ -9,6 +9,7 @@ end
 # gem 'opal', git: 'https://github.com/opal/opal.git'
 gem 'capybara-webkit', require: false
 gem 'selenium-webdriver', require: false
+gem 'opal-minitest' # for rspec-specs
 
 # These need to come from our local path in order for create_requires.rb to work properly
 gem 'rspec',              path: 'rspec'

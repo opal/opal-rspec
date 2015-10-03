@@ -1,6 +1,5 @@
 require 'opal'
 require 'opal/rspec/version'
-require 'opal/minitest'
 require 'opal/rspec/sprockets_environment'
 
 # Just register our opal code path with opal build tools
@@ -25,21 +24,16 @@ stubs = [
   'diff/lcs/hunk',
   'diff/lcs/internals',
   'test/unit/assertions',
-
   # Opal doesn't have optparse, yet
   'optparse',
-
   'shellwords',
   'socket',
   'uri',
   'drb/drb',
-
-  # Minitest used to be in stdlib, now is in opal-minitest GEM,
-  # but this file does not exist
-  # (referenced from minitest_assertions_adapter.rb in RSpec)
-  'minitest/unit',
-
   'cgi/util',
+  'minitest', # RSpec uses require to see if minitest is there, opal/sprockets won't like that, so stub it
+  'minitest/unit',
+  'minitest/assertions'
 ]
 
 stubs.each {|mod| Opal::Processor.stub_file mod }

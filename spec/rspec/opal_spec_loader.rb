@@ -13,6 +13,10 @@ module Opal
         []
       end
 
+      def unstub_requires
+        []
+      end
+
       def get_ignored_spec_failures
         FileList[File.join(base_dir, 'filter/**/*.txt')].map do |filename|
           get_exclusions_compact filename
@@ -21,6 +25,10 @@ module Opal
 
       def stub_requires
         stubbed_requires.each { |f| Opal::Processor.stub_file f }
+        unstub_requires.each do |f|
+          puts "Unstubbing #{f} per test request"
+          Opal::Processor.stubbed_files.delete f
+        end
       end
 
       def get_file_list
