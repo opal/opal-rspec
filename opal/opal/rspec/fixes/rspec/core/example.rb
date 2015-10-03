@@ -11,7 +11,7 @@ class RSpec::Core::Example
     RSpec::Matchers.clear_generated_description
   end
 
-  # Fix unnecessary deprecation warnings
+  # https://github.com/opal/opal/issues/1126
   # Hash.public_instance_methods - Object.public_instance_methods, which is a part of metadata.rb/HashImitatable (included by ExecutionResult), returns the initialize method, which gets marked as deprecated. The intent of the issue_deprecation method though is to shift people away from using this as a hash. Initialize obviously is not indicative of hash usage (any new object will trip this up, and that should not happen).
   class ExecutionResult
     # There is no real constructor to preserve in example.rb's ExecutionResult class, so can eliminate the issue_deprecation call this way

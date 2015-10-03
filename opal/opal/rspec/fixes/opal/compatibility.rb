@@ -42,6 +42,58 @@ module Opal
         mod = Opal::RSpec::Compatibility
         `#{mod.constants} !== #{mod.constants}`
       end
+
+      # https://github.com/opal/opal/issues/1077, fixed in Opal 0.9
+      def self.class_descendant_of_self_fixed?
+        !(String < String)
+      end
+
+      # https://github.com/opal/opal/issues/1090, fixed in Opal 0.9
+      def self.and_works_with_lhs_nil?
+        value = nil
+        (value && nil) == nil
+      end
+
+      # https://github.com/opal/opal/issues/858
+      def self.is_set_coerced_to_array?
+        require 'set'
+
+        obj = Object.new
+
+        def obj.splat(*data)
+          return data[0]
+        end
+
+        obj.splat(*Set.new(Set.new([:foo, :bar]))) == :foo
+      end
+
+      # https://github.com/opal/opal/pull/1117, status pending
+      def self.fail_raise_matches_mri?
+        ex = nil
+        %x{
+          try {
+            #{fail}
+          }
+          catch(e) {
+            #{ex} = e;
+          }
+        }
+        ex.is_a? RuntimeError
+      end
+
+      TEST_CLASS = Class.new do
+        class ClassWithinClassNewWorks
+        end
+
+        def self.does_class_exist?
+          Compatibility.const_defined? :ClassWithinClassNewWorks
+        end
+      end
+
+      # https://github.com/opal/opal/issues/1110, fixed in Opal 0.9
+      def self.class_within_class_new_works?
+        TEST_CLASS.does_class_exist?
+      end
     end
   end
 end

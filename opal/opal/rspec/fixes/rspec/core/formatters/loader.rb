@@ -19,11 +19,16 @@ class ::RSpec::Core::Formatters::Loader
     if Class === formatter_ref
       formatter_ref
     elsif string_const?(formatter_ref)
+      # retry not supported on opal
+      # begin
+      #   formatter_ref.gsub(/^::/, '').split('::').inject(Object) { |a, e| a.const_get e }
+      # rescue NameError
+      #   require(path_for(formatter_ref)) ? retry : raise
+      # end
       while true
         begin
           return formatter_ref.gsub(/^::/, '').split('::').inject(Object) { |a, e| a.const_get e }
         rescue NameError
-          # retry not supported on opal
           raise unless require(path_for(formatter_ref))
         end
       end
