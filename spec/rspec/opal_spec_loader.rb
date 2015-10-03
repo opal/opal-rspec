@@ -185,7 +185,6 @@ module Opal
               Regexp.new(expected[:exclusion]).match actual
             end
           end
-          puts "reasons #{remaining_failures.empty?} #{pending == expected_pending_count.to_s} #{rake_success}"
           if remaining_failures.empty? && pending == expected_pending_count.to_s && rake_success
             puts 'Test successful!'
             puts "#{total} total specs, #{failed} expected failures, #{pending} expected pending"

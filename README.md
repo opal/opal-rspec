@@ -228,6 +228,8 @@ Only 'spec' will be added to the load path.
 * nodejs runner
   * debug mode + source map support not there yet (see source map support - https://github.com/evanw/node-source-map-support)
   * currently running a lot slower than phantomjs, might need optimization
+* predicate matchers (be_some_method_on_your_subject)
+  * Do not currently work with delegate objects (Opal DelegateClass is incomplete)
 
 ## Contributing
 
