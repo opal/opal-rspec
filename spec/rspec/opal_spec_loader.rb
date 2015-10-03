@@ -135,7 +135,8 @@ module Opal
           stub_requires
           files = get_file_list
           with_sub = sub_in_end_of_line files
-          task.files = with_sub
+          multi_regex = remove_multiline_regexes with_sub
+          task.files = multi_regex
           append_additional_load_paths server
           server.debug = ENV['OPAL_DEBUG']
         end

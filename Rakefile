@@ -5,6 +5,7 @@ Bundler::GemHelper.install_tasks
 
 require 'opal/rspec/rake_task'
 require_relative 'spec/rspec/core/core_spec_loader'
+require_relative 'spec/rspec/expectations/expectation_spec_loader'
 
 task :default => [:unit_specs, :verify_opal_specs, :integration_specs, :verify_other_specs]
 
@@ -34,7 +35,11 @@ Opal::RSpec::RakeTask.new(:other_specs) do |server, task|
   task.pattern = 'spec/other/**/*_spec.rb'
 end
 
-Opal::RSpec::CoreSpecLoader.rake_tasks_for(:rspec_specs)
+Opal::RSpec::CoreSpecLoader.rake_tasks_for(:rspec_core_specs)
+Opal::RSpec::ExpectationSpecLoader.rake_tasks_for(:rspec_expectation_specs)
+
+desc 'Verifies all RSpec specs'
+task :verify_rspec_specs => [:verify_rspec_core_specs, :verify_rspec_expectation_specs]
 
 desc 'Verifies other_spec_dir task ran correctly'
 task :verify_other_specs do
