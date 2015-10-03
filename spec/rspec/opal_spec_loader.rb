@@ -175,7 +175,7 @@ module Opal
             puts "Total passed count #{total.to_i - failed.to_i - pending.to_i}"
             puts "Expected pending count #{expected_pending_count}, actual pending count #{pending}"
             puts "Total 'failure' count: #{actual_failures.length}"
-            puts "Unexpected failure count #{remaining_failures.length}"
+            puts "Unexpected failure count: #{remaining_failures.length}"
             raise 'Test failed!'
           end
         end
