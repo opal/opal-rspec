@@ -145,9 +145,14 @@ module Opal
         task "verify_#{name}" do
           test_output = `rake #{name}`
           test_output.force_encoding 'UTF-8'
-          count_match = /(\d+) examples, (\d+) failures, (\d+) pending/.match(test_output)
+          count_match = /(\d+) examples, (\d+) failures/.match(test_output)
           raise 'Expected a finished count of test failures/success/etc. but did not see it' unless count_match
-          total, failed, pending = count_match.captures
+          total, failed = count_match.captures
+          pending = if (match = /(\d+) pending/.match(test_output))
+                      match.captures[0]
+                    else
+                      0
+                    end
           actual_failures = []
           all_failed_examples = Regexp.new('Failed examples:\s(.*)', Regexp::MULTILINE).match(test_output).captures[0]
           all_failed_examples.scan /rspec \S+ # (.*)/ do |match|
