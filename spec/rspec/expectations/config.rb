@@ -1,4 +1,4 @@
-require 'opal/progress_json_formatter'
+require 'opal/progress_json_formatter' # verify case uses this
 
 RSpec::configure do |config|
   config.color = true
@@ -12,5 +12,5 @@ RSpec::configure do |config|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
   end
 
-  config.formatter = Opal::RSpec::ProgressJsonFormatter
+  #config.full_description = 'RSpec::Expectations::Configuration configuring rspec-expectations directly behaves like configuring the expectation syntax can limit the syntax to :should'
 end

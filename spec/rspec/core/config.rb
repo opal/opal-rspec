@@ -1,6 +1,5 @@
-require 'opal/progress_json_formatter'
+require 'opal/progress_json_formatter' # verify case uses this
 
 RSpec.configure do |c|
-  c.formatter = Opal::RSpec::ProgressJsonFormatter
   #c.full_description = 'uses the default color for the shared example backtrace line'
 end

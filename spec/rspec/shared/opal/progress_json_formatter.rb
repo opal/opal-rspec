@@ -22,7 +22,8 @@ module Opal::RSpec
     def close(_notification)
       output.puts # our dots will not have closed out with a CR
       output.puts 'BEGIN JSON'
-      output.puts @output_hash.to_json
+      super
+      output.puts # Need a CR for popen to know we're done
     end
   end
 end

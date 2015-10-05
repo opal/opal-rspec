@@ -20,6 +20,8 @@
 
 *   Browser formatter now works w/ progress bar
 
+*   JSON formatter supported
+
 *   More matchers enabled
 
 

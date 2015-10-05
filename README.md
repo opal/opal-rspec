@@ -30,11 +30,26 @@ Then, to run your specs inside phantomjs (the default runner), just run the rake
 bundle exec rake
 ```
 
-If you want to enable colors in the output
+Enable colors in the output
 
 ```
 SPEC_OPTS="--color" bundle exec rake
 ```
+
+Use a different formatter
+
+```
+SPEC_OPTS="--format RSpec::Core::Formatters::JsonFormatter" bundle exec rake
+```
+
+The following formatters have been tested. Note that you can't use the shortcut (j/json/etc.) right now. You must use the full class.
+
+| Formatter          | Command Line Option                             |
+|--------------------|-------------------------------------------------|
+| Default (progress) | RSpec::Core::Formatters::ProgressFormatter      |
+| Documentation      | RSpec::Core::Formatters::DocumentationFormatter |
+| JSON               | RSpec::Core::Formatters::JsonFormatter          |
+
 
 You can also customize the pattern of specs used similiar to how RSpec's rake task works:
 
@@ -230,6 +245,7 @@ Only 'spec' will be added to the load path.
   * currently running a lot slower than phantomjs, might need optimization
 * predicate matchers (be_some_method_on_your_subject)
   * Do not currently work with delegate objects (Opal DelegateClass is incomplete)
+* Formatters must be supplied as full classes (otherwise Opal tries to load them from inside the Loader class)  
 
 ## Contributing
 

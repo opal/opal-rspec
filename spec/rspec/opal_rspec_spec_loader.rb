@@ -58,8 +58,6 @@ module Opal
         (baseline + additional_load_paths).each { |p| server.append_path p }
       end
 
-      # TODO: Use the progress formatter if we can swing their errors
-
       # https://github.com/opal/opal/issues/1125
       def remove_multiline_regexes(files)
         bad_regex = /(%r%$.*%)$/m
@@ -139,7 +137,7 @@ module Opal
       end
 
       def execute_specs(name)
-        command_line = "rake #{name}"
+        command_line = "SPEC_OPTS=\"--format Opal::RSpec::ProgressJsonFormatter\" rake #{name}"
         puts "Running #{command_line}"
         example_info = []
         state = :progress
