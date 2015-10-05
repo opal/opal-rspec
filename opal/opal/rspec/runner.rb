@@ -37,6 +37,8 @@ module ::RSpec::Core
       def autorun
         # see NoCarriageReturnIO source for why this is being done (not on Node though)
         err, out = get_opal_closed_tty_io
+        # Have to do this in 2 places. This will ensure the default formatter gets the right IO, but need to do this in config for custom formatters
+        # that will be constructed BEFORE this runs, see rspec.rb
         run(ARGV, err, out).then do |status|
           exit_with_code status.to_i
         end
