@@ -1,0 +1,7 @@
+# diffs not yet supported on Opal
+RSpec::Matchers::DSL::Matcher handles multiline string diffs
+
+# throw not in Opal
+Matchers should be able to generate their own descriptions expect\(...\).to throw symbol
+Matchers should be able to generate their own descriptions expect\(...\).to throw symbol \(with named symbol\)
+RSpec::Matchers::BuiltIn::ThrowSymbol.*

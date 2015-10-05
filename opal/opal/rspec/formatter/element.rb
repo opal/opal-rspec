@@ -14,7 +14,7 @@ module Opal
       def self.from_string(str)
         dummy_div = `document.createElement('div')`
         `#{dummy_div}.innerHTML = #{str}`
-        new(`#{dummy_div}.firstChild`)
+        new(`#{dummy_div}.children[0]`)
       end
 
       def initialize(el, attrs={})
@@ -31,8 +31,20 @@ module Opal
         `#@native.className`
       end
 
+      def get_child_by_tag_name(tag)
+        Element.new(`#@native.getElementsByTagName(#{tag})[0]`)
+      end
+
       def class_name=(name)
         `#@native.className = #{name}`
+      end
+
+      def native
+        `#@native`
+      end
+
+      def outer_html
+        `#@native.outerHTML`
       end
 
       def html=(html)

@@ -6,6 +6,8 @@ module Opal
     class HtmlPrinter < ::RSpec::Core::Formatters::HtmlPrinter
       def initialize(output)
         super
+        @group_stack = []
+        @update_stack = []
       end
 
       def print_html_start
@@ -19,11 +21,13 @@ module Opal
         @output.close
         # From here, we'll do more direct DOM manipulation
         reset_output
-        @results = Element.klass 'results'
+        @root_node = Element.klass 'results'
       end
 
       def flush_output
-        @results.append Element.from_string(@output.string)
+        node = @group_stack.last ? @group_stack.last : @root_node
+        new_node = Element.from_string(@output.string)
+        node.append new_node
         reset_output
       end
 
@@ -33,14 +37,19 @@ module Opal
 
       def print_example_group_start(group_id, description, number_of_parents)
         super
+        @output.puts '</dl></div>'
+        parent_node = @group_stack.last ? @group_stack.last : @root_node
+        new_node = Element.from_string(@output.string)
+        reset_output
+        parent_node << new_node
+        @group_stack << new_node.get_child_by_tag_name('dl')
         # We won't have this in the DOM until group ends, so need to queue up yellow/red updates
-        @pending_group_updates = []
+        @update_stack << []
       end
 
       def print_example_group_end
-        super
-        flush_output
-        @pending_group_updates.each(&:call)
+        @group_stack.pop
+        @update_stack.pop.each(&:call)
       end
 
       def print_example_passed(description, run_time)
@@ -83,14 +92,14 @@ module Opal
       end
 
       def make_example_group_header_red(group_id)
-        @pending_group_updates << lambda do
+        @update_stack.last << lambda do
           `makeRed(#{"div_group_#{group_id}"})`
           `makeRed(#{"example_group_#{group_id}"})`
         end
       end
 
       def make_example_group_header_yellow(group_id)
-        @pending_group_updates << lambda do
+        @update_stack.last << lambda do
           `makeYellow(#{"div_group_#{group_id}"})`
           `makeYellow(#{"example_group_#{group_id}"})`
         end
