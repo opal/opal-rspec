@@ -1,0 +1,4 @@
+# similar splat issue as the one noted in metadata bugs for these 3 (splat/description)
+RSpec::Core::FilterManager#exclusions#description includes an overriden :if filter
+RSpec::Core::FilterManager#exclusions#description includes an overriden :unless filter
+RSpec::Core::FilterManager#exclusions#description includes other filters

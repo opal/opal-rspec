@@ -203,14 +203,26 @@ module Opal
                 example['exception']['message']
             ].join "\n"
           end
-          if remaining_failures.empty? && pending == expected_pending_count && results[:success]
+          reasons = []
+          unless remaining_failures.empty?
+            reasons << 'Unexpected failures'
+          end
+          reasons << "Expected #{expected_pending_count} pending but got #{pending}" unless pending == expected_pending_count
+          reasons << 'no specs found' unless total > 0
+          reasons << 'No failures, but Rake task did not succeed' if (failed == 0 && !results[:success])
+          if reasons.empty?
             puts 'Test successful!'
             puts "#{total} total specs, #{failed} expected failures, #{pending} expected pending"
           else
-            puts "Unexpected failures:\n\n#{remaining_failures.join("\n")}\n"
+            puts 'Test FAILED for the following reasons:'
+            puts reasons.join "\n"
+            if remaining_failures.any?
+              puts
+              puts "Unexpected failures:\n\n#{remaining_failures.join("\n")}\n"
+            end
             puts '-----------Summary-----------'
             puts "Total passed count: #{total - failed - pending}"
-            puts "Expected pending count: #{expected_pending_count}, actual pending count #{pending}"
+            puts "Pending count #{pending}"
             puts "Total 'failure' count: #{actual_failures.length}"
             puts "Unexpected failure count: #{remaining_failures.length}"
             raise 'Test failed!'

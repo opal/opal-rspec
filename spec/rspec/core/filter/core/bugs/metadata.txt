@@ -1,0 +1,5 @@
+# splat problem? something isn't right here, same issue for the following 3
+RSpec::Core::Metadata :description on a group with a non-string and a string concats the args
+RSpec::Core::Metadata :full_description with a 2nd arg starting with # removes the space
+RSpec::Core::Metadata :full_description with a 2nd arg starting with . removes the space
+RSpec::Core::Metadata :full_description with a 2nd arg starting with :: removes the space

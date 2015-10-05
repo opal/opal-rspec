@@ -1,0 +1,4 @@
+# These use mocking (as_stubbed_const), which isn't working, might be easier to figure out in the mocks specs:
+
+RSpec::Core::Formatters::Loader#add\(formatter\) when a legacy formatter is added with RSpec::LegacyFormatters loads formatters from the external gem
+RSpec::Core::Formatters::Loader#add\(formatter\) when a legacy formatter is added with RSpec::LegacyFormatters subscribes the formatter to the notifications the adaptor implements
