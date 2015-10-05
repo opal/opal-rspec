@@ -138,6 +138,36 @@ module Opal
         files_we_left_alone + fixed_temp_files
       end
 
+      def execute_specs(name)
+        command_line = "rake #{name}"
+        puts "Running #{command_line}"
+        example_info = []
+        state = :progress
+        IO.popen(command_line).each do |line|
+          line.force_encoding 'UTF-8'
+          case state
+            when :progress
+              puts line
+            when :example_info
+              example_info << line
+          end
+          state = case line
+                    when /BEGIN JSON/
+                      :example_info
+                    else
+                      state
+                  end
+        end.close
+        {
+            example_info: example_info,
+            success: $?.success?
+        }
+      end
+
+      def parse_results(results)
+        JSON.parse results[:example_info].join("\n")
+      end
+
       def rake_tasks_for(name)
         Opal::RSpec::RakeTask.new(name) do |server, task|
           stub_requires
@@ -151,49 +181,35 @@ module Opal
 
         desc "Verifies that #{name} work correctly"
         task "verify_#{name}" do
-          output_log = []
-          # Color makes it harder to parse
-          command_line = "SPEC_OPTS=\"--no-color\" rake #{name}"
-          # TODO: Filter out failure details for stuff we're ignoring and only show details for unexpected failures
-          puts "Running #{command_line}"
-          IO.popen(command_line).each do |line|
-            puts line
-            output_log << line
-          end.close
-          rake_success = $?.success?
-          test_output = output_log.join "\n"
-          test_output.force_encoding 'UTF-8'
-          count_match = /(\d+) examples, (\d+) failures/.match(test_output)
-          raise 'Expected a finished count of test failures/success/etc. but did not see it' unless count_match
-          total, failed = count_match.captures
-          pending = if (match = /(\d+) pending/.match(test_output))
-                      match.captures[0]
-                    else
-                      '0'
-                    end
-          actual_failures = []
-          failed_match = Regexp.new('Failed examples:\s(.*)', Regexp::MULTILINE).match(test_output)
-          if failed_match
-            all_failed_examples = failed_match.captures[0]
-            all_failed_examples.scan /rspec \S+ # (.*)/ do |match|
-              actual_failures << match[0].strip
-            end
-            actual_failures.sort!
-          end
+          results = execute_specs name
+          parsed_results = parse_results results
+          summary = parsed_results['summary']
+          total = summary['example_count']
+          failed = summary['failure_count']
+          pending = summary['pending_count']
+          actual_failures = parsed_results['examples']
+                                .select { |ex| ex['status'] == 'failed' }
           expected_failures = get_ignored_spec_failures
+          each_header = '----------------------------------------------------'
           remaining_failures = actual_failures.reject do |actual|
             expected_failures.any? do |expected|
-              Regexp.new(expected[:exclusion]).match actual
+              Regexp.new(expected[:exclusion]).match actual['full_description']
             end
+          end.map do |example|
+            [
+                each_header,
+                'Example: '+example['full_description'],
+                each_header,
+                example['exception']['message']
+            ].join "\n"
           end
-          if remaining_failures.empty? && pending == expected_pending_count.to_s && rake_success
+          if remaining_failures.empty? && pending == expected_pending_count && results[:success]
             puts 'Test successful!'
             puts "#{total} total specs, #{failed} expected failures, #{pending} expected pending"
           else
-            puts "Raw output: #{test_output}" if ENV['RAW_OUTPUT']
             puts "Unexpected failures:\n\n#{remaining_failures.join("\n")}\n"
             puts '-----------Summary-----------'
-            puts "Total passed count: #{total.to_i - failed.to_i - pending.to_i}"
+            puts "Total passed count: #{total - failed - pending}"
             puts "Expected pending count: #{expected_pending_count}, actual pending count #{pending}"
             puts "Total 'failure' count: #{actual_failures.length}"
             puts "Unexpected failure count: #{remaining_failures.length}"
