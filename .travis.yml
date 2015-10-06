@@ -17,9 +17,9 @@ matrix:
     - rvm: 2.2
       env: RUN=default
     - rvm: 2.2
-      env: RUN=in_progress_specs
+      env: RUN=default RUNNER=node
     - rvm: 2.2
-      env: RUN="verify_opal_specs verify_other_specs" RUNNER=node
+      env: RUN=in_progress_specs
     - rvm: 2.2
       env: RUN=in_progress_specs RUNNER=node
 
