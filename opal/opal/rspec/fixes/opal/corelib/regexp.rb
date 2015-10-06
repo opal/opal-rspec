@@ -47,6 +47,13 @@ unless Opal::RSpec::Compatibility.multiline_regex_works? && Opal::RSpec::Compati
       end
     end
 
+    # https://github.com/opal/opal/pull/1129
+    unless Opal::RSpec::Compatibility.regex_case_compare_works?
+      def ===(string)
+        `#{match(Opal.coerce_to?(string, String, :to_str))} !== nil`
+      end
+    end
+
     unless Opal::RSpec::Compatibility.multiline_regex_works?
       # https://github.com/opal/opal/pull/1129
       def match(string, pos = undefined, &block)

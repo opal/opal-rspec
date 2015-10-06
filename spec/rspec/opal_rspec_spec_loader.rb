@@ -217,7 +217,7 @@ module Opal
           reasons << 'No failures, but Rake task did not succeed' if (failed == 0 && !results[:success])
           unused_exclusions = expected_failures.uniq - used_exclusions.uniq
           if unused_exclusions.any?
-            msg = "WARNING: The following exclusion rules did not match an actual failure. Time to update exclusions? Duplicate exclusions??\n" +
+            msg = "WARNING: The following #{unused_exclusions.length} exclusion rules did not match an actual failure. Time to update exclusions? Duplicate exclusions??\n" +
                 unused_exclusions.map { |e| "File: #{e[:filename]}\nLine #{e[:line_number]}\nFilter: #{e[:exclusion]}" }.join("\n---------------------\n")
             reasons << msg
           end

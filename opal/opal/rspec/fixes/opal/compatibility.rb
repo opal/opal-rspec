@@ -124,6 +124,15 @@ module Opal
           false
         end
       end
+
+      # https://github.com/opal/opal/pull/1129
+      def self.regex_case_compare_works?
+        begin
+          (/abc/ === nil) == false && (/abc/ === /abc/) == false
+        rescue
+          false
+        end
+      end
     end
   end
 end

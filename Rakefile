@@ -47,10 +47,10 @@ Opal::RSpec::SupportSpecLoader.rake_tasks_for(:rspec_support_specs)
 
 # These are done
 desc 'Verifies all RSpec specs'
-task :verify_rspec_specs => [:verify_rspec_core_specs]
+task :verify_rspec_specs => [:verify_rspec_support_specs, :verify_rspec_core_specs]
 
 # Still work to do here
-IN_PROGRESS_SPECS = [:verify_rspec_expectation_specs, :rspec_support_specs]
+IN_PROGRESS_SPECS = [:verify_rspec_expectation_specs]
 desc 'Runs verify_rspec_specs without failing until end until we have baseline'
 task :in_progress_specs do
   failures = IN_PROGRESS_SPECS.map do |task_name|
