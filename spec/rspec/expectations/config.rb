@@ -12,5 +12,5 @@ RSpec::configure do |config|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
   end
 
-  #config.full_description = 'RSpec::Expectations::Configuration configuring rspec-expectations directly behaves like configuring the expectation syntax can limit the syntax to :should'
+  #config.full_description = '.*yield.*has a description'
 end

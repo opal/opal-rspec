@@ -1,0 +1,15 @@
+# Probably more related to nesting lambdas in the test than with using raise_error - https://github.com/opal/opal/pull/1117
+expect { ... }.to raise_error\(NamedError, error_message\) { \|err\| ... } does NOT yield exception if error message is not matched
+expect { ... }.to raise_error\(NamedError, error_message\) { \|err\| ... } does not yield exception if error class is not matched
+expect { ... }.to raise_error\(NamedError, error_message\) with Regexp fails if correct error is raised with incorrect message
+expect { ... }.to raise_error\(NamedError, error_message\) with Regexp fails if incorrect error is raised
+expect { ... }.to raise_error\(NamedError, error_message\) with String fails if correct error is raised with incorrect message
+expect { ... }.to raise_error\(NamedError, error_message\) with String fails if incorrect error is raised
+# there are 2 examples w/ the same name, 1 fails because it used load (Opal), the other for the same reason as above
+expect { ... }.to raise_error\(NamedError\) fails if another error is raised \(NameError\)
+# might be something else wrong with these re: an extra class in the message
+expect { ... }.to raise_error.with_message\(message\) fails if any other error is raised with the wrong message
+expect { ... }.to raise_error.with_message\(message\) fails if RuntimeError error is raised with the wrong message
+expect { ... }.to raise_error\(message\) fails if any other error is raised with the wrong message
+expect { ... }.to raise_error\(message\) fails if RuntimeError error is raised with the wrong message
+expect { ... }.not_to raise_error with no specific error class fails if anything is raised

@@ -1,0 +1,3 @@
+# Constant looking in Opal still needs some work
+RSpec::Support::RecursiveConstMethods#recursive_const_defined\? does not find constants in ancestors
+RSpec::Support::RecursiveConstMethods#recursive_const_get does not get constants in ancestors

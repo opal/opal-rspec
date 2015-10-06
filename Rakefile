@@ -6,6 +6,7 @@ Bundler::GemHelper.install_tasks
 require 'opal/rspec/rake_task'
 require_relative 'spec/rspec/core/core_spec_loader'
 require_relative 'spec/rspec/expectations/expectation_spec_loader'
+require_relative 'spec/rspec/support/support_spec_loader'
 
 task :default => [:unit_specs, :verify_opal_specs, :integration_specs, :verify_rspec_specs]
 
@@ -42,13 +43,14 @@ end
 
 Opal::RSpec::CoreSpecLoader.rake_tasks_for(:rspec_core_specs)
 Opal::RSpec::ExpectationSpecLoader.rake_tasks_for(:rspec_expectation_specs)
+Opal::RSpec::SupportSpecLoader.rake_tasks_for(:rspec_support_specs)
 
 # These are done
 desc 'Verifies all RSpec specs'
 task :verify_rspec_specs => [:verify_rspec_core_specs]
 
 # Still work to do here
-IN_PROGRESS_SPECS = [:verify_rspec_expectation_specs]
+IN_PROGRESS_SPECS = [:verify_rspec_expectation_specs, :rspec_support_specs]
 desc 'Runs verify_rspec_specs without failing until end until we have baseline'
 task :in_progress_specs do
   failures = IN_PROGRESS_SPECS.map do |task_name|

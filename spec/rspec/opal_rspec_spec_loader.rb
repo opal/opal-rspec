@@ -17,6 +17,10 @@ module Opal
         []
       end
 
+      def additional_load_paths
+        []
+      end
+
       def get_ignored_spec_failures
         FileList[File.join(base_dir, 'filter/**/*.txt')].map do |filename|
           get_exclusions_compact filename

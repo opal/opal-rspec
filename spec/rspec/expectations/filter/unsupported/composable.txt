@@ -1,0 +1,2 @@
+# I/O on Opal is different. Possible this is a bug, but don't think so
+RSpec::Matchers::Composable does not blow up when surfacing descriptions from an unreadable IO object

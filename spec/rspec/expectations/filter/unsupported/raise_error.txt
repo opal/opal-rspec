@@ -1,0 +1,7 @@
+# strings == symbols in opal, no alternate for this right now (but one could be created)
+Composing matchers with `raise_error` expect { }.to raise_error\(matcher\) provides a description
+Composing matchers with `raise_error` expect { }.to raise_error\(matcher\) fails with a clear message when the matcher does not match the raised error
+
+# backtrace / line numbers
+expect { ... }.to raise_error\(message\) includes the backtrace of any other error in the failure message
+expect { ... }.not_to raise_error with no specific error class includes the backtrace of the error that was raised in the error message

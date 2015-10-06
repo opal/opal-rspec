@@ -243,8 +243,9 @@ Only 'spec' will be added to the load path.
 * nodejs runner
   * debug mode + source map support not there yet (see source map support - https://github.com/evanw/node-source-map-support)
   * currently running a lot slower than phantomjs, might need optimization
-* predicate matchers (be_some_method_on_your_subject)
-  * Do not currently work with delegate objects (Opal DelegateClass is incomplete)
+* Matchers
+  * predicate matchers (be_some_method_on_your_subject) do not currently work with delegate objects (Opal DelegateClass is incomplete)
+  * expect {...}.to raise_error matchers have some bugs as well 
 * Formatters must be supplied as full classes (otherwise Opal tries to load them from inside the Loader class)
 * A lot of backports/monkey patches to Opal classes/methods are done to make this work on Opal 0.8. That means some things might work in your tests that do not work without opal-rspec. You can explore the opal/opal/rspec/fixes/opal directory to see what is being changed. All of the monkey patches check to see if the feature is "broken" before they apply themselves.
 
