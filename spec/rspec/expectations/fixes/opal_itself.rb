@@ -18,4 +18,13 @@ unless Opal::RSpec::Compatibility.class_within_class_new_works?
       :bar;
     end
   end
+
+  # description_generaiton_spec
+  class Parent;
+  end
+  class Child < Parent
+    def child_of?(*parents)
+      parents.all? { |parent| self.is_a?(parent) }
+    end
+  end
 end

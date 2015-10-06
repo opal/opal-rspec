@@ -30,6 +30,6 @@ describe 'Opal::RSpec::BrowserFormatter', type: :feature do
   end
 
   # Travis version (4.x QT) might be causing this to fail
-  include_examples :browser, :webkit, lambda { |page| page.driver.error_messages }
-  #include_examples :browser, :selenium, lambda {|page| page.evaluate_script('window.jsErrors') }
+  #include_examples :browser, :webkit, lambda { |page| page.driver.error_messages }
+  include_examples :browser, :selenium, lambda {|page| page.evaluate_script('window.jsErrors') }
 end

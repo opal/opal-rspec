@@ -17,17 +17,17 @@ matrix:
     - rvm: 2.2
       env: RUN=default
     - rvm: 2.2
-      env: RUN=verify_rspec_specs_without_fail
+      env: RUN=in_progress_specs
     - rvm: 2.2
       env: RUN="verify_opal_specs verify_other_specs" RUNNER=node
     - rvm: 2.2
-      env: RUN=verify_rspec_specs_without_fail RUNNER=node
+      env: RUN=in_progress_specs RUNNER=node
 
   allow_failures:
     - rvm: 2.2
-      env: RUN=verify_rspec_specs_without_fail
+      env: RUN=in_progress_specs
     - rvm: 2.2
-      env: RUN=verify_rspec_specs_without_fail RUNNER=node
+      env: RUN=in_progress_specs RUNNER=node
 
 before_install:
   - git submodule update --init

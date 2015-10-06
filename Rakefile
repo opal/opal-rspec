@@ -7,7 +7,7 @@ require 'opal/rspec/rake_task'
 require_relative 'spec/rspec/core/core_spec_loader'
 require_relative 'spec/rspec/expectations/expectation_spec_loader'
 
-task :default => [:unit_specs, :verify_opal_specs, :integration_specs, :verify_other_specs]
+task :default => [:unit_specs, :verify_opal_specs, :integration_specs, :verify_rspec_specs]
 
 desc 'Runs a set of specs in opal'
 Opal::RSpec::RakeTask.new(:opal_specs) do |_, task|
@@ -28,6 +28,7 @@ end
 desc 'Unit tests for MRI focused components of opal-rspec'
 RSpec::Core::RakeTask.new :unit_specs do |t|
   t.pattern = 'spec/mri/unit/**/*_spec.rb'
+  t.exclude_pattern = 'spec/mri/unit/opal/rspec/opal/**/*'
 end
 
 desc 'A more limited spec suite to test pattern usage'
@@ -42,13 +43,15 @@ end
 Opal::RSpec::CoreSpecLoader.rake_tasks_for(:rspec_core_specs)
 Opal::RSpec::ExpectationSpecLoader.rake_tasks_for(:rspec_expectation_specs)
 
-RSPEC_SPECS = [:verify_rspec_core_specs, :verify_rspec_expectation_specs]
+# These are done
 desc 'Verifies all RSpec specs'
-task :verify_rspec_specs => RSPEC_SPECS
+task :verify_rspec_specs => [:verify_rspec_core_specs]
 
+# Still work to do here
+IN_PROGRESS_SPECS = [:verify_rspec_expectation_specs]
 desc 'Runs verify_rspec_specs without failing until end until we have baseline'
-task :verify_rspec_specs_without_fail do
-  failures = RSPEC_SPECS.map do |task_name|
+task :in_progress_specs do
+  failures = IN_PROGRESS_SPECS.map do |task_name|
     result = nil
     sh "rake #{task_name}" do
       result = task_name

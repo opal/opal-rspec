@@ -1,0 +1,2 @@
+# Probably related to https://github.com/opal/opal/pull/1117
+Matchers should be able to generate their own descriptions expect\(...\).to raise_error with type

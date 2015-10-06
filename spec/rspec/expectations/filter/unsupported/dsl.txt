@@ -1,0 +1,5 @@
+# mutable strings
+RSpec::Matchers::DSL::Matcher defined using the dsl raises NoMethodError for methods not in the running_example
+
+# Fixnum = Numeric on Opal
+Spec::Matchers::DSL::Matcher wrapping another expectation \(expect\(...\).to eq ...\) can use the `include` matcher from a `match` block

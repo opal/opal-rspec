@@ -109,6 +109,21 @@ module Opal
 
         !klass.new.respond_to? :bar
       end
+
+      # https://github.com/opal/opal/pull/1129
+      def self.multiline_regex_works?
+        /foo.bar/m.match("foo\nbar").to_a == ["foo\nbar"]
+      end
+
+      # https://github.com/opal/opal/pull/1129
+      def self.empty_regex_works?
+        empty = //
+        begin
+          empty.options == 0 && empty.match('foo').to_s == ''
+        rescue
+          false
+        end
+      end
     end
   end
 end

@@ -16,7 +16,7 @@ module Opal
 
       def self.spec_directories
         # will have a glob appended to each element in the array
-        %w{rspec-expectations/spec}
+        %w{rspec-expectations/spec spec/rspec/expectations/opal_alternates}
       end
 
       def self.files_with_line_continue
