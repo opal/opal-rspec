@@ -1,3 +1,3 @@
-# promise
+# promise, see opal alternates
 RSpec::Core::MemoizedHelpers using 'self' as an explicit subject delegates matcher to the ExampleGroup
 RSpec::Core::MemoizedHelpers using 'self' as an explicit subject supports a new expect-based syntax

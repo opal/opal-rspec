@@ -1,7 +1,4 @@
-# delay methods defined for async testing cause this to fail
-RSpec::Core::ExampleGroup minimizes the number of methods that users could inadvertantly overwrite
-
-# There is a carve out for Rubinius, but not for Opal
+# There is a carve out for Rubinius, but not for Opal, see opal alternates
 RSpec::Core::ExampleGroup constant naming disambiguates name collisions by appending a number
 
 # location, file path, line number

@@ -1,7 +1,6 @@
 # location, file path, line number
 
-RSpec::Core::FilterManager#prune prefers location to exclusion filter
-RSpec::Core::FilterManager#prune prefers location to exclusion filter on entire group
+RSpec::Core::FilterManager#prune prefers location to exclusion filter.*
 
 # File I/O
 RSpec::Core::FilterManager#exclusions#description cleans up the description

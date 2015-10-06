@@ -189,9 +189,12 @@ module Opal
                                 .select { |ex| ex['status'] == 'failed' }
           expected_failures = get_ignored_spec_failures
           each_header = '----------------------------------------------------'
+          used_exclusions = []
           remaining_failures = actual_failures.reject do |actual|
             expected_failures.any? do |expected|
-              Regexp.new(expected[:exclusion]).match actual['full_description']
+              matches = Regexp.new(expected[:exclusion]).match actual['full_description']
+              used_exclusions << expected if matches
+              matches
             end
           end.map do |example|
             [
@@ -208,12 +211,18 @@ module Opal
           reasons << "Expected #{expected_pending_count} pending but got #{pending}" unless pending == expected_pending_count
           reasons << 'no specs found' unless total > 0
           reasons << 'No failures, but Rake task did not succeed' if (failed == 0 && !results[:success])
+          unused_exclusions = expected_failures.uniq - used_exclusions.uniq
+          if unused_exclusions.any?
+            msg = "WARNING: The following exclusion rules did not match an actual failure. Time to update exclusions? Duplicate exclusions??\n" +
+                unused_exclusions.map { |e| "File: #{e[:filename]}\nLine #{e[:line_number]}\nFilter: #{e[:exclusion]}" }.join("\n---------------------\n")
+            reasons << msg
+          end
           if reasons.empty?
             puts 'Test successful!'
             puts "#{total} total specs, #{failed} expected failures, #{pending} expected pending"
           else
-            puts 'Test FAILED for the following reasons:'
-            puts reasons.join "\n"
+            puts "Test FAILED for the following reasons:\n"
+            puts reasons.join "\n\n"
             if remaining_failures.any?
               puts
               puts "Unexpected failures:\n\n#{remaining_failures.join("\n")}\n"
@@ -252,6 +261,7 @@ module Opal
           line_num += 1
           {
               exclusion: line,
+              filename: filename,
               line_number: line_num
           }
         end.reject do |line|

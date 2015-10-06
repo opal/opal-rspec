@@ -1,0 +1,2 @@
+# probably due to an Opal bug in 0.8
+RSpec::Matchers::DSL::Matcher allows chainable methods to accept blocks

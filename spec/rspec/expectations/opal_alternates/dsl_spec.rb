@@ -41,5 +41,26 @@ describe 'Opal RSpec::Matchers::DSL::Matcher' do
       }.to fail_with(/expected Numeric not to descend from Object/)
       #}.to fail_with(/expected Fixnum not to descend from Object/)
     end
+
+    it "can use the `match` matcher from a `match` block" do
+      RSpec::Matchers.define(:be_a_phone_number_string) do
+        match do |string|
+          # \A and \Z in JS regex
+          # expect(string).to match(/\A\d{3}\-\d{3}\-\d{4}\z/)
+          expect(string).to match(/^\d{3}\-\d{3}\-\d{4}$/)
+        end
+      end
+
+      expect("206-123-1234").to be_a_phone_number_string
+      expect("foo").not_to be_a_phone_number_string
+
+      expect {
+        expect("foo").to be_a_phone_number_string
+      }.to fail_with(/expected "foo" to be a phone number string/)
+
+      expect {
+        expect("206-123-1234").not_to be_a_phone_number_string
+      }.to fail_with(/expected "206-123-1234" not to be a phone number string/)
+    end
   end
 end
