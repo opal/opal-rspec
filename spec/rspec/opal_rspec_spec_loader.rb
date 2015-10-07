@@ -21,6 +21,10 @@ module Opal
         []
       end
 
+      def post_requires
+        []
+      end
+
       def get_ignored_spec_failures
         FileList[File.join(base_dir, 'filter/**/*.txt')].map do |filename|
           get_exclusions_compact filename
@@ -52,8 +56,9 @@ module Opal
             File.join(base_dir, 'require_specs.rb'), # need our code to go in first
             *include_globs
         ].exclude(*exclude_globs_only)
-        puts "Running the following RSpec specs:"
-        files.sort.each { |f| puts f }
+        files += post_requires.map { |r| File.join(base_dir, r) }
+        puts 'Running the following RSpec specs:'
+        files.each { |f| puts f }
         files
       end
 
