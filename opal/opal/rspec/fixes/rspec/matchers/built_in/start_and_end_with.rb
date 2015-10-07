@@ -17,5 +17,26 @@ module ::RSpec::Matchers::BuiltIn
       #   end
       # end
     end
+
+    # see StartWith and EndWith below
+    def check_ordered_element(actual)
+      # Opal arity checking off by default, will check it manually
+      arity = actual.method(:[]).arity
+      raise ArgumentError.new "wrong number of arguments (2 for #{arity})" unless arity == 2
+    end
+  end
+
+  class StartWith
+    def subset_matches?
+      check_ordered_element actual
+      values_match?(expected, actual[0, expected.length])
+    end
+  end
+
+  class EndWith
+    def subset_matches?
+      check_ordered_element actual
+      values_match?(expected, actual[-expected.length, expected.length])
+    end
   end
 end
