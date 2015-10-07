@@ -1,0 +1,3 @@
+# Opal is interpretting the == and === literally (as a boolean)
+RSpec::Matchers should have an alias for "be == 3" with description: "a value == 3"
+RSpec::Matchers should have an alias for "be === 3" with description: "a value === 3"

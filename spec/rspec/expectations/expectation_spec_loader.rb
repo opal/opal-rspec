@@ -1,5 +1,4 @@
 require_relative '../opal_rspec_spec_loader'
-require 'opal/minitest'
 
 module Opal
   module RSpec
@@ -25,13 +24,6 @@ module Opal
 
       def self.files_with_multiline_regex
         [/matchers\/built_in\/match_spec.rb/]
-      end
-
-      def self.unstub_requires
-        [
-            'minitest', # we stub this in lib/opal/rspec.rb for the implementation, we need to test with minitest though
-            'minitest/assertions'
-        ]
       end
 
       def self.stubbed_requires

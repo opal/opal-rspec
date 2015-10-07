@@ -6,5 +6,3 @@ RSpec::Expectations::Configuration configuring using the rspec-core config API b
 
 # global config problem
 RSpec::Expectations::Configuration#backtrace_formatter defaults to a null formatter when rspec-core is not loaded
-
-# arity issue

@@ -1,0 +1,2 @@
+# opal-minispec integration not working yet
+**/minitest_integration_spec.rb

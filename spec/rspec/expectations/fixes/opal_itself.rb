@@ -27,4 +27,22 @@ unless Opal::RSpec::Compatibility.class_within_class_new_works?
       parents.all? { |parent| self.is_a?(parent) }
     end
   end
+
+  # be_between spec
+  class SizeMatters
+    include Comparable
+    attr :str
+
+    def <=>(other)
+      str.size <=> other.str.size
+    end
+
+    def initialize(str)
+      @str = str
+    end
+
+    def inspect
+      @str
+    end
+  end
 end

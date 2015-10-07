@@ -192,7 +192,6 @@ module Opal
           actual_failures = parsed_results['examples']
                                 .select { |ex| ex['status'] == 'failed' }
           expected_failures = get_ignored_spec_failures
-          each_header = '----------------------------------------------------'
           used_exclusions = []
           remaining_failures = actual_failures.reject do |actual|
             expected_failures.any? do |expected|
@@ -200,10 +199,14 @@ module Opal
               used_exclusions << expected if matches
               matches
             end
-          end.map do |example|
+          end
+          each_header = '----------------------------------------------------'
+          index = 0
+          remaining_failures = remaining_failures.map do |example|
+            index += 1
             [
                 each_header,
-                'Example: '+example['full_description'],
+                "Example #{index}: #{example['full_description']}",
                 each_header,
                 example['exception']['message']
             ].join "\n"

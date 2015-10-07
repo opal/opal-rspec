@@ -1,0 +1,3 @@
+# Maybe Numeric shouldn't == Fixnum but it does in Opal
+expect\(actual\).to be_an_instance_of\(expected\) fails if actual is instance of subclass of expected class
+expect\(actual\).to be_instance_of\(expected\) fails if actual is instance of subclass of expected class

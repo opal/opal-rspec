@@ -3,5 +3,4 @@ Matchers should be able to generate their own descriptions expect\(...\).to have
 Matchers should be able to generate their own descriptions expect\(...\).not_to eql
 
 # throw not in Opal
-Matchers should be able to generate their own descriptions expect\(...\).to throw symbol
-Matchers should be able to generate their own descriptions expect\(...\).to throw symbol \(with named symbol\)
+Matchers should be able to generate their own descriptions expect\(...\).to throw symbol.*

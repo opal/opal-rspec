@@ -45,6 +45,9 @@ Opal::RSpec::CoreSpecLoader.rake_tasks_for(:rspec_core_specs)
 Opal::RSpec::ExpectationSpecLoader.rake_tasks_for(:rspec_expectation_specs)
 Opal::RSpec::SupportSpecLoader.rake_tasks_for(:rspec_support_specs)
 
+# TODO: add a require SPEC_OPT for our rspec formatter gem/task
+# TODO: opal-rails compatibility
+
 # These are done
 desc 'Verifies all RSpec specs'
 task :verify_rspec_specs => [:verify_rspec_support_specs, :verify_rspec_core_specs]

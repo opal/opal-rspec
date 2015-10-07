@@ -12,5 +12,5 @@ RSpec::configure do |config|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
   end
 
-  #config.full_description = '.*yield.*has a description'
+  #config.full_description = 'RSpec::Matchers once required includes itself in Minitest::Test'
 end

@@ -1,0 +1,2 @@
+# no private methods in opal
+expect\(...\).to be_predicate fails when :predicate\? is private

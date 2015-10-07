@@ -1,5 +1,4 @@
 require_relative '../opal_rspec_spec_loader'
-require 'opal/minitest'
 
 module Opal
   module RSpec
