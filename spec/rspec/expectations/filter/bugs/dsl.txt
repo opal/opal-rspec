@@ -1,2 +1,14 @@
 # probably due to an Opal bug in 0.8
 RSpec::Matchers::DSL::Matcher allows chainable methods to accept blocks
+
+# something w/ inheritance is wrong here
+RSpec::Matchers::DSL::Matcher defined using the dsl can get a method object for methods in the running example
+
+# probably class scoping issue since new_matcher creates a new DSL matcher class, probably https://github.com/opal/opal/issues/1110 related
+RSpec::Matchers::DSL::Matcher#match_unless_raises without a specified error class passes if no error is raised
+
+# not sure, class scoping issue? (see above)
+RSpec::Matchers::DSL::Matcher#match_unless_raises with an unexpected error raises the error
+RSpec::Matchers::DSL::Matcher#match_unless_raises with an assertion with passing assertion passes
+RSpec::Matchers::DSL::Matcher with an included module allows multiple modules to be included at once
+RSpec::Matchers::DSL::Matcher allows an early `return` to be used from a `match_unless_raises` block

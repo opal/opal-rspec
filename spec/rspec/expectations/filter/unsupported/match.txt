@@ -1,0 +1,2 @@
+# diffing on Opal
+expect\(...\).to match\(expected\) provides a diff on failure

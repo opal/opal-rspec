@@ -12,36 +12,18 @@ unless Opal::RSpec::Compatibility.multiline_regex_works? && Opal::RSpec::Compati
       end
 
       def options
-        # https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp/flags is still experimental
-        # we need the flags and source does not give us that
         %x{
             if (self.un_initialized) {
               #{raise TypeError, 'uninitialized Regexp'}
             }
-            var as_string, text_flags, result, text_flag;
-            as_string = self.toString();
-            text_flags = as_string.replace(self.source, '').match(/\w+/);
-            result = 0;
-            // may have no flags
-            if (text_flags == null) {
-              return result;
+            var result = 0;
+            // should be supported in IE6 according to https://msdn.microsoft.com/en-us/library/7f5z26w4(v=vs.94).aspx
+            if (self.multiline) {
+              result |= #{MULTILINE};
             }
-            // first match contains all of our flags
-            text_flags = text_flags[0];
-            for (var i=0; i < text_flags.length; i++) {
-              text_flag = text_flags[i];
-              switch(text_flag) {
-                case 'i':
-                  result |= #{IGNORECASE};
-                  break;
-                case 'm':
-                  result |= #{MULTILINE};
-                  break;
-                default:
-                  #{raise "RegExp flag #{`text_flag`} does not have a match in Ruby"}
-              }
+            if (self.ignoreCase) {
+              result |= #{IGNORECASE};
             }
-
             return result;
           }
       end
@@ -84,7 +66,7 @@ unless Opal::RSpec::Compatibility.multiline_regex_works? && Opal::RSpec::Compati
           var source = self.source;
           var flags = 'g';
           // m flag + a . in Ruby will match white space, but in JS, it only matches beginning/ending of lines, so we get the equivalent here
-          if (#{options & MULTILINE}) {
+          if (self.multiline) {
             source = source.replace('.', "[\\s\\S]");
             flags += 'm';
           }
