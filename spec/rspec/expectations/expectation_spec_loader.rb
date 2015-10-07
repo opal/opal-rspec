@@ -26,6 +26,10 @@ module Opal
         [/matchers\/built_in\/match_spec.rb/]
       end
 
+      def self.post_requires
+        %w{fixes/example_patches.rb}
+      end
+
       def self.stubbed_requires
         [
             'timeout', # not part of opal stdlib

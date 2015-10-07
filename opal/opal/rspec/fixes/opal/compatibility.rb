@@ -133,6 +133,22 @@ module Opal
           false
         end
       end
+
+      class ConstTest
+      end
+
+      module ModuleConstTest
+      end
+
+      # https://github.com/opal/opal/issues/1085
+      def self.constant_resolution_works_right?
+        begin
+          ModuleConstTest::ConstTest.new
+          false
+        rescue
+          true
+        end
+      end
     end
   end
 end
