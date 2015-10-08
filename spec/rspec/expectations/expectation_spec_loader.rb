@@ -30,6 +30,21 @@ module Opal
         %w{fixes/example_patches.rb}
       end
 
+      def self.sub_in_files
+        files = super
+        symbols_in_expectations files
+      end
+
+      def self.symbols_in_expectations(files)
+        # fail_with(/expected .* to respond to :some_method/)
+        replace_with_regex /fail_with\(\/(.*)\/\)/, 'fix symbols in message expectations', files, [/respond_to_spec.rb/] do |match, temp_filename|
+          fail_with_wo_symbols = match.captures[0].gsub(/:(\S+)/, "\"\\1\"")
+          new = "fail_with(/#{fail_with_wo_symbols}/)"
+          puts "Replacing #{match.to_s} with #{new} in new temp file #{temp_filename}"
+          new
+        end
+      end
+
       def self.stubbed_requires
         [
             'timeout', # not part of opal stdlib

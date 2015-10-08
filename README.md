@@ -233,7 +233,7 @@ For a pattern of:
 
 Only 'spec' will be added to the load path.
 
-## Other Limitations
+## Other Limitations/Known Issues
 
 * Backtrace info on specs is buggy ([no Kernel::caller method in Opal](https://github.com/opal/opal/issues/894)), in Firefox w/ the browser runner, no backtraces show up with failed specs
 * Not all RSpec runner options are supported yet
@@ -247,6 +247,7 @@ Only 'spec' will be added to the load path.
   * predicate matchers (be_some_method_on_your_subject) do not currently work with delegate objects (Opal DelegateClass is incomplete)
   * expect {...}.to raise_error matchers have some bugs as well
   * Descriptions on aliased/negated matchers won't be like normal RSpec due to several bugs: method owner not being correct (not fixed yet), blocks passed after arguments and hash (Opal 0.9 pull request open)
+  * Arity checking is not enabled by default in Opal but it can be. It's not currently enabled because it broke a lot of Opal specs. As a result, any matcher use (particularly respond_to) that depends on arity checking will not work
 * Formatters must be supplied as full classes (otherwise Opal tries to load them from inside the Loader class)
 * A lot of backports/monkey patches to Opal classes/methods are done to make this work on Opal 0.8. That means some things might work in your tests that do not work without opal-rspec. You can explore the opal/opal/rspec/fixes/opal directory to see what is being changed. All of the monkey patches check to see if the feature is "broken" before they apply themselves.
 

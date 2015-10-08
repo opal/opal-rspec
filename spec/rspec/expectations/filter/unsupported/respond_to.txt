@@ -1,6 +1,0 @@
-# arity not enabled by default on Opal
-expect\(...\).not_to respond_to\(:sym\).with\(2\).arguments fails if target responds to :sym with two or more args
-expect\(...\).not_to respond_to\(:sym\).with\(2)\.arguments fails if target responds to :sym with one or more args
-expect\(...\).not_to respond_to\(:sym\).with\(2\).arguments fails if target responds to :sym with any number args
-expect\(...\).not_to respond_to\(:sym\).with\(2\).arguments fails if target responds to :sym with 2 args
-expect\(...\).not_to respond_to\(message1, message2\) fails if target responds to both message1 and message2

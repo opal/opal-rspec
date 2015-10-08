@@ -67,30 +67,18 @@ module Opal
         (baseline + additional_load_paths).each { |p| server.append_path p }
       end
 
-      # https://github.com/opal/opal/issues/1125
-      def remove_multiline_regexes(files)
-        bad_regex = /(%r%$.*%)$/m
-        fix_these_files = files.select { |f| files_with_multiline_regex.any? { |regex| regex.match(f) } }
-        return files unless fix_these_files.any?
+      def replace_with_regex(regex, description, starting_file_set, files_to_replace)
+        fix_these_files = starting_file_set.select { |f| files_to_replace.any? { |regex| regex.match(f) } }
+        return starting_file_set unless fix_these_files.any?
         dir = Dir.mktmpdir
         missing = []
         fixed_temp_files = fix_these_files.map do |path|
           temp_filename = File.join dir, File.basename(path)
           input = File.read path
           found_regex = false
-          input.gsub!(bad_regex) do |_|
+          input.gsub!(regex) do |_|
             found_regex = true
-            multi_line_regex = Regexp
-                                   .last_match
-                                   .captures[0]
-                                   .gsub("\n", '')
-            parsed = instance_eval multi_line_regex # can just have ruby do this for us
-            escaped = parsed
-                          .source
-                          .gsub('/', '\/')
-            replace = "/#{escaped}/m"
-            puts "Replacing multiline regex with #{replace} in new temp file #{temp_filename}"
-            replace
+            yield Regexp.last_match, temp_filename
           end
           File.open temp_filename, 'w' do |output_file|
             output_file.write input
@@ -101,9 +89,31 @@ module Opal
         at_exit do
           FileUtils.remove_entry dir
         end
-        raise "Expected to fix multiline regex in #{fix_these_files} but we didn't find any expressions in #{missing}. Check if RSpec has been upgraded" if missing.any?
-        files_we_left_alone = files - fix_these_files
+        raise "Expected to #{description} in #{fix_these_files} but we didn't find any expressions in #{missing}. Check if RSpec has been upgraded" if missing.any?
+        files_we_left_alone = starting_file_set - fix_these_files
         files_we_left_alone + fixed_temp_files
+      end
+
+      # https://github.com/opal/opal/issues/1125
+      def remove_multiline_regexes(files)
+        replace_with_regex /(%r%$.*%)$/m, 'fix multiline regex', files, files_with_multiline_regex do |match, temp_filename|
+          multi_line_regex = match
+                                 .captures[0]
+                                 .gsub("\n", '')
+          parsed = instance_eval multi_line_regex # can just have ruby do this for us
+          escaped = parsed
+                        .source
+                        .gsub('/', '\/')
+          replace = "/#{escaped}/m"
+          puts "Replacing multiline regex with #{replace} in new temp file #{temp_filename}"
+          replace
+        end
+      end
+
+      def sub_in_files
+        files = get_file_list
+        with_sub = sub_in_end_of_line files
+        remove_multiline_regexes with_sub
       end
 
       # https://github.com/opal/opal/issues/821
@@ -178,10 +188,7 @@ module Opal
       def rake_tasks_for(name)
         Opal::RSpec::RakeTask.new(name) do |server, task|
           stub_requires
-          files = get_file_list
-          with_sub = sub_in_end_of_line files
-          multi_regex = remove_multiline_regexes with_sub
-          task.files = multi_regex
+          task.files = sub_in_files
           append_additional_load_paths server
           server.debug = ENV['OPAL_DEBUG']
         end
@@ -252,10 +259,8 @@ module Opal
       def run_rack_server(rack)
         Opal::Processor.source_map_enabled = false
 
-        files = get_file_list
-        with_sub = sub_in_end_of_line files
-        multi_regex = remove_multiline_regexes with_sub
-        sprockets_env = Opal::RSpec::SprocketsEnvironment.new(spec_pattern=nil, spec_exclude_pattern=nil, spec_files=multi_regex)
+        files = sub_in_files
+        sprockets_env = Opal::RSpec::SprocketsEnvironment.new(spec_pattern=nil, spec_exclude_pattern=nil, spec_files=files)
         rack.run Opal::Server.new(sprockets: sprockets_env) { |s|
                    s.main = 'opal/rspec/sprockets_runner'
                    stub_requires
