@@ -45,9 +45,17 @@ module Opal
         ]
       end
 
+      def self.integer_float_files
+        [/be_within_spec.rb/]
+      end
+
       def self.integer_decimals(files)
+        matching_exp = [
+            /fail_\w+\((.*)\)/,
+            /expect.*description\)\.to eq (.*)/
+        ]
         # In Opal, 5.0 will be considered 5. Rather than muck with all of the code, any time we're expecting 5.0, just change it to 5
-        replace_with_regex /fail_\w+\((.*)\)/, 'expected integers when given integers', files, [/be_within_spec.rb/] do |match, temp_filename|
+        replace_with_regex matching_exp, 'expected integers when given integers', files, integer_float_files do |match, temp_filename|
           integer_regex = /(\d+)\.0/
           has_integers = integer_regex.match(match.captures[0])
           next match.to_s unless has_integers

@@ -68,22 +68,28 @@ module Opal
       end
 
       def replace_with_regex(regex, description, starting_file_set, files_to_replace)
-        fix_these_files = starting_file_set.select { |f| files_to_replace.any? { |regex| regex.match(f) } }
+        fix_these_files = starting_file_set.select { |f| files_to_replace.any? { |r| r.match(f) } }
         return starting_file_set unless fix_these_files.any?
         dir = Dir.mktmpdir
         missing = []
+        expressions = [*regex]
         fixed_temp_files = fix_these_files.map do |path|
           temp_filename = File.join dir, File.basename(path)
           input = File.read path
-          found_regex = false
-          input.gsub!(regex) do |_|
-            found_regex = true
-            yield Regexp.last_match, temp_filename
+          matching = false
+          expressions.each do |r|
+            match = r.match input
+            if match
+              matching = true
+              input.gsub!(r) do |_|
+                yield Regexp.last_match, temp_filename
+              end
+            end
           end
           File.open temp_filename, 'w' do |output_file|
             output_file.write input
           end
-          missing << path unless found_regex
+          missing << path unless matching
           temp_filename
         end
         at_exit do
