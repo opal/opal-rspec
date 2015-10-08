@@ -1,0 +1,2 @@
+# https://github.com/opal/opal/pull/1136 - operators and method missing issues with a_value > < etc
+.include matcher Composing matchers with `include` expect\(array\).to include\(matcher\) works with comparison matchers

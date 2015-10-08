@@ -33,7 +33,8 @@ module Opal
       def self.sub_in_files
         files = super
         files = symbols_in_expectations files
-        integer_decimals files
+        files = integer_decimals files
+        anonymous_examples_operators files
       end
 
       def self.symbol_files
@@ -48,6 +49,19 @@ module Opal
 
       def self.integer_float_files
         [/be_within_spec.rb/]
+      end
+
+      def self.anonymous_examples_operators(files)
+        example_number = 0
+        replace_with_regex /specify do(.*?)end/m, 'anonymous examples we cannot filter', files, [/aliases_spec.rb/] do |match, temp_filename|
+          example_number += 1
+          body = match.captures[0]
+          contains_operator = /a_value [<>]/.match(body) || /a_value <=/.match(body)
+          next match.to_s unless contains_operator
+          fixed = "specify 'alias example #{example_number}' do\n#{body}\nend"
+          puts "#{temp_filename} - anonymous examples we cannot filter - replacing #{match.to_s} with #{fixed}"
+          fixed
+        end
       end
 
       def self.integer_decimals(files)

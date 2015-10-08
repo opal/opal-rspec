@@ -3,6 +3,7 @@ eq with BigDecimal objects fails with a conventional representation of the decim
 
 # no activesupport on opal
 eq Time Equality with DateTime objects.*
+eq Time Equality with Time objects produces different output for Times differing by milliseconds
 
 # symbols
 eq #description with "symbol" is "eq :symbol"

@@ -154,6 +154,14 @@ module Opal
       def self.exception_inspect_matches?
         Exception.new.inspect == '#<Exception: Exception>'
       end
+
+      # https://github.com/opal/opal/pull/1135
+      def self.ostruct_works_right?
+        require 'ostruct'
+
+        s = OpenStruct.new(:exist? => true)
+        s.respond_to? :exist?
+      end
     end
   end
 end
