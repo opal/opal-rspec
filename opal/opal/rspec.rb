@@ -13,6 +13,11 @@ RSpec.configure do |config|
   _, stdout = ::RSpec::Core::Runner.get_opal_closed_tty_io
   config.output_stream = stdout
 
+  # This shouldn't be in here, but RSPec uses undef to change this configuration and that doesn't work well enough yet
+  config.expect_with :rspec do |c|
+    c.syntax = [:should, :expect]
+  end
+
   # Legacy helpers
   config.include Opal::RSpec::AsyncHelpers
 end

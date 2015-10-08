@@ -9,3 +9,6 @@ output.to_stderr matcher expect { ... }.to output\(matcher\).to_stderr fails if 
 output.to_stderr matcher expect { ... }.to_not output\(/regex/\).to_stderr fails if the block outputs a string to stderr that matches the regex
 output.to_stderr matcher expect { ... }.to output\(/regex/\).to_stderr fails if the block outputs a string to stderr that does not match
 output.to_stderr matcher expect { ... }.to output\(/regex/\).to_stderr fails if the block does not output to stderr
+
+# $VERBOSE global variable
+output..* matcher does not produce warnings when the failure message is accessed first

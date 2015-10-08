@@ -237,7 +237,8 @@ Only 'spec' will be added to the load path.
 
 * Backtrace info on specs is buggy ([no Kernel::caller method in Opal](https://github.com/opal/opal/issues/894)), in Firefox w/ the browser runner, no backtraces show up with failed specs
 * Not all RSpec runner options are supported yet
-  * At some point, using node + Phantom's ability to read environment variables could be combined with a opal friendly optparse implementation to allow full options to be supplied/parsed
+* At some point, using node + Phantom's ability to read environment variables could be combined with a opal friendly optparse implementation to allow full options to be supplied/parsed
+* Expect and should syntax are both enabled. They cannot be disabled due to bugs with the undef keyword in Opal
 * Random order does not work yet due to lack of [srand/Random support](https://github.com/opal/opal/issues/639) and RSpec's bundled Random implementation (RSpec::Core::Backports::Random) locks the browser/Phantom. If you specify random order, it will be ignored.
 * With Opal < 0.9, you can't access the example from named subject blocks (e.g. subject {|e| puts "example is #{e}" })
 * nodejs runner

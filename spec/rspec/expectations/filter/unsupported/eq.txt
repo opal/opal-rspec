@@ -1,0 +1,9 @@
+# no bigdecimal on opal
+eq with BigDecimal objects fails with a conventional representation of the decimal
+
+# no activesupport on opal
+eq Time Equality with DateTime objects.*
+
+# symbols
+eq #description with "symbol" is "eq :symbol"
+eq #description with {"foo"=>"bar"} is "eq {:foo=>:bar}"
