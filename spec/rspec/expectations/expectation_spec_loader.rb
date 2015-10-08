@@ -32,7 +32,8 @@ module Opal
 
       def self.sub_in_files
         files = super
-        symbols_in_expectations files
+        files = symbols_in_expectations files
+        integer_decimals files
       end
 
       def self.fail_with_files
@@ -42,6 +43,18 @@ module Opal
             /have_attributes_spec.rb/,
             /has_spec.rb/
         ]
+      end
+
+      def self.integer_decimals(files)
+        # In Opal, 5.0 will be considered 5. Rather than muck with all of the code, any time we're expecting 5.0, just change it to 5
+        replace_with_regex /fail_\w+\((.*)\)/, 'expected integers when given integers', files, [/be_within_spec.rb/] do |match, temp_filename|
+          integer_regex = /(\d+)\.0/
+          has_integers = integer_regex.match(match.captures[0])
+          next match.to_s unless has_integers
+          fixed = match.to_s.gsub(integer_regex, "\\1")
+          puts "Float/integer fix, replacing #{match.to_s} with #{fixed} in new temp file #{temp_filename}"
+          fixed
+        end
       end
 
       def self.symbols_in_expectations(files)
