@@ -235,7 +235,9 @@ Only 'spec' will be added to the load path.
 
 ## Other Limitations/Known Issues
 
-* Backtrace info on specs is buggy ([no Kernel::caller method in Opal](https://github.com/opal/opal/issues/894)), in Firefox w/ the browser runner, no backtraces show up with failed specs
+* Formatting
+  * Backtrace info on specs is buggy ([no Kernel::caller method in Opal](https://github.com/opal/opal/issues/894)), in Firefox w/ the browser runner, no backtraces show up with failed specs
+  * Diffs are not yet available when objects do not meet expectations (diff-lcs gem dependency has not been dealt with yet in Opal)
 * Not all RSpec runner options are supported yet
 * At some point, using node + Phantom's ability to read environment variables could be combined with a opal friendly optparse implementation to allow full options to be supplied/parsed
 * Expect and should syntax are both enabled. They cannot be disabled due to bugs with the undef keyword in Opal
