@@ -1,5 +1,2 @@
-# Our Rake task takes care of a lot of symbols, but this one is not a fail message
-expect\(...\).to have_sym\(\*args\) allows composable aliases to be defined
-
 # private method
 expect\(...\).to have_sym\(\*args\) fails if #has_sym\?\(\*args\) is private

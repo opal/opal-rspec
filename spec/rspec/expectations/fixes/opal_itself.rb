@@ -1,3 +1,35 @@
+unless Opal::RSpec::Compatibility.exception_inspect_matches?
+  # https://github.com/opal/opal/pull/1134
+  # only doing this fix in the tests since it's actual uses of opal-rspec will probably not zero in on the failure
+  Exception.remove_method(:to_s)
+  class Exception
+    def self.new(message=nil)
+      %x{
+          var err = new self.$$alloc(message);
+
+          if (Error.captureStackTrace) {
+            Error.captureStackTrace(err);
+          }
+
+          err.name = self.$$name;
+          err.$initialize(message);
+          return err;
+        }
+    end
+
+    def message
+      @message || self.class.to_s
+    end
+
+    alias to_s message
+
+    def inspect
+      as_str = to_s
+      as_str.empty? ? self.class.to_s : "#<#{self.class.to_s}: #{to_s}>"
+    end
+  end
+end
+
 # https://github.com/opal/opal/issues/1110, fixed in Opal 0.9
 unless Opal::RSpec::Compatibility.class_within_class_new_works?
   require 'delegate'
@@ -43,17 +75,6 @@ unless Opal::RSpec::Compatibility.class_within_class_new_works?
 
     def inspect
       @str
-    end
-  end
-end
-
-unless Opal::RSpec::Compatibility.exception_inspect_matches?
-  # https://github.com/opal/opal/pull/1134
-  class Exception
-    def inspect
-      class_str = self.class.to_s
-      our_str = to_s
-      our_str.empty? ? class_str : "#<#{class_str}: #{our_str == class_str ? @message : our_str}>"
     end
   end
 end

@@ -1,6 +1,3 @@
-# Our Rake task takes care of a lot of symbols, but this one is not a fail message
-.include matcher Composing matchers with `include` expect\(hash\).to include\(key => matcher\) provides a description
-
 # Diff
 .include matcher expect\(...\).to include\(with_one_arg\) for a string target includes a diff when actual is multiline and there are multiple expecteds
 .include matcher expect\(...\).to include\(with_one_arg\) for a string target includes a diff when actual is multiline

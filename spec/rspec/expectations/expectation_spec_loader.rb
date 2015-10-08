@@ -36,12 +36,13 @@ module Opal
         integer_decimals files
       end
 
-      def self.fail_with_files
+      def self.symbol_files
         [
             /respond_to_spec.rb/,
             /include_spec.rb/,
             /have_attributes_spec.rb/,
-            /has_spec.rb/
+            /has_spec.rb/,
+            /raise_error_spec.rb/
         ]
       end
 
@@ -60,14 +61,18 @@ module Opal
           has_integers = integer_regex.match(match.captures[0])
           next match.to_s unless has_integers
           fixed = match.to_s.gsub(integer_regex, "\\1")
-          puts "Float/integer fix, replacing #{match.to_s} with #{fixed} in new temp file #{temp_filename}"
+          puts "#{temp_filename} - float/integer fix, replacing #{match.to_s} with #{fixed} in new temp file"
           fixed
         end
       end
 
       def self.symbols_in_expectations(files)
+        matching = [
+            /(fail_\w+)\((.*)\)/,
+            /(expect.*description\)\.to eq)\((.*)\)/
+        ]
         # fail_with(/expected .* to respond to :some_method/)
-        replace_with_regex /(fail_\w+)\((.*)\)/, 'fix symbols in message expectations', files, fail_with_files do |match, temp_filename|
+        replace_with_regex matching, 'fix symbols in message expectations', files, symbol_files do |match, temp_filename|
           # Don't want to match #<Object:.*>
           between_parens = match.captures[1]
           symbol_matcher = /:([a-zA-Z]\w*)/
@@ -81,7 +86,7 @@ module Opal
           fail_with_wo_symbols = between_parens.gsub(symbol_matcher, replace_pattern)
           fail_type = match.captures[0]
           new = "#{fail_type}(#{fail_with_wo_symbols})"
-          puts "Replacing #{match.to_s} with #{new} in new temp file #{temp_filename}"
+          puts "#{temp_filename} - symbol fix -replacing #{match.to_s} with #{new} in new temp file"
           new
         end
       end
