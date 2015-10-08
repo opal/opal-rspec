@@ -46,3 +46,14 @@ unless Opal::RSpec::Compatibility.class_within_class_new_works?
     end
   end
 end
+
+unless Opal::RSpec::Compatibility.exception_inspect_matches?
+  # https://github.com/opal/opal/pull/1134
+  class Exception
+    def inspect
+      class_str = self.class.to_s
+      our_str = to_s
+      our_str.empty? ? class_str : "#<#{class_str}: #{our_str == class_str ? @message : our_str}>"
+    end
+  end
+end

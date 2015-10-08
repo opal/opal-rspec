@@ -1,0 +1,5 @@
+# Also arity related, but looks like opal is returning the optional arg splat as arity
+expect\(...\).not_to respond_to\(:sym\).with\(1\).argument fails if target responds to :sym with one or more args
+expect\(...\).to respond_to\(:sym\).with\(2\).arguments passes if target responds to two or more arguments
+expect\(...\).to respond_to\(:sym\).with\(2\).arguments passes if target responds to any number of arguments
+expect\(...\).to respond_to\(:sym\).with\(1\).argument passes if target responds to one or more arguments

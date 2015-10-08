@@ -37,9 +37,10 @@ module Opal
 
       def self.symbols_in_expectations(files)
         # fail_with(/expected .* to respond to :some_method/)
-        replace_with_regex /fail_with\(\/(.*)\/\)/, 'fix symbols in message expectations', files, [/respond_to_spec.rb/] do |match, temp_filename|
-          fail_with_wo_symbols = match.captures[0].gsub(/:(\S+)/, "\"\\1\"")
-          new = "fail_with(/#{fail_with_wo_symbols}/)"
+        replace_with_regex /fail_with\((.*)\)/, 'fix symbols in message expectations', files, [/respond_to_spec.rb/] do |match, temp_filename|
+          # Don't want to match #<Object:.*>
+          fail_with_wo_symbols = match.captures[0].gsub(/:([a-zA-Z]\w*)/, "\"\\1\"")
+          new = "fail_with(#{fail_with_wo_symbols})"
           puts "Replacing #{match.to_s} with #{new} in new temp file #{temp_filename}"
           new
         end

@@ -149,6 +149,11 @@ module Opal
           true
         end
       end
+
+      # https://github.com/opal/opal/pull/1134
+      def self.exception_inspect_matches?
+        Exception.new.inspect == '#<Exception: Exception>'
+      end
     end
   end
 end
