@@ -1,0 +1,2 @@
+# Do not support marshalling in Opal
+**/marshal_extension_spec.rb

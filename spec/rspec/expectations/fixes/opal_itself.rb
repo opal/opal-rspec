@@ -108,9 +108,7 @@ unless Opal::RSpec::Compatibility.ostruct_works_right?
       end
     end
 
-    def table
-      @table
-    end
+    attr_reader :table
 
     def delete_field(name)
       sym = name.to_sym
