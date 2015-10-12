@@ -39,4 +39,11 @@ unless Opal::RSpec::Compatibility.class_within_class_new_works?
       end
     end
   end
+
+  class Foo
+    def self.foo
+      bar
+    rescue StandardError
+    end
+  end
 end

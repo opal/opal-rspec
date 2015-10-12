@@ -35,6 +35,17 @@ module Opal
         ]
       end
 
+      def self.symbol_files
+        [
+            /have_received_spec.rb/
+        ]
+      end
+
+      def self.sub_in_files
+        files = super
+        symbols_in_expectations files
+      end
+
       def self.additional_load_paths
         [
             'rspec-mocks/spec' # a few spec support files live outside of rspec-mocks/spec/rspec and live in support

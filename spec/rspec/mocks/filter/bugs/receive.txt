@@ -1,0 +1,2 @@
+# can't change expect/should right now due to undef/Opal
+RSpec::Mocks::Matchers::Receive when used in a test framework without rspec-expectations can toggle the available syntax
