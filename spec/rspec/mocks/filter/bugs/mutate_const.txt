@@ -1,0 +1,2 @@
+# a lof of constants functionality broken on Opal
+Constant Mutating.*

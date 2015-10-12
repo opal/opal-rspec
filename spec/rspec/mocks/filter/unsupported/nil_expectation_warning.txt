@@ -1,0 +1,6 @@
+# marshal not supported on Opal
+.allow_message_expectations_on_nil does not affect subsequent examples
+.allow_message_expectations_on_nil doesnt error when marshalled
+
+# backtrace / line number
+an expectation set on nil issues a warning with file and line number information

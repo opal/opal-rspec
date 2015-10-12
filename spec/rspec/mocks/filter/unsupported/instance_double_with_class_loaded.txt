@@ -1,0 +1,2 @@
+# depends on private methods
+An instance double with the doubled class loaded gives a descriptive error message for NoMethodError
