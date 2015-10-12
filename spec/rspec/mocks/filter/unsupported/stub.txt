@@ -1,0 +1,3 @@
+# no throw in Opal
+A method stub throws with argument when told to
+A method stub throws when told to

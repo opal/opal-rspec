@@ -3,3 +3,6 @@
 
 # No private, public, etc.
 **/method_visibility_spec.rb
+
+# class_double depends on ClassVerifyingDouble inheriting from Module to support transferring nested constants, but that doesn't work on Opal
+**/class_double*_spec.rb

@@ -1,3 +1,6 @@
 # any_instance
 RSpec::Mocks.with_temporary_scope in a before\(:all\) with an any_instance stub does not allow the double to be used in the examples
 RSpec::Mocks.with_temporary_scope in a before\(:all\) with an any_instance stub does not allow the double to be used after the scope in before\(:all\)
+
+# current issue with bridged classes (string in this case) and mocking
+RSpec::Mocks.teardown does not put rspec-mocks into an inconsistent state when called extra times

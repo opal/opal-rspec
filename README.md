@@ -255,6 +255,8 @@ Only 'spec' will be added to the load path.
   * Arity checking is not enabled by default in Opal but it can be. It's not currently enabled because it broke a lot of Opal specs. As a result, any matcher use (particularly respond_to) that depends on arity checking will not work
 * Mocks
   * any_instance_of causes runner to crash due to issues with redefining the === operator, which breaks a case statement inside Hooks#find_hook
+  * Mocking string (and probably any bridged/native class) does not work in Opal 0.8
+  * class_double is not supported (it depends on ClassVerifyingDouble inheriting from Module to support transferring nested constants, but that doesn't work on Opal)
 * Formatters must be supplied as full classes (otherwise Opal tries to load them from inside the Loader class)
 * A lot of backports/monkey patches to Opal classes/methods are done to make this work on Opal 0.8. That means some things might work in your tests that do not work without opal-rspec. You can explore the opal/opal/rspec/fixes/opal directory to see what is being changed. All of the monkey patches check to see if the feature is "broken" before they apply themselves.
 

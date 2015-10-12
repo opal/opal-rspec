@@ -1,0 +1,2 @@
+# arity doesn't work right with default args on Opal
+Expected argument verification \(when `#with` is called\) when doubling a loaded class when `no_args` is used allows a method expectation on a method that has defaults for all arguments

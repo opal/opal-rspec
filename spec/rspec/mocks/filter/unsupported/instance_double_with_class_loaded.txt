@@ -1,2 +1,5 @@
 # depends on private methods
 An instance double with the doubled class loaded gives a descriptive error message for NoMethodError
+An instance double with the doubled class loaded for null objects reports that it responds to protected methods when the appropriate arg is passed
+An instance double with the doubled class loaded for null objects reports that it responds to defined private methods when the appropriate arg is passed
+An instance double with the doubled class loaded for null objects includes the double's name in a private method error

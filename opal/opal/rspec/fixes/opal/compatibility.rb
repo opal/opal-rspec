@@ -162,6 +162,49 @@ module Opal
         s = OpenStruct.new(:exist? => true)
         s.respond_to? :exist?
       end
+
+      module ModuleCase
+      end
+
+      module ModuleCase2
+        include ModuleCase
+      end
+
+      class ModuleCase3
+        include ModuleCase2
+      end
+
+      def self.module_case_works_right?
+        instance = ModuleCase3.new
+        ModuleCase === instance && instance.kind_of?(ModuleCase)
+      end
+
+      module MultModSuper1
+        def stuff
+          :howdy
+        end
+      end
+
+      module MultModSuper2
+        def stuff
+          super
+        end
+      end
+
+      module MultModSuper3
+        include MultModSuper1
+        include MultModSuper2
+      end
+
+      class MultModSuperClass
+        include MultModSuper3
+      end
+
+      def self.multiple_module_include_super_works_right?
+        MultModSuperClass.new.stuff == :howdy
+      rescue
+        false
+      end
     end
   end
 end

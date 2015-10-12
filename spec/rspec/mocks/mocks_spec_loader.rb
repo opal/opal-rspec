@@ -6,7 +6,7 @@ module Opal
       extend Opal::RSpec::OpalRSpecSpecLoader
 
       def self.expected_pending_count
-        0
+        10
       end
 
       def self.base_dir
@@ -37,7 +37,16 @@ module Opal
 
       def self.symbol_files
         [
-            /have_received_spec.rb/
+            /have_received_spec.rb/,
+            /stubbed_message_expectations_spec.rb/
+        ]
+      end
+
+      def self.symbols_replace_regexes
+        [
+            /(expect.*description\)\.to eq)\((.*)\)/,
+            /(expect.*description\)\.to eq) (.*)/,
+            /(raise_error)\((%Q.*)\)/
         ]
       end
 

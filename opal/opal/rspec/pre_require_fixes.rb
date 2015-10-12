@@ -6,3 +6,6 @@ class SecurityError < Exception; end unless defined?(SecurityError)
 # This completely changes the struct class, so need it before RSpec runs
 require_relative 'fixes/opal/compatibility'
 require_relative 'fixes/opal/corelib/struct'
+
+# RSpec code changes based on this
+require_relative 'fixes/rspec/support/ruby_features'

@@ -1,0 +1,2 @@
+# can't change expect/should right now due to undef/Opal
+RSpec::Mocks::Configuration.*configuring the syntax.*

@@ -3,4 +3,33 @@ class RSpec::Mocks::Space
   def id_for(object)
     object.__id__
   end
+
+  unless Opal::RSpec::Compatibility.module_case_works_right?
+    def proxy_not_found_for(id, object)
+      # case when SomeClass wasn't working properly
+      includes_test_double = [
+          InstanceVerifyingDouble,
+          ObjectVerifyingDouble,
+          ClassVerifyingDouble,
+          Double
+      ]
+      proxies[id] = if object.is_a?(NilClass)
+                      ProxyForNil.new(@expectation_ordering)
+                    elsif includes_test_double.any? { |klass| object.is_a? klass }
+                      object.__build_mock_proxy_unless_expired(@expectation_ordering)
+                    elsif object.is_a?(Class)
+                      if RSpec::Mocks.configuration.verify_partial_doubles?
+                        VerifyingPartialClassDoubleProxy.new(self, object, @expectation_ordering)
+                      else
+                        PartialClassDoubleProxy.new(self, object, @expectation_ordering)
+                      end
+                    else
+                      if RSpec::Mocks.configuration.verify_partial_doubles?
+                        VerifyingPartialDoubleProxy.new(object, @expectation_ordering)
+                      else
+                        PartialDoubleProxy.new(object, @expectation_ordering)
+                      end
+                    end
+    end
+  end
 end

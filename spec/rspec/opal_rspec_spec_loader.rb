@@ -39,12 +39,16 @@ module Opal
         end
       end
 
-      def symbols_in_expectations(files)
-        matching = [
+      def symbols_replace_regexes
+        [
             /(fail_\w+)\((.*)\)/,
             /(expect.*description\)\.to eq)\((.*)\)/,
             /(expect.*description\)\.to eq) (.*)/
         ]
+      end
+
+      def symbols_in_expectations(files)
+        matching = symbols_replace_regexes
         # fail_with(/expected .* to respond to :some_method/)
         replace_with_regex matching, 'fix symbols in message expectations', files, symbol_files do |match, temp_filename|
           # Don't want to match #<Object:.*>
