@@ -71,21 +71,17 @@ module Opal
 
       def get_file_list
         exclude_these_specs = get_exclusions_compact File.join(base_dir, 'spec_files_exclude.txt')
-        missing_exclusions = exclude_these_specs.map do |f|
-          result = spec_directories.any? do |spec_dir|
-            FileList[File.join(spec_dir, f[:exclusion])].any?
-          end
-          result ? nil : f
-        end.compact
+        exclude_globs_only = exclude_these_specs.map { |f| f[:exclusion] }
+        files = FileList[
+            File.join(base_dir, 'require_specs.rb'), # need our code to go in first
+            *spec_glob
+        ].exclude(*exclude_globs_only)
+        missing_exclusions = exclude_these_specs.reject do |exclude|
+          FileList[exclude[:exclusion]].any?
+        end
         if missing_exclusions.any?
           raise "Expected to exclude #{missing_exclusions} as noted in spec_files_exclude.txt but we didn't find these files. Has RSpec been upgraded?"
         end
-        exclude_globs_only = exclude_these_specs.map { |f| f[:exclusion] }
-        include_globs = spec_directories.map { |g| File.join(g, '**/*_spec.rb') }
-        files = FileList[
-            File.join(base_dir, 'require_specs.rb'), # need our code to go in first
-            *include_globs
-        ].exclude(*exclude_globs_only)
         files += post_requires.map { |r| File.join(base_dir, r) }
         puts 'Running the following RSpec specs:'
         files.each { |f| puts f }

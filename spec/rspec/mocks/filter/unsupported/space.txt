@@ -1,0 +1,2 @@
+# no diff on Opal
+RSpec::Mocks::Space can be diffed in a failure when it has references to an error generator via a proxy

@@ -17,9 +17,8 @@ module Opal
         [/core\/example_spec.rb/, /pending_spec.rb/]
       end
 
-      def self.spec_directories
-        # will have a glob appended to each element in the array
-        %w{rspec-core/spec spec/rspec/core/opal_alternates}
+      def self.spec_glob
+        %w{rspec-core/spec/**/*_spec.rb spec/rspec/core/opal_alternates/**/*_spec.rb}
       end
 
       def self.stubbed_requires

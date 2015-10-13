@@ -76,6 +76,7 @@ RSpec.configure do |config|
   config.extend RSpec::Support::RubyFeatures
   config.include RSpec::Support::RubyFeatures
   config.filter_run_excluding full_description: Regexp.union(CAUSES_SPECS_TO_CRASH)
+  #config.full_description = 'when verify_partial_doubles configuration option is set.*'
 end
 
 RSpec.shared_context "with syntax" do |syntax|

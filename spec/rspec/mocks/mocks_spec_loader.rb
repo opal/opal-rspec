@@ -17,9 +17,8 @@ module Opal
         []
       end
 
-      def self.spec_directories
-        # will have a glob appended to each element in the array
-        %w{rspec-mocks/spec}
+      def self.spec_glob
+        %w{rspec-mocks/spec/**/*_spec.rb}
       end
 
       def self.stubbed_requires
@@ -38,15 +37,18 @@ module Opal
       def self.symbol_files
         [
             /have_received_spec.rb/,
-            /stubbed_message_expectations_spec.rb/
+            /stubbed_message_expectations_spec.rb/,
+            /stub_spec.rb/
         ]
       end
 
       def self.symbols_replace_regexes
+        # raise_error(/received :foo with unexpected arguments.*Please stub a default value/m)
         [
             /(expect.*description\)\.to eq)\((.*)\)/,
             /(expect.*description\)\.to eq) (.*)/,
-            /(raise_error)\((%Q.*)\)/
+            /(raise_error)\((%Q.*)\)/,
+            /(raise_error)\((\/received (?!:two).*\/.*)\)/
         ]
       end
 

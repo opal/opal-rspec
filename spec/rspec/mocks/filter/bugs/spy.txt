@@ -1,0 +1,5 @@
+# ClassVerifyingDouble inheriting from Module to support transferring nested constants, but that doesn't work on Opal
+the spy family of methods class_spy.*
+
+# depends on proper initializer behavior in ObjectVerifyingDoubleMethods
+the spy family of methods object_spy.*

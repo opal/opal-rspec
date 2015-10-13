@@ -1,0 +1,5 @@
+# stubs class methods
+unstubbing with `and_call_original` when partial doubles are verified restores the correct implementations when stubbed and unstubbed on a grandparent and grandchild class
+unstubbing with `and_call_original` when partial doubles are verified restores the correct implementations when stubbed and unstubbed on a parent and child class
+unstubbing with `and_call_original` when partial doubles are not verified restores the correct implementations when stubbed and unstubbed on a grandparent and grandchild class
+unstubbing with `and_call_original` when partial doubles are not verified restores the correct implementations when stubbed and unstubbed on a parent and child class

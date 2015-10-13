@@ -1,0 +1,8 @@
+# frozen and Opal
+RSpec::Mocks::Matchers::Receive expect\(...\).to receive behaves like resets partial mocks cleanly on a frozen object includes the spec location in the warning
+RSpec::Mocks::Matchers::Receive expect\(...\).to receive behaves like resets partial mocks cleanly on a frozen object warns about being unable to remove the method double
+RSpec::Mocks::Matchers::Receive allow\(...\).to receive behaves like resets partial mocks cleanly on a frozen object includes the spec location in the warning
+
+# line #
+RSpec::Mocks::Matchers::Receive expect\(...\).to receive behaves like an expect syntax expectation reports the line number of expectation of unreceived message
+RSpec::Mocks::Matchers::Receive allow\(...\).to receive behaves like resets partial mocks cleanly on a frozen object warns about being unable to remove the method double

@@ -17,9 +17,8 @@ module Opal
         [/support\/method_signature_verifier_spec.rb/]
       end
 
-      def self.spec_directories
-        # will have a glob appended to each element in the array
-        %w{rspec-support/spec}
+      def self.spec_glob
+        %w{rspec-support/spec/**/*_spec.rb}
       end
 
       def self.stubbed_requires
