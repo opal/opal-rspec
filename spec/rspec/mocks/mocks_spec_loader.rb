@@ -38,17 +38,21 @@ module Opal
         [
             /have_received_spec.rb/,
             /stubbed_message_expectations_spec.rb/,
-            /stub_spec.rb/
+            /stub_spec.rb/,
+            /receive_spec.rb/,
+            /hash_excluding_matcher_spec.rb/,
+            /hash_including_matcher_spec.rb/,
+            /\/double_spec.rb/
         ]
       end
 
       def self.symbols_replace_regexes
-        # raise_error(/received :foo with unexpected arguments.*Please stub a default value/m)
         [
             /(expect.*description\)\.to eq)\((.*)\)/,
             /(expect.*description\)\.to eq) (.*)/,
             /(raise_error)\((%Q.*)\)/,
-            /(raise_error)\((\/received (?!:two).*\/.*)\)/
+            /(raise_error)\((\/received (?!:two).*\/.*)\)/,
+            /(raise_error\(RSpec::Mocks::MockExpectationError,) (.*\))/
         ]
       end
 

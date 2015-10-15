@@ -6,3 +6,8 @@ RSpec::Mocks::Matchers::Receive allow\(...\).to receive behaves like resets part
 # line #
 RSpec::Mocks::Matchers::Receive expect\(...\).to receive behaves like an expect syntax expectation reports the line number of expectation of unreceived message
 RSpec::Mocks::Matchers::Receive allow\(...\).to receive behaves like resets partial mocks cleanly on a frozen object warns about being unable to remove the method double
+
+# Fixnum and Float will be considered the same in Opal
+RSpec::Mocks::Matchers::Receive expect\(...\).to receive behaves like an expect syntax expectation behaves like a receive matcher allows the caller to constrain the received arguments by matcher
+RSpec::Mocks::Matchers::Receive allow\(...\).to receive behaves like an expect syntax allowance behaves like a receive matcher allows the caller to constrain the received arguments by matcher
+RSpec::Mocks::Matchers::Receive expect\(...\).to receive behaves like an expect syntax expectation sets up a message expectation that formats argument matchers correctly

@@ -1,0 +1,2 @@
+# throw not supported on Opal
+receive_message_chain with only the expect syntax enabled works with and_throw
