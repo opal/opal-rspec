@@ -47,8 +47,6 @@ Opal::RSpec::ExpectationSpecLoader.rake_tasks_for(:rspec_expectation_specs)
 Opal::RSpec::SupportSpecLoader.rake_tasks_for(:rspec_support_specs)
 Opal::RSpec::MocksSpecLoader.rake_tasks_for(:rspec_mocks_specs)
 
-# TODO: opal-rails compatibility
-
 # These are done
 desc 'Verifies all RSpec specs'
 task :verify_rspec_specs => [
