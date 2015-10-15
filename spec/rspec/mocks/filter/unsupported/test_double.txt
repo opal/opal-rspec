@@ -1,2 +1,0 @@
-# file / line number
-RSpec::Mocks::TestDouble#freeze gives the correct call site for the warning

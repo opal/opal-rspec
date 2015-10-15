@@ -56,6 +56,16 @@ module Opal
         ]
       end
 
+      def self.symbol_do_not_replace_regexes
+        # in these cases, the symbols do come in correctly in Opal
+        [
+            # fails when args are expected but none are received
+            'raise_error(RSpec::Mocks::MockExpectationError, %q|Double "test double" received unexpected message :foobar with (no args)|)',
+            # fails if unexpected method called
+            'raise_error(RSpec::Mocks::MockExpectationError, "Double \"test double\" received unexpected message :something with (\"a\", \"b\", \"c\")")'
+        ].map { |r| Regexp.new(Regexp.escape(r)) }
+      end
+
       def self.sub_in_files
         files = super
         symbols_in_expectations files

@@ -47,10 +47,15 @@ module Opal
         ]
       end
 
+      def symbol_do_not_replace_regexes
+        []
+      end
+
       def symbols_in_expectations(files)
         matching = symbols_replace_regexes
         # fail_with(/expected .* to respond to :some_method/)
         replace_with_regex matching, 'fix symbols in message expectations', files, symbol_files do |match, temp_filename|
+          next match.to_s if symbol_do_not_replace_regexes.any? { |exp| exp.match match.to_s }
           # Don't want to match #<Object:.*>
           between_parens = match.captures[1]
           symbol_matcher = /:([a-zA-Z]\w*)/

@@ -46,4 +46,14 @@ unless Opal::RSpec::Compatibility.class_within_class_new_works?
     rescue StandardError
     end
   end
+
+  class OutOfGas < StandardError
+    attr_reader :amount, :units
+
+    def initialize(amount, units)
+      @amount = amount
+      @units = units
+    end
+  end
 end
+

@@ -155,6 +155,11 @@ module Opal
         Exception.new.inspect == '#<Exception: Exception>'
       end
 
+      # https://github.com/opal/opal/pull/1151, should be fixed in Opal 0.9
+      def self.exception_exception_method_works?
+        Exception.respond_to?(:exception) && Exception.exception.is_a?(Exception)
+      end
+
       # https://github.com/opal/opal/pull/1135
       def self.ostruct_works_right?
         require 'ostruct'

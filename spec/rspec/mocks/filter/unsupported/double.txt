@@ -1,4 +1,11 @@
+# private methods
 RSpec::Mocks::Double does not respond_to\? method_missing \(because it's private\)
 
 # backtrace/line number
 RSpec::Mocks::Double reports line number of expectation of unreceived message
+
+# depends on eval
+RSpec::Mocks::Double fails when calling yielding method with invalid kw args
+
+# throw not supported on Opal
+RSpec::Mocks::Double throws when told to
