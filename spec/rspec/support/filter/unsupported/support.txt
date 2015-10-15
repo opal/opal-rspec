@@ -1,5 +1,0 @@
-# evals code
-RSpec::Support behaves like a library that issues no warnings when loaded issues no warnings when loaded
-
-# undef'ing methods not working yet on Opal
-RSpec::Support.method_handle_for\(object, method_name\) fails with `NameError` when a method is fetched from an object that has overriden `method` to not return a method

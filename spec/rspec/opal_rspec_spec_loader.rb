@@ -1,4 +1,5 @@
 require 'tmpdir'
+require_relative 'filter_processor'
 
 module Opal
   module RSpec
@@ -26,9 +27,16 @@ module Opal
       end
 
       def get_ignored_spec_failures
-        FileList[File.join(base_dir, 'filter/**/*.txt')].map do |filename|
-          get_exclusions_compact filename
+        text_based = FileList[File.join(base_dir, 'filter/**/*.txt')].map do |filename|
+          get_compact_text_expressions filename, wrap_in_regex=true
         end.flatten
+        processor = FilterProcessor.new
+        FileList[File.join(base_dir, 'filter/**/*.rb')].exclude('**/sandbox/**/*').each do |filename|
+          processor.filename = filename
+          contents = File.read filename
+          processor.instance_eval contents
+        end
+        text_based + processor.all_filters
       end
 
       def stub_requires
@@ -75,7 +83,7 @@ module Opal
       end
 
       def get_file_list
-        exclude_these_specs = get_exclusions_compact File.join(base_dir, 'spec_files_exclude.txt')
+        exclude_these_specs = get_compact_text_expressions File.join(base_dir, 'spec_files_exclude.txt'), wrap_in_regex=false
         exclude_globs_only = exclude_these_specs.map { |f| f[:exclusion] }
         files = FileList[
             File.join(base_dir, 'require_specs.rb'), # need our code to go in first
@@ -244,7 +252,16 @@ module Opal
           used_exclusions = []
           remaining_failures = actual_failures.reject do |actual|
             expected_failures.any? do |expected|
-              matches = Regexp.new(expected[:exclusion]).match actual['full_description']
+              exclusion = expected[:exclusion]
+              actual_descr = actual['full_description']
+              matches = case exclusion
+                          when Regexp
+                            exclusion.match actual_descr
+                          when String
+                            exclusion == actual_descr
+                          else
+                            raise "Unknown filter expression type #{exclusion.class} in #{expected}!"
+                        end
               used_exclusions << expected if matches
               matches
             end
@@ -309,7 +326,7 @@ module Opal
 
       private
 
-      def get_exclusions_compact(filename)
+      def get_compact_text_expressions(filename, wrap_in_regex)
         line_num = 0
         File.read(filename).split("\n").map do |line|
           line_num += 1
@@ -321,6 +338,8 @@ module Opal
         end.reject do |line|
           exclusion = line[:exclusion]
           exclusion.empty? or exclusion.start_with? '#'
+        end.map do |filter|
+          wrap_in_regex ? filter.merge({exclusion: Regexp.new(filter[:exclusion])}) : filter
         end
       end
     end
