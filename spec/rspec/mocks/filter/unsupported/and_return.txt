@@ -1,0 +1,2 @@
+# arity checking disabled, so not catching this
+and_return when no argument is passed raises ArgumentError

@@ -1,0 +1,8 @@
+# Fixnum == Float on Opal
+argument matchers matching handling non-matcher arguments fails a class against an object of a different type
+argument matchers matching instance_of handles non matching instances nicely
+argument matchers matching instance_of does NOT accept float as instance_of\(Numeric\)
+argument matchers matching instance_of does NOT accept fixnum as instance_of\(Numeric\)
+
+# symbols and strings are different to this example but they are the same in Opal
+argument matchers matching handling non-matcher arguments fails for a hash w/ wrong keys

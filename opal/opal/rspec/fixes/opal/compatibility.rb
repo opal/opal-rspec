@@ -210,6 +210,12 @@ module Opal
       rescue
         false
       end
+
+      # https://github.com/opal/opal/pull/1152
+      def self.set_has_superset?
+        require 'set'
+        Set.new.respond_to?(:superset?)
+      end
     end
   end
 end

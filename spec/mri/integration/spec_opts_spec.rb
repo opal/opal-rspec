@@ -65,6 +65,12 @@ describe 'spec_opts' do
     include_context :color_test, false
   end
 
+  context 'requires and format' do
+    let(:spec_opts) { '--format TestFormatter --require formatter_dependency --require test_formatter' }
+
+    it { is_expected.to match /{"examples".*test formatter ran!/m }
+  end
+
   context 'default' do
     subject { `rake other_specs` }
 

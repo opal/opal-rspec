@@ -39,17 +39,19 @@ SPEC_OPTS="--color" bundle exec rake
 Use a different formatter
 
 ```
-SPEC_OPTS="--format RSpec::Core::Formatters::JsonFormatter" bundle exec rake
+SPEC_OPTS="--format json" bundle exec rake
 ```
 
-The following formatters have been tested. Note that you can't use the shortcut (j/json/etc.) right now. You must use the full class.
+The following formatters have been tested:
+* Default (progress)
+* Documentation
+* JSON
 
-| Formatter          | Command Line Option                             |
-|--------------------|-------------------------------------------------|
-| Default (progress) | RSpec::Core::Formatters::ProgressFormatter      |
-| Documentation      | RSpec::Core::Formatters::DocumentationFormatter |
-| JSON               | RSpec::Core::Formatters::JsonFormatter          |
+If you need to specify additional requires for a custom formatter, you can do this:
 
+```
+SPEC_OPTS="--format SomeFormatter --require some_formatter" bundle exec rake
+```
 
 You can also customize the pattern of specs used similiar to how RSpec's rake task works:
 
@@ -261,6 +263,7 @@ Only 'spec' will be added to the load path.
   * object_spy is not supported (depends on proper initializer behavior in ObjectVerifyingDoubleMethods)
   * verifying partial doubles do not fully work yet
   * chaining and_return after do...end does not work
+  * duck_type argument matching is still buggy
 * Formatters must be supplied as full classes (otherwise Opal tries to load them from inside the Loader class)
 * A lot of backports/monkey patches to Opal classes/methods are done to make this work on Opal 0.8. That means some things might work in your tests that do not work without opal-rspec. You can explore the opal/opal/rspec/fixes/opal directory to see what is being changed. All of the monkey patches check to see if the feature is "broken" before they apply themselves.
 

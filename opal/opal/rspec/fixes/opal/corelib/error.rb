@@ -22,8 +22,9 @@ end
 unless Opal::RSpec::Compatibility.exception_exception_method_works?
   class Exception
     def self.new(*args)
+      # undefined check can be removed if https://github.com/opal/opal/pull/1117 happens
       %x{
-          var message = (args.length > 0) ? args[0] : nil;
+          var message = (args.length > 0 && args[0] !== undefined) ? args[0] : nil;
           var err = new self.$$alloc(message);
 
           if (Error.captureStackTrace) {
@@ -41,7 +42,8 @@ unless Opal::RSpec::Compatibility.exception_exception_method_works?
     end
 
     def initialize(*args)
-      `self.message = (args.length > 0) ? args[0] : nil`
+      # undefined check can be removed if https://github.com/opal/opal/pull/1117 happens
+      `self.message = (args.length > 0 && args[0] !== undefined) ? args[0] : nil`
     end
 
     def exception(str=nil)

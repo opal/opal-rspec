@@ -42,7 +42,8 @@ module Opal
             /receive_spec.rb/,
             /hash_excluding_matcher_spec.rb/,
             /hash_including_matcher_spec.rb/,
-            /\/double_spec.rb/
+            /\/double_spec.rb/,
+            /argument_matchers_spec.rb/
         ]
       end
 
@@ -52,7 +53,12 @@ module Opal
             /(expect.*description\)\.to eq) (.*)/,
             /(raise_error)\((%Q.*)\)/,
             /(raise_error)\((\/received (?!:two).*\/.*)\)/,
-            /(raise_error\(RSpec::Mocks::MockExpectationError,) (.*\))/
+            /(raise_error\(RSpec::Mocks::MockExpectationError,) (.*\))/,
+            /(fail_\w+)\((\/expected: \\\({\(:.*)\)/,
+            # "expected: (hash_not_including(:a=>1))"
+            /(fail_\w+) ("expected: \(hash.*)/,
+            # fail_matching "expected: (duck_type(:abs, :div))"
+            /(fail_\w+) ("expected: \(duck_type.*)/
         ]
       end
 

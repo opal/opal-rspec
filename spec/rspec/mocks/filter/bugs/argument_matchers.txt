@@ -1,0 +1,1 @@
+argument matchers matching duck_type matches duck type with two methods

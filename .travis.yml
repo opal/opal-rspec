@@ -14,20 +14,10 @@ matrix:
       env: RUN=default
     - rvm: 2.1.0
       env: RUN=default
-    - rvm: 2.2
+    - rvm: 2.2.3
       env: RUN=default
-    - rvm: 2.2
+    - rvm: 2.2.3
       env: RUN=default RUNNER=node
-    - rvm: 2.2
-      env: RUN=in_progress_specs
-    - rvm: 2.2
-      env: RUN=in_progress_specs RUNNER=node
-
-  allow_failures:
-    - rvm: 2.2
-      env: RUN=in_progress_specs
-    - rvm: 2.2
-      env: RUN=in_progress_specs RUNNER=node
 
 before_install:
   - git submodule update --init

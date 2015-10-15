@@ -1,0 +1,2 @@
+# This seems to be returning the correct method but something with method equality might be broken
+and_wrap_original on a partial double passes in the original method

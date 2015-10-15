@@ -12,7 +12,14 @@
             config.instance_variable_set(:@color, <%=color_value.to_s%>)
 <%
         end
-        if (match = /--format (.*)/.match(spec_opts))
+        if (requires = spec_opts.scan(/--require \S+/)).any?
+            requires.map {|r| /--require (.*)/.match(r).captures[0]}.each do |req| %>
+
+            require "<%= req %>"
+
+<%          end
+        end
+        if (match = /--format (\S+)/.match(spec_opts))
             formatter = match.captures[0]
 %>
             config.formatter = "<%=formatter%>"

@@ -47,7 +47,6 @@ Opal::RSpec::ExpectationSpecLoader.rake_tasks_for(:rspec_expectation_specs)
 Opal::RSpec::SupportSpecLoader.rake_tasks_for(:rspec_support_specs)
 Opal::RSpec::MocksSpecLoader.rake_tasks_for(:rspec_mocks_specs)
 
-# TODO: add a require SPEC_OPT for our rspec formatter gem/task
 # TODO: opal-rails compatibility
 
 # These are done
@@ -55,23 +54,9 @@ desc 'Verifies all RSpec specs'
 task :verify_rspec_specs => [
          :verify_rspec_support_specs,
          :verify_rspec_core_specs,
-         :verify_rspec_expectation_specs
+         :verify_rspec_expectation_specs,
+         :verify_rspec_mocks_specs
      ]
-
-# Still work to do here
-IN_PROGRESS_SPECS = [:verify_rspec_mocks_specs]
-desc 'Runs verify_rspec_specs without failing until end until we have baseline'
-task :in_progress_specs do
-  failures = IN_PROGRESS_SPECS.map do |task_name|
-    result = nil
-    sh "rake #{task_name}" do
-      result = task_name
-    end
-    result
-  end
-  failures = failures.compact
-  fail "The following tasks failed: #{failures}" if failures.any?
-end
 
 desc 'Verifies other_spec_dir task ran correctly'
 task :verify_other_specs do

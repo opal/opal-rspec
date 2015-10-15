@@ -1,5 +1,5 @@
-unless Opal::RSpec::Compatibility.constant_resolution_works_right?
-  module ::RSpec::Mocks
+module ::RSpec::Mocks
+  unless Opal::RSpec::Compatibility.constant_resolution_works_right?
     class MockExpectationError < Exception
     end
 
@@ -22,6 +22,19 @@ unless Opal::RSpec::Compatibility.constant_resolution_works_right?
 
     # @private
     class VerifyingDoubleNotDefinedError < StandardError
+    end
+  end
+
+  class ErrorGenerator
+    def actual_method_call_args_description(count, args)
+      method_call_args_description(args) ||
+          if count > 0 && args.length > 0
+            # \A and \z not supported on Opal
+            # " with arguments: #{args.inspect.gsub(/\A\[(.+)\]\z/, '(\1)')}"
+            " with arguments: #{args.inspect.gsub(/^\[(.+)\]$/, '(\1)')}"
+          else
+            ""
+          end
     end
   end
 end

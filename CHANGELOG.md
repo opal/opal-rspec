@@ -14,7 +14,7 @@
 
 *   Basic nodejs runner support
 
-*   Colors can be enabled from the command line via environment variables
+*   Colors, formatter, and additional requires can be supplied from the command line via the SPEC_OPTS environment variable
 
 *   Fix redundant messages with expectation fails
 

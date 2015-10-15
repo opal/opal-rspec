@@ -1,0 +1,7 @@
+# Opal does not support catch
+Combining implementation instructions can combine and_yield and and_throw
+Combining implementation instructions can combine and_yield, a block implementation and and_throw
+Combining implementation instructions allows the terminal action to be overriden
+
+# line # / backtrace
+Combining implementation instructions warns when the inner implementation block is overriden
