@@ -22,6 +22,9 @@ matrix:
       env: RUN=default
       gemfile: gemfiles/opal_master.gemfile
 
+  allow_failures:
+    - gemfile: gemfiles/opal_master.gemfile
+
 before_install:
   - git submodule update --init
 
