@@ -34,7 +34,44 @@ module RSpec::Core
       end
     end
 
-    describe "#around" do
+    describe '#around' do
+      context 'when it does not run the example' do
+        context 'for a hook declared in the group' do
+          it 'converts the example to a skipped example so the user is made aware of it' do
+            ex = nil
+            group = RSpec.describe do
+              around {}
+              ex = example("not run") {}
+            end
+
+            # promise
+            # group.run
+            # expect(ex.execution_result.status).to eq(:pending)
+            group.run.then do
+              expect(ex.execution_result.status).to eq(:pending)
+            end
+          end
+        end
+
+        context 'for a hook declared in config' do
+          it 'converts the example to a skipped example so the user is made aware of it' do
+            RSpec.configuration.around {}
+
+            ex = nil
+            group = RSpec.describe do
+              ex = example("not run") {}
+            end
+
+            # promise
+            # group.run
+            # expect(ex.execution_result.status).to eq(:pending)
+            group.run.then do
+              expect(ex.execution_result.status).to eq(:pending)
+            end
+          end
+        end
+      end
+
       it 'considers the hook to have run when passed as a block to a method that yields' do
         ex = nil
         group = RSpec.describe do
@@ -51,6 +88,24 @@ module RSpec::Core
         # expect(ex.execution_result.status).to eq(:passed)
         group.run.then do
           expect(ex.execution_result.status).to eq(:passed)
+        end
+      end
+
+      it 'does not consider the hook to have run when passed as a block to a method that does not yield' do
+        ex = nil
+        group = RSpec.describe do
+          def transactionally;
+          end
+
+          around { |e| transactionally(&e) }
+          ex = example("not run") {}
+        end
+
+        # promise
+        # group.run
+        # expect(ex.execution_result.status).to eq(:pending)
+        group.run.then do
+          expect(ex.execution_result.status).to eq(:pending)
         end
       end
     end
