@@ -216,6 +216,13 @@ module Opal
         require 'set'
         Set.new.respond_to?(:superset?)
       end
+
+      # MRI does does, Opal does not yet
+      def self.lambda_zero_arg_throws_arg_error?
+        !(lambda { 3 } === lambda { 4 })
+      rescue
+        true
+      end
     end
   end
 end
