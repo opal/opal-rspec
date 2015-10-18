@@ -257,7 +257,7 @@ Only 'spec' will be added to the load path.
   * Arity checking is not enabled by default in Opal but it can be. It's not currently enabled because it broke a lot of Opal specs. As a result, any matcher use (particularly respond_to) that depends on arity checking will not work
 * Mocks
   * allow_any_instance/any_instance_of/any_instance will not work and may cause runner to crash due to issues with redefining the === operator, which breaks a case statement inside Hooks#find_hook
-  * mocking string (and probably any bridged/native class) does not work in Opal 0.8
+  * using expect/allow on String/Number (or any immutable bridged/native class) does not work
   * mocking class methods (including `::new`) is currently broken
   * class_double/class_spy are not supported (it depends on ClassVerifyingDouble inheriting from Module to support transferring nested constants, but that doesn't work on Opal)
   * object_spy is not supported (depends on proper initializer behavior in ObjectVerifyingDoubleMethods)
