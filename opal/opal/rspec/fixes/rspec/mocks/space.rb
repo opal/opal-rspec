@@ -1,6 +1,6 @@
 # Opal does not support ObjectSpace, so force object __id__'s
 class RSpec::Mocks::Space
-  OPAL_NON_MOCKABLE_TYPES = [String, Number]
+  OPAL_NON_MOCKABLE_TYPES = [:String, :Number, :Numeric]
 
   def id_for(object)
     object.__id__
@@ -8,7 +8,7 @@ class RSpec::Mocks::Space
 
   # originally had an alternate impl here due to Opal::RSpec::Compatibility.module_case_works_right?, now also doing checks
   def proxy_not_found_for(id, object)
-    raise "#{object.class} #{object} cannot be used for mocking in Opal!" if OPAL_NON_MOCKABLE_TYPES.include?(object.class)
+    raise "#{object.class} #{object} cannot be used for mocking in Opal!" if OPAL_NON_MOCKABLE_TYPES.include?(object.class.name)
     # case when SomeClass wasn't working properly
     includes_test_double = [
         InstanceVerifyingDouble,

@@ -3,7 +3,7 @@ describe 'Opal ExpectationTarget' do
     it 'fails an invalid negative expectation' do
       # Fixnum = Numeric on Opal
       # message = /expected 5 not to be a kind of Fixnum/
-      message = /expected 5 not to be a kind of Numeric/
+      message = /expected 5 not to be a kind of Num.*/
       expect {
         expect(5).not_to be_a(Fixnum)
       }.to fail_with(message)
@@ -12,7 +12,7 @@ describe 'Opal ExpectationTarget' do
     it 'fails an invalid negative expectation with a split infinitive' do
       # Fixnum = Numeric on Opal
       # message = /expected 5 not to be a kind of Fixnum/
-      message = /expected 5 not to be a kind of Numeric/
+      message = /expected 5 not to be a kind of Num.*/
       expect {
         expect(5).to_not be_a(Fixnum)
       }.to fail_with(message)
