@@ -1,2 +1,0 @@
-# can't change expect/should right now due to undef/Opal
-Methods added to every object limits the number of methods that get added to all objects

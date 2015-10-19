@@ -259,12 +259,12 @@ Only 'spec' will be added to the load path.
   * debug mode + source map support not there yet (see source map support - https://github.com/evanw/node-source-map-support)
   * currently running a lot slower than phantomjs, might need optimization
 * Matchers
-  * Predicate matchers (be_some_method_on_your_subject) do not currently work with delegate objects (Opal DelegateClass is incomplete)
-  * Operator based comparison, except for ==, won't work on Opal 0.8 due to lack of method_missing support for operators. There is a PR to fix this in Opal 0.9: https://github.com/opal/opal/pull/1136
-  * Descriptions on aliased/negated matchers won't be like normal RSpec due to several bugs: method owner not being correct (not fixed yet), blocks passed after arguments and hash (Opal 0.9 pull request open)
+  * predicate matchers (be_some_method_on_your_subject) do not currently work with delegate objects (Opal DelegateClass is incomplete)
+  * operator based comparison, except for ==, won't work on Opal 0.8 due to lack of method_missing support for operators. There is a PR to fix this in Opal 0.9: https://github.com/opal/opal/pull/1136
+  * descriptions on aliased/negated matchers won't be like normal RSpec due to several bugs: method owner not being correct (not fixed yet), blocks passed after arguments and hash (Opal 0.9 pull request open)
   * equal and eq matchers function largely the same right now since == and equal? in Opal are largely the same
-  * Time based matching is not yet tested
-  * Arity checking is not enabled by default in Opal but it can be. It's not currently enabled because it broke a lot of Opal specs. As a result, any matcher use (particularly respond_to) that depends on arity checking will not work
+  * time based matching is not yet tested
+  * arity checking is not enabled by default in Opal but it can be. It's not currently enabled because it broke a lot of Opal specs. As a result, any matcher use (particularly respond_to) that depends on arity checking will not work
 * Mocks
   * allow_any_instance/any_instance_of/any_instance will not work and may cause runner to crash due to issues with redefining the === operator, which breaks a case statement inside Hooks#find_hook
   * using expect/allow on String/Number (or any immutable bridged/native class) does not work
@@ -274,6 +274,7 @@ Only 'spec' will be added to the load path.
   * verifying partial doubles do not fully work yet
   * chaining and_return after do...end does not work
   * duck_type argument matching is still buggy
+  * and_throw does not work on Opal 0.8 since throw/catch was not implemented until Opal 0.9
 * Formatters must be supplied as full classes (otherwise Opal tries to load them from inside the Loader class)
 * A lot of backports/monkey patches to Opal classes/methods are done to make this work on Opal 0.8. That means some things might work in your tests that do not work without opal-rspec. You can explore the opal/opal/rspec/fixes/opal directory to see what is being changed. All of the monkey patches check to see if the feature is "broken" before they apply themselves.
 

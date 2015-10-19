@@ -1,3 +1,0 @@
-Method visibility when using partial mocks keeps public methods public
-Method visibility when using partial mocks keeps private methods private
-Method visibility when using partial mocks keeps protected methods protected
