@@ -232,6 +232,8 @@ module Opal
 
       def rake_tasks_for(name)
         Opal::RSpec::RakeTask.new(name) do |server, task|
+          # A lot of specs, can take longer on slower machines
+          task.timeout = 80000
           stub_requires
           task.files = sub_in_files
           append_additional_load_paths server

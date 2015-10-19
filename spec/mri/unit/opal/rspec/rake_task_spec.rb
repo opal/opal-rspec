@@ -7,9 +7,12 @@ describe Opal::RSpec::RakeTask do
   include_context :temp_dir
   let(:captured_opal_server) { {} }
 
-  RSpec::Matchers.define :invoke_runner do |expected|
+  RSpec::Matchers.define :invoke_runner do |expected, timeout_value=nil|
     match do
-      invoked_runners == [expected]
+      invoked_runners == [{
+                              type: expected,
+                              timeout_value: timeout_value
+                          }]
     end
   end
 
@@ -66,12 +69,18 @@ describe Opal::RSpec::RakeTask do
       block.call
       thread_double
     end
-    allow(task_definition).to receive(:launch_phantom) do
-      invoked_runners << :phantom
+    allow(task_definition).to receive(:launch_phantom) do |timeout_value|
+      invoked_runners << {
+          type: :phantom,
+          timeout_value: timeout_value
+      }
       nil
     end
     allow(task_definition).to receive(:launch_node) do
-      invoked_runners << :node
+      invoked_runners << {
+          type: :node,
+          timeout_value: nil
+      }
       nil
     end
     expect(task_definition).to receive(:wait_for_server) if expected_to_run
@@ -207,5 +216,30 @@ describe Opal::RSpec::RakeTask do
     end
 
     it { is_expected.to raise_exception 'Cannot supply both a pattern and files!' }
+  end
+
+  context 'custom timeout value' do
+    let(:task_definition) do
+      Opal::RSpec::RakeTask.new(task_name) do |server, task|
+        task.timeout = 40000
+      end
+    end
+
+    before do
+      create_dummy_spec_files 'spec/something/dummy_spec.rb'
+    end
+
+    around do |example|
+      # in case we're running on travis, etc.
+      current_env_runner = ENV['RUNNER']
+      ENV['RUNNER'] = nil
+      example.run
+      ENV['RUNNER'] = current_env_runner
+    end
+
+    it { is_expected.to have_attributes pattern: nil }
+    it { is_expected.to append_opal_path 'spec' }
+    it { is_expected.to require_opal_specs eq ['something/dummy_spec'] }
+    it { is_expected.to invoke_runner :phantom, timeout_value=40000 }
   end
 end

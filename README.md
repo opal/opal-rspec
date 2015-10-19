@@ -80,6 +80,16 @@ Opal::RSpec::RakeTask.new(:default) do |server, task|
 end
 ```
 
+PhantomJS will timeout by default after 60 seconds. If you need to lengthen the timeout value, set it like this:
+
+```ruby
+require 'opal/rspec/rake_task'
+Opal::RSpec::RakeTask.new(:default) do |server, task|
+	task.files = FileList['spec/**/something_spec.rb]
+	task.timeout = 80000 # 80 seconds, unit needs to be milliseconds
+end
+```
+
 ### Run specs in nodejs
 
 Same options as above, you can use the RUNNER=node environment variable or use the Rake task like so:

@@ -10,10 +10,10 @@ module Opal
       PORT = 9999
       URL = "http://localhost:#{PORT}/"
 
-      attr_accessor :pattern, :exclude_pattern, :files, :runner
+      attr_accessor :pattern, :exclude_pattern, :files, :runner, :timeout
 
-      def launch_phantom
-        command_line = %Q{phantomjs #{RUNNER} "#{URL}"}
+      def launch_phantom(timeout_value)
+        command_line = %Q{phantomjs #{RUNNER} "#{URL}"#{timeout_value ? " #{timeout_value}" : ''}}
         puts "Running #{command_line}"
         system command_line
         success = $?.success?
@@ -119,7 +119,7 @@ module Opal
           end
 
           begin
-            is_phantom ? launch_phantom : launch_node(app)
+            is_phantom ? launch_phantom(timeout) : launch_node(app)
           ensure
             server.kill
           end
