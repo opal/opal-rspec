@@ -1,2 +1,0 @@
-# Dir usage
-RSpec::Mocks behaves like a library that issues no warnings when loaded issues no warnings when loaded
