@@ -250,21 +250,23 @@ Only 'spec' will be added to the load path.
 * Formatting
   * Backtrace info on specs is buggy ([no Kernel::caller method in Opal](https://github.com/opal/opal/issues/894)), in Firefox w/ the browser runner, no backtraces show up with failed specs
   * Diffs are not yet available when objects do not meet expectations (diff-lcs gem dependency has not been dealt with yet in Opal)
-* Not all RSpec runner options are supported yet
-* At some point, using node + Phantom's ability to read environment variables could be combined with a opal friendly optparse implementation to allow full options to be supplied/parsed
-* Expect and should syntax are both enabled. They cannot be disabled due to bugs with the undef keyword in Opal
-* Random order does not work yet due to lack of [srand/Random support](https://github.com/opal/opal/issues/639) and RSpec's bundled Random implementation (RSpec::Core::Backports::Random) locks the browser/Phantom. If you specify random order, it will be ignored.
+* Configuration  
+  * Not all RSpec runner options are supported yet
+  * At some point, using node + Phantom's ability to read environment variables could be combined with a opal friendly optparse implementation to allow full options to be supplied/parsed
+  * Expect and should syntax are both enabled. They cannot be disabled due to bugs with the undef keyword in Opal
+  * Random order does not work yet due to lack of [srand/Random support](https://github.com/opal/opal/issues/639) and RSpec's bundled Random implementation (RSpec::Core::Backports::Random) locks the browser/Phantom. If you specify random order, it will be ignored.
 * With Opal < 0.9, you can't access the example from named subject blocks (e.g. subject {|e| puts "example is #{e}" })
-* nodejs runner
+* Nodejs runner
   * debug mode + source map support not there yet (see source map support - https://github.com/evanw/node-source-map-support)
   * currently running a lot slower than phantomjs, might need optimization
 * Matchers
   * predicate matchers (be_some_method_on_your_subject) do not currently work with delegate objects (Opal DelegateClass is incomplete)
-  * operator based comparison, except for ==, won't work on Opal 0.8 due to lack of method_missing support for operators. There is a PR to fix this in Opal 0.9: https://github.com/opal/opal/pull/1136
-  * descriptions on aliased/negated matchers won't be like normal RSpec due to several bugs: method owner not being correct (not fixed yet), blocks passed after arguments and hash (Opal 0.9 pull request open)
+  * operator based comparison, except for ==, won't work on Opal 0.8 due to lack of method_missing support for operators. This works correctly in Opal 0.9.
+  * descriptions on aliased/negated matchers won't be like normal RSpec due to several bugs: method owner not being correct (not fixed yet), blocks passed after arguments and hash (fixed in Opal 0.9)
   * equal and eq matchers function largely the same right now since == and equal? in Opal are largely the same
   * time based matching is not yet tested
   * arity checking is not enabled by default in Opal but it can be. It's not currently enabled because it broke a lot of Opal specs. As a result, any matcher use (particularly respond_to) that depends on arity checking will not work
+  * splat methods and expect(...).to respond_to will be inconsistent in Opal 0.8 since several splat bugs were fixed with Opal 0.9
 * Mocks
   * allow_any_instance/any_instance_of/any_instance will not work and may cause runner to crash due to issues with redefining the === operator, which breaks a case statement inside Hooks#find_hook
   * using expect/allow on String/Number (or any immutable bridged/native class) does not work
@@ -275,7 +277,6 @@ Only 'spec' will be added to the load path.
   * chaining and_return after do...end does not work
   * duck_type argument matching is still buggy
   * and_throw does not work on Opal 0.8 since throw/catch was not implemented until Opal 0.9
-* Formatters must be supplied as full classes (otherwise Opal tries to load them from inside the Loader class)
 * A lot of backports/monkey patches to Opal classes/methods are done to make this work on Opal 0.8. That means some things might work in your tests that do not work without opal-rspec. You can explore the opal/opal/rspec/fixes/opal directory to see what is being changed. All of the monkey patches check to see if the feature is "broken" before they apply themselves.
 
 ## Contributing
@@ -291,29 +292,6 @@ which is needed to run specs, use:
     $ git submodule update --init
 
 When updating the RSpec versions, after updating the submodule revisions, you may need to use the generate_requires Rake task in order to pre-resolve RSpec's dynamic requires
-
-### Run on command line
-
-A simple rake task should run the example specs in `spec/`:
-
-    $ bundle exec rake
-
-### Run in the browser
-
-Run attached rack app to handle building:
-
-    $ bundle exec rackup
-
-Visit the page in any browser and view the console:
-
-    $ open http://localhost:9292
-
-## Things to fix
-
-`opal/opal-rspec/fixes.rb` contains a few bug fixes that need to be merged upstream
-to opal itself. `app/rspec-builder.rb` is used to precompile rspec ready to be used
-in `opal-rspec`. All requires from `core.rb` have been inlined as opal cannot require
-dynamically at runtime.
 
 ## License
 
