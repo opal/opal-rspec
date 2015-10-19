@@ -1,9 +1,0 @@
-# https://github.com/opal/opal/pull/1136 - operators and method missing issues with a_value > < etc
-should =~ array when the array undefines `=~` still works
-should_not =~ \[:with, :multiple, :args\] fails when the arrays match
-using contain_exactly with expect passes for an out of order valid positive expectation with hashes
-using contain_exactly with expect passes for an in order valid positive expectation with hashes
-should =~ array when the array defines a `send` method still works
-should =~ array when the array defines a `=~` method delegates to that method rather than using the contain_exactly matcher
-should =~ array fails an invalid positive expectation
-should =~ array passes a valid positive expectation

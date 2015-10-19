@@ -1,7 +1,0 @@
-# method owner (no issue/PR) and block (https://github.com/opal/opal/pull/1132)
-RSpec::Matchers.define_negated_matcher when the negated description is overriden overrides the failure message with the provided block
-RSpec::Matchers.define_negated_matcher when the negated description is overriden overrides the description with the provided block
-RSpec::Matchers.define_negated_matcher when no block is passed when matched negatively fails matches against values that pass the original matcher
-RSpec::Matchers.define_negated_matcher when no block is passed when matched positively fails matches against values that pass the original matcher
-RSpec::Matchers.define_negated_matcher the failure message for a matcher with default failure messages when failing negatively uses the phrasing from the provided defined matcher alias
-RSpec::Matchers.define_negated_matcher the failure message for a matcher with default failure messages when failing positively uses the phrasing from the provided defined matcher alias

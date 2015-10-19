@@ -1,11 +1,21 @@
 module Opal
   module RSpec
+    module OpalVersionStuff
+      def at_least_opal_0_9?
+        Gem::Dependency.new('opal', '~> 0.9').match?('opal', opal_version) || opal_version == '0.9.0.dev'
+      end
+    end
+
     class FilterProcessor
       attr_reader :all_filters
       attr_accessor :filename
 
+      include OpalVersionStuff
+
       class GuardCheck
         attr_reader :opal_version
+
+        include Opal::RSpec::OpalVersionStuff
 
         def initialize(current_filters, opal_version)
           @current_filters = current_filters
@@ -20,10 +30,6 @@ module Opal
         def if(&block)
           result = instance_eval(&block)
           remove_filter unless result
-        end
-
-        def at_least_opal_0_9?
-          Gem::Dependency.new('opal', '~> 0.9').match?('opal', opal_version) || opal_version == '0.9.0.dev'
         end
 
         private

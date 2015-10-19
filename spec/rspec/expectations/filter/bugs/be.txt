@@ -1,2 +1,0 @@
-# Maybe Numeric shouldn't == Fixnum but it does in Opal
-be_an_instance_of fails when class is higher up hierarchy
