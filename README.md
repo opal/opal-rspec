@@ -58,8 +58,8 @@ You can also customize the pattern of specs used similiar to how RSpec's rake ta
 ```ruby
 require 'opal/rspec/rake_task'
 Opal::RSpec::RakeTask.new(:default) do |server, task|
-	# server is an instance of Opal::Server in case you want to add to the load path, customize, etc.
-	task.pattern = 'spec_alternate/**/*_spec.rb' # can also supply an array of patterns
+  # server is an instance of Opal::Server in case you want to add to the load path, customize, etc.
+  task.pattern = 'spec_alternate/**/*_spec.rb' # can also supply an array of patterns
 end
 ```
 
@@ -67,7 +67,7 @@ Excluding patterns can be setup this way:
 ```ruby
 require 'opal/rspec/rake_task'
 Opal::RSpec::RakeTask.new(:default) do |server, task|
-	task.exclude_pattern = 'spec_alternate/**/*_spec.rb' # can also supply an array of patterns
+  task.exclude_pattern = 'spec_alternate/**/*_spec.rb' # can also supply an array of patterns
 end
 ```
 
@@ -76,7 +76,7 @@ FileLists (as in Rake FileLists) can also be supplied:
 ```ruby
 require 'opal/rspec/rake_task'
 Opal::RSpec::RakeTask.new(:default) do |server, task|
-	task.files = FileList['spec/**/something_spec.rb]
+  task.files = FileList['spec/**/something_spec.rb]
 end
 ```
 
@@ -85,8 +85,8 @@ PhantomJS will timeout by default after 60 seconds. If you need to lengthen the 
 ```ruby
 require 'opal/rspec/rake_task'
 Opal::RSpec::RakeTask.new(:default) do |server, task|
-	task.files = FileList['spec/**/something_spec.rb]
-	task.timeout = 80000 # 80 seconds, unit needs to be milliseconds
+  task.files = FileList['spec/**/something_spec.rb]
+  task.timeout = 80000 # 80 seconds, unit needs to be milliseconds
 end
 ```
 
@@ -199,13 +199,13 @@ This is the approach that was supported in opal-rspec <= 0.4.3 and it still work
 
 ```ruby
 describe MyClass2 do
-	async 'HTTP requests should work' do
-	  HTTP.get('/users/1.json') do |res|
-	    async {
-	      expect(res).to be_ok
-	    }
-	  end
-	end
+  async 'HTTP requests should work' do
+    HTTP.get('/users/1.json') do |res|
+      async {
+        expect(res).to be_ok
+      }
+    end
+  end
 end
 ```
 

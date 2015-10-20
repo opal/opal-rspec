@@ -4,10 +4,10 @@
 require 'opal'
 # Hard to capture errors w/ Selenium
 %x{
-	window.jsErrors = [];
-	window.onerror = function (errorMessage) {
-		window.jsErrors.push(errorMessage);
-	};
+  window.jsErrors = [];
+  window.onerror = function (errorMessage) {
+    window.jsErrors.push(errorMessage);
+  };
 }
 
 require 'opal-rspec'
