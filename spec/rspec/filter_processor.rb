@@ -2,7 +2,8 @@ module Opal
   module RSpec
     module OpalVersionStuff
       def at_least_opal_0_9?
-        Gem::Dependency.new('opal', '~> 0.9').match?('opal', opal_version) || opal_version == '0.9.0.dev'
+        # it's ok if we have a pre-release version
+        Gem::Dependency.new('opal', '>= 0.9').match?('opal', Gem::Version.new(opal_version).release.to_s)
       end
     end
 
@@ -69,9 +70,7 @@ module Opal
       private
 
       def opal_version
-        @opal_version ||= begin
-          `opal -e 'puts RUBY_ENGINE_VERSION'`.strip
-        end
+        Opal::VERSION
       end
     end
   end
