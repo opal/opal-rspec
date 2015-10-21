@@ -1,5 +1,6 @@
 require 'opal/rspec'
 require 'tempfile'
+require 'socket'
 
 module Opal
   module RSpec
@@ -59,14 +60,19 @@ module Opal
         # avoid retryable dependency
         tries = 0
         up = false
+        uri = URI(URL)
         while tries < 4 && !up
           tries += 1
           sleep 0.1
           begin
-            open URL
+            # Using TCPSocket, not net/http open because executing the HTTP GET / will incur a decent delay just to check if the server is up
+            # in order to better communicate to the user what is going on, save the actual HTTP request for the phantom/node run
+            # the only objective here is to see if the Rack server has started
+            socket = TCPSocket.new uri.hostname, uri.port
             up = true
+            socket.close
           rescue Errno::ECONNREFUSED
-            puts 'Server not up yet'
+            # server not up yet
           end
         end
         raise 'Tried 4 times to contact Rack server and not up!' unless up
