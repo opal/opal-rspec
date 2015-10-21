@@ -1,0 +1,2 @@
+# Opal doesn't do checking to see if args match arity
+RSpec::Core::MetadataFilter.filter_applies\? raises an error when the proc has an incorrect arity

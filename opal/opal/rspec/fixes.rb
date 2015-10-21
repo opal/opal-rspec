@@ -1,12 +1,5 @@
-require 'encoding'
+require 'encoding' unless Object.const_defined? :Encoding
 # Thread usage in core.rb
 require 'thread'
-require 'opal/rspec/fixes/caller_filter'
-require 'opal/rspec/fixes/matchers'
-require 'opal/rspec/fixes/example_groups'
-require 'opal/rspec/fixes/mocks'
-require 'opal/rspec/fixes/kernel'
-require 'opal/rspec/fixes/reporter'
-require 'opal/rspec/fixes/formatter'
-require 'opal/rspec/fixes/example'
-require 'opal/rspec/fixes/expectations'
+require_relative 'fixes/rspec'
+require_relative 'fixes/opal'

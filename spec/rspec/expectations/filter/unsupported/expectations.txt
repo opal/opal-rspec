@@ -1,0 +1,8 @@
+# diff on Opal
+RSpec::Expectations includes a diff if expected and actual are diffable
+RSpec::Expectations does not include the diff if expected and actual are not diffable
+RSpec::Expectations uses matcher descriptions in place of matchers in diffs
+RSpec::Expectations tells the differ to use color
+
+# Dir
+RSpec::Expectations behaves like a library that issues no warnings when loaded issues no warnings when loaded

@@ -1,0 +1,2 @@
+# method owner doesn't fully work, so we can't count on these
+RSpec::Matchers::BuiltIn::BaseMatcher default failure message detection.*

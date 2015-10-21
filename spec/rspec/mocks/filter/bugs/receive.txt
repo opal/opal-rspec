@@ -1,0 +1,5 @@
+# can't change expect/should right now due to undef/Opal
+RSpec::Mocks::Matchers::Receive when used in a test framework without rspec-expectations can toggle the available syntax
+
+RSpec::Mocks::Matchers::Receive expect\(...\).to receive behaves like an expect syntax expectation behaves like a receive matcher allows chaining off a `do...end` block implementation to be provided
+RSpec::Mocks::Matchers::Receive allow\(...\).to receive behaves like an expect syntax allowance behaves like a receive matcher allows chaining off a `do...end` block implementation to be provided

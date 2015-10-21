@@ -1,0 +1,3 @@
+# backtrace / line numbers
+expect { ... }.to raise_error\(message\) includes the backtrace of any other error in the failure message
+expect { ... }.not_to raise_error with no specific error class includes the backtrace of the error that was raised in the error message

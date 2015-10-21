@@ -1,0 +1,2 @@
+# ArgumentErrors/arity don't work right w/ Opal here
+RSpec::Support::FuzzyMatcher when given an object whose implementation of `==` raises an ArgumentError surfaces the error

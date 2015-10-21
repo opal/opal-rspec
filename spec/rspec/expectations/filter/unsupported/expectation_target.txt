@@ -1,0 +1,2 @@
+# Fixnum = Numeric on Opal, see opal alternates
+RSpec::Expectations::ExpectationTarget when constructed via #expect fails an invalid negative expectation

@@ -7,9 +7,13 @@ Object.send(:remove_const, :Random)
 
 # These scripts allow a leaner top level spec (like noted here)
 BASE_FILES = %w{rspec rspec/mocks rspec/expectations rspec/core rspec/core/mocking_adapters/rspec}
-FORMATTERS = %w{base_formatter html_printer}.map {|f| "rspec/core/formatters/#{f}"}
+FORMATTERS = %w{base_formatter base_text_formatter progress_formatter documentation_formatter html_printer json_formatter}.map {|f| "rspec/core/formatters/#{f}"}
+MATCHERS = Dir.glob('rspec-expectations/lib/rspec/matchers/built_in/**/*.rb').map do |each_file|
+  path = Pathname.new(each_file).relative_path_from(Pathname.new('rspec-expectations/lib')).to_s
+  path.sub File.extname(path), ''
+end
 MOCK_STUFF = %w{matchers/expectation_customization any_instance}.map { |f| "rspec/mocks/#{f}" }
-REQUIRES = BASE_FILES + FORMATTERS + MOCK_STUFF
+REQUIRES = BASE_FILES + FORMATTERS + MATCHERS + MOCK_STUFF
 
 # Should not need to edit below this
 

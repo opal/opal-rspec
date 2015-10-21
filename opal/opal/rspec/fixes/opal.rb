@@ -1,0 +1,5 @@
+require_relative 'opal/compatibility'
+require_relative 'opal/kernel'
+require_relative 'opal/class'
+require_relative 'opal/stdlib'
+require_relative 'opal/corelib'

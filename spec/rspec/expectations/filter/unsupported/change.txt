@@ -1,0 +1,2 @@
+# strings are immutable
+expect { ... }.to change\(actual, message\) with a string passes when actual is modified by the block

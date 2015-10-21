@@ -4,8 +4,10 @@
 require 'opal'
 require 'opal-rspec'
 
-<% Dir.glob('spec/**/*_spec.{rb,opal}').each do |s| %>
-require <%= s.sub(/^spec\//, '').sub(/\.(rb|opal)$/, '').inspect %>
+<%
+environment.get_opal_spec_requires.each do |s| %>
+require <%= s.inspect %>
 <% end %>
+require 'opal/rspec/spec_opts'
 
-Opal::RSpec::Runner.autorun
+::RSpec::Core::Runner.autorun

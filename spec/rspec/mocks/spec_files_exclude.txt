@@ -1,0 +1,11 @@
+# Do not support marshalling in Opal
+**/marshal_extension_spec.rb
+
+# No private, public, etc.
+**/method_visibility_spec.rb
+
+# class_double depends on ClassVerifyingDouble inheriting from Module to support transferring nested constants, but that doesn't work on Opal
+**/class_double*_spec.rb
+
+# YAML/marshal serialization
+**/serialization_spec.rb

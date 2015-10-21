@@ -1,0 +1,2 @@
+# there are 2 examples w/ the same name, 1 fails because it used load (Opal), the other for the same reason as above
+expect { ... }.to raise_error\(NamedError\) fails if another error is raised \(NameError\)

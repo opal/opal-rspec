@@ -4,7 +4,28 @@
 
 *   Update to RSpec 3.1 (core is 3.1.7, expectations/support 3.1.2, mocks 3.1.3)
 
-*   Remove copy of source (and just rely on git submodule fetch)
+*   Opal 0.9 compatibility
+
+*   A lot more aspects of RSpec should work now as 20+ Opal pull requests were completed from opal-rspec work
+
+*   Remove copy of source from opal-rspec git repo (and just rely on git submodule fetch)
+
+*   Rake task improvements:
+  * supports passing a test pattern (include and exclude) and FileLists besides 'spec/**/*_spec.rb
+  * colors, formatter, and additional requires can be supplied from the command line via the SPEC_OPTS environment variable
+
+*   Formatters:
+  * Fixed issues with RSpec's BaseTextFormatter and made ProgressFormatter the default when run via the Rake task
+  * Fix redundant messages with expectation fails
+  * Browser formatter now works w/ progress bar
+  * JSON formatter supported
+
+*   Fixed issues with constants/example group naming
+
+*   Basic nodejs runner support
+
+*   A lot more matchers enabled
+
 
 ## 0.4.3 (2015-06-14)
 

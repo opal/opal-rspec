@@ -1,0 +1,2 @@
+# backtrace/line #
+RSpec::Expectations::Configuration#backtrace_formatter defaults to rspec-core's backtrace formatter when rspec-core is loaded

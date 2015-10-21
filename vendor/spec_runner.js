@@ -14,6 +14,20 @@ page.onInitialized = function() {
   });
 };
 
+var system = require('system');
+page.onCallback = function(data) {
+  switch (data[0]) {
+  case 'stdout':
+    system.stdout.write(data[1] || '');
+    break;
+  case 'stderr':
+    system.stderr.write(data[1] || '');
+    break;
+  default:
+    console.error('Unknown callback data: ', data);
+  }
+};
+
 /*
  * Exit phantom instance "safely" see - https://github.com/ariya/phantomjs/issues/12697
  * https://github.com/nobuoka/gulp-qunit/commit/d242aff9b79de7543d956e294b2ee36eda4bac6c

@@ -1,0 +1,2 @@
+# line/number backtrace
+expect\(...\).to receive_messages\(:a => 1, :b => 2\) fails with the correct location

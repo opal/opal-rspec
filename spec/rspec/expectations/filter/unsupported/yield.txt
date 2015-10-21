@@ -1,0 +1,2 @@
+# symbols == strings, see opal alternates
+yield_successive_args matcher has a description

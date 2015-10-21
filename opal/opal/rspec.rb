@@ -1,20 +1,23 @@
 require 'opal/rspec/pre_require_fixes'
 require 'opal/rspec/requires'
 require 'opal/rspec/fixes'
-require 'opal/rspec/text_formatter'
-require 'opal/rspec/browser_formatter'
+require 'opal/rspec/formatter/browser_formatter'
 require 'opal/rspec/runner'
 require 'opal/rspec/async'
 
 RSpec.configure do |config|
-  # For now, always use our custom formatter for results
-  config.default_formatter = Opal::RSpec::Runner.default_formatter
-  
-  # Legacy helpers
-  config.include Opal::RSpec::AsyncHelpers
+  config.default_formatter = ::RSpec::Core::Runner.non_browser? ? ::RSpec::Core::Formatters::ProgressFormatter : ::Opal::RSpec::BrowserFormatter
 
-  # Always support expect() and .should syntax (we should not do this really..)
+  # Have to do this in 2 places. This will ensure the default formatter gets the right IO, but need to do this here for custom formatters
+  # that will be constructed BEFORE Runner.autorun runs (see runner.rb)
+  _, stdout = ::RSpec::Core::Runner.get_opal_closed_tty_io
+  config.output_stream = stdout
+
+  # This shouldn't be in here, but RSPec uses undef to change this configuration and that doesn't work well enough yet
   config.expect_with :rspec do |c|
     c.syntax = [:should, :expect]
   end
+
+  # Legacy helpers
+  config.include Opal::RSpec::AsyncHelpers
 end

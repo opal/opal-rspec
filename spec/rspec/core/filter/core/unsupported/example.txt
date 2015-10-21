@@ -1,0 +1,7 @@
+# location/line number
+RSpec::Core::Example when there is no explicit description.*using the block
+RSpec::Core::Example when there is no explicit description.*uses the file and line number.*
+RSpec::Core::Example#pending in the example sets the backtrace to the example definition so it can be located by the user
+
+# set_backtrace not supported on Opal
+RSpec::Core::Example#run when the example raises an error leaves a raised exception unmodified.*

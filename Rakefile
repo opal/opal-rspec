@@ -1,11 +1,20 @@
 require 'bundler'
 require 'rspec/core/rake_task'
-Bundler.require
 
 Bundler::GemHelper.install_tasks
 
 require 'opal/rspec/rake_task'
-Opal::RSpec::RakeTask.new(:specs_via_rake)
+require_relative 'spec/rspec/core/core_spec_loader'
+require_relative 'spec/rspec/expectations/expectation_spec_loader'
+require_relative 'spec/rspec/support/support_spec_loader'
+require_relative 'spec/rspec/mocks/mocks_spec_loader'
+
+task :default => [:unit_specs, :verify_opal_specs, :integration_specs, :verify_rspec_specs]
+
+desc 'Runs a set of specs in opal'
+Opal::RSpec::RakeTask.new(:opal_specs) do |_, task|
+  task.pattern = 'spec/opal/**/*_spec.{rb,opal}'
+end
 
 desc 'Generates an RSpec requires file free of dynamic requires'
 task :generate_requires do
@@ -13,15 +22,52 @@ task :generate_requires do
   sh 'ruby -Irspec/lib -Irspec-core/lib/rspec -Irspec-support/lib/rspec util/create_requires.rb'
 end
 
-RSpec::Core::RakeTask.new :browser_specs do |t|
-  t.pattern = 'spec_mri/**/*_spec.rb'
+desc 'Runs a test to test browser based specs using Opal specs in spec/opal'
+RSpec::Core::RakeTask.new :integration_specs do |t|
+  t.pattern = 'spec/mri/integration/**/*_spec.rb'
 end
 
-task :default => [:verify_rake_specs, :browser_specs]
+desc 'Unit tests for MRI focused components of opal-rspec'
+RSpec::Core::RakeTask.new :unit_specs do |t|
+  t.pattern = 'spec/mri/unit/**/*_spec.rb'
+  t.exclude_pattern = 'spec/mri/unit/opal/rspec/opal/**/*'
+end
 
-desc 'Will run a spec suite (rake specs_via_rake) and check for expected combination of failures and successes'
-task :verify_rake_specs do
-  test_output = `rake specs_via_rake`
+desc 'A more limited spec suite to test pattern usage'
+Opal::RSpec::RakeTask.new(:other_specs) do |_, task|
+  task.pattern = 'spec/other/dummy_spec.rb'
+end
+
+Opal::RSpec::RakeTask.new(:color_on_by_default) do |_, task|
+  task.pattern = 'spec/other/color_on_by_default_spec.rb'
+end
+
+Opal::RSpec::CoreSpecLoader.rake_tasks_for(:rspec_core_specs)
+Opal::RSpec::ExpectationSpecLoader.rake_tasks_for(:rspec_expectation_specs)
+Opal::RSpec::SupportSpecLoader.rake_tasks_for(:rspec_support_specs)
+Opal::RSpec::MocksSpecLoader.rake_tasks_for(:rspec_mocks_specs)
+
+# These are done
+desc 'Verifies all RSpec specs'
+task :verify_rspec_specs => [
+         :verify_rspec_support_specs,
+         :verify_rspec_core_specs,
+         :verify_rspec_expectation_specs,
+         :verify_rspec_mocks_specs
+     ]
+
+desc 'Verifies other_spec_dir task ran correctly'
+task :verify_other_specs do
+  test_output = `rake other_specs`
+  unless /1 example, 0 failures/.match(test_output)
+    raise "Expected 1 passing example, but got output '#{test_output}'"
+  end
+  puts 'Test successful'
+end
+
+desc 'Will run a spec suite (rake opal_specs) and check for expected combination of failures and successes'
+task :verify_opal_specs do
+  test_output = `rake opal_specs`
   raise "Expected test runner to fail due to failed tests, but got return code of #{$?.exitstatus}" if $?.success?
   count_match = /(\d+) examples, (\d+) failures, (\d+) pending/.match(test_output)
   raise 'Expected a finished count of test failures/success/etc. but did not see it' unless count_match
@@ -46,73 +92,9 @@ task :verify_rake_specs do
     end
   end
 
-  expected_pending_count = 22
+  expected_pending_count = 12
+  expected_failures = File.read('spec/opal/expected_failures.txt').split("\n").compact.sort
 
-  expected_failures= ['promise should make example fail properly before async block reached',
-                      'promise matcher fails properly',
-                      'promise non-assertion failure in promise no args',
-                      'promise non-assertion failure in promise string arg',
-                      'promise non-assertion failure in promise exception arg',
-                      'pending in example no promise would not fail otherwise, thus fails properly',
-                      'async/sync mix fails properly if a sync test is among async tests',
-                      'async/sync mix can finish running after a long delay and fail properly',
-                      'be_truthy fails properly with truthy values',
-                      'subject sync unnamed assertion fails properly should eq 43',
-                      'subject sync unnamed fails properly during subject create',
-                      'subject async assertion implicit fails properly should eq 43',
-                      'subject async fails properly during creation explicit async',
-                      'subject async fails properly during creation implicit usage',
-                      'subject async assertion explicit async fails properly',
-                      'hooks around sync fails after example should equal 42',
-                      'hooks around sync fails before example',
-                      'hooks around async fails after example after(:each) async fails sync match passes',
-                      'hooks around async fails after example after(:each) async passes sync match passes',
-                      'hooks around async fails after example after(:each) sync fails sync match passes',
-                      'hooks around async fails after example after(:each) sync passes sync match passes',
-                      'hooks around async fails after example before(:each) fails should not reach the example',
-                      'hooks around async fails after example matches another async match',
-                      'hooks around async fails after example matches async match',
-                      'hooks around async fails after example matches async match fails properly',
-                      'hooks around async fails after example matches sync fails properly',
-                      'hooks around async fails after example matches sync match',
-                      'hooks around async fails before example after(:each) async fails sync match passes',
-                      'hooks around async fails before example after(:each) async passes sync match passes',
-                      'hooks around async fails before example after(:each) sync fails sync match passes',
-                      'hooks around async fails before example after(:each) sync passes sync match passes',
-                      'hooks around async fails before example before(:each) fails should not reach the example',
-                      'hooks around async fails before example matches another async match',
-                      'hooks around async fails before example matches async match',
-                      'hooks around async fails before example matches async match fails properly',
-                      'hooks around async fails before example matches sync fails properly',
-                      'hooks around async fails before example matches sync match',
-                      'hooks around async succeeds after(:each) async fails sync match passes',
-                      'hooks around async succeeds after(:each) sync fails sync match passes',
-                      'hooks around async succeeds before(:each) fails should not reach the example',
-                      'hooks around async succeeds matches async match fails properly',
-                      'hooks around async succeeds matches sync fails properly',
-                      'hooks before async with async subject async match fails properly',
-                      'hooks before async with async subject before :each fails properly should not reach the example',
-                      'hooks before async with async subject before :each succeeds, assertion fails properly should not eq 42',
-                      'hooks before async with async subject before :each succeeds, subject fails properly should not reach the example',
-                      'hooks before async with async subject both subject and before(:each) fail properly should not reach the example',
-                      'hooks before async with sync subject async match fails properly',
-                      'hooks before async with sync subject before :each fails properly should not reach the example',
-                      'hooks before async with sync subject match fails properly should not eq 42',
-                      'hooks before sync with sync subject context fails properly should not reach the example',
-                      'hooks before sync with sync subject before :each fails properly should not reach the example',
-                      'hooks before sync with sync subject match fails properly should not eq 42',
-                      'hooks before sync with sync subject first before :each in chain triggers failure inner context should not reach the example',
-                      'hooks after sync after fails should eq 42',
-                      'hooks after sync before fails should not reach the example',
-                      'hooks after sync match fails async match',
-                      'hooks after sync match fails sync match should eq 43',
-                      'hooks after async after(:each) fails properly',
-                      'hooks after async before(:each) fails properly',
-                      'hooks after async match fails properly async match',
-                      'hooks after async match fails properly sync match should eq 43',
-                      'exception handling should fail properly if an exception is raised',
-                      'exception handling should ignore an exception after a failed assertion',
-                      'legacy async fails properly after a long delay'].sort
   if actual_failures != expected_failures
     unexpected = actual_failures - expected_failures
     missing = expected_failures - actual_failures
@@ -124,6 +106,7 @@ task :verify_rake_specs do
 
   if failure_messages.empty?
     puts 'Test successful!'
+    puts "#{total} total specs, #{failed} expected failures, #{pending} expected pending"
   else
     raise "Test failed, reasons:\n\n#{failure_messages.join("\n")}\n"
   end

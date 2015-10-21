@@ -1,4 +1,5 @@
 require 'opal/rspec'
+require 'tempfile'
 
 module Opal
   module RSpec
@@ -7,48 +8,118 @@ module Opal
 
       RUNNER = File.expand_path('../../../../vendor/spec_runner.js', __FILE__)
       PORT = 9999
-      URL = "http://localhost:9999/"
+      URL = "http://localhost:#{PORT}/"
+
+      attr_accessor :pattern, :exclude_pattern, :files, :runner, :timeout
+
+      def launch_phantom(timeout_value)
+        command_line = %Q{phantomjs #{RUNNER} "#{URL}"#{timeout_value ? " #{timeout_value}" : ''}}
+        puts "Running #{command_line}"
+        system command_line
+        success = $?.success?
+
+        exit 1 unless success
+      end
+
+      def runner
+        ((via_env = ENV['RUNNER']) && via_env.to_sym) || @runner || :phantom
+      end
+
+      def get_load_asset_code(server)
+        sprockets = server.sprockets
+        name = server.main
+        asset = sprockets[name]
+        raise "Cannot find asset: #{name}" if asset.nil?
+        Opal::Processor.load_asset_code(sprockets, name)
+      end
+
+      # TODO: Avoid the Rack server and compile directly
+      def launch_node(server)
+        compiled = Tempfile.new 'opal_rspec.js'
+        begin
+          uri = URI(URL)
+          Net::HTTP.start uri.hostname, uri.port do |http|
+            resp = http.get File.join('/assets', server.main)
+            compiled.write resp.body
+            load_asset_code = get_load_asset_code server
+            compiled.write load_asset_code
+            compiled.close
+          end
+          command_line = "node #{compiled.path} 2>&1"
+          puts "Running #{command_line}"
+          system command_line
+          exit 1 unless $?.success?
+        ensure
+          compiled.close unless compiled.closed?
+          compiled.unlink
+        end
+      end
+
+      def wait_for_server
+        # avoid retryable dependency
+        tries = 0
+        up = false
+        while tries < 4 && !up
+          tries += 1
+          sleep 0.1
+          begin
+            open URL
+            up = true
+          rescue Errno::ECONNREFUSED
+            puts 'Server not up yet'
+          end
+        end
+        raise 'Tried 4 times to contact Rack server and not up!' unless up
+      end
 
       def initialize(name = 'opal:rspec', &block)
-        desc "Run opal specs in phantomjs"
+        desc 'Run opal specs in phantomjs/node'
         task name do
           require 'rack'
           require 'webrick'
 
-          app = Opal::Server.new { |s|
+          sprockets_env = Opal::RSpec::SprocketsEnvironment.new
+          app = Opal::Server.new(sprockets: sprockets_env) { |s|
             s.main = 'opal/rspec/sprockets_runner'
-            s.append_path 'spec'
             s.debug = false
 
-            block.call s if block
+            block.call s, self if block
+            sprockets_env.spec_pattern = self.pattern if self.pattern
+            sprockets_env.spec_exclude_pattern = self.exclude_pattern
+            sprockets_env.spec_files = self.files
+            raise 'Cannot supply both a pattern and files!' if self.files and self.pattern
+            sprockets_env.add_spec_paths_to_sprockets
           }
+
+          # TODO: Once Opal 0.9 compatibility is established, if we're running node, add in the node stdlib requires in so RSpec can use them, also add NODE_PATH to the runner command above
 
           server = Thread.new do
             Thread.current.abort_on_exception = true
             Rack::Server.start(
-              :app => app,
-              :Port => PORT,
-              :AccessLog => [],
-              :Logger => WEBrick::Log.new("/dev/null"),
+                :app => app,
+                :Port => PORT,
+                :AccessLog => [],
+                :Logger => WEBrick::Log.new("/dev/null"),
             )
           end
 
-          if `phantomjs -v`.strip.to_i >= 2
-            warn <<-WARN.gsub(/^              /,'')
-              Only PhantomJS v1 is currently supported,
-              if you're using homebrew on OSX you can switch version with:
+          wait_for_server
+          is_phantom = runner == :phantom
+          if is_phantom
+            if `phantomjs -v`.strip.to_i >= 2
+              warn <<-WARN.gsub(/^              /, '')
+                Only PhantomJS v1 is currently supported,
+                if you're using homebrew on OSX you can switch version with:
 
-                brew switch phantomjs 1.9.8
+                  brew switch phantomjs 1.9.8
 
-            WARN
-            exit 1
+              WARN
+              exit 1
+            end
           end
 
           begin
-            system %Q{phantomjs #{RUNNER} "#{URL}"}
-            success = $?.success?
-
-            exit 1 unless success
+            is_phantom ? launch_phantom(timeout) : launch_node(app)
           ensure
             server.kill
           end
