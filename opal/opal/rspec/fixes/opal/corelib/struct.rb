@@ -52,14 +52,12 @@ unless Opal::RSpec::Compatibility.is_struct_hash_correct?
 
       members << name
 
-      if Opal.valid_method_name?(name)
-        define_method name do
-          self[name]
-        end
+      define_method name do
+        self[name]
+      end
 
-        define_method "#{name}=" do |value|
-          self[name] = value
-        end
+      define_method "#{name}=" do |value|
+        self[name] = value
       end
     end
 
