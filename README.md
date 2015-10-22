@@ -56,7 +56,6 @@ SPEC_OPTS="--format SomeFormatter --require some_formatter" bundle exec rake
 You can also customize the pattern of specs used similiar to how RSpec's rake task works:
 
 ```ruby
-require 'opal/rspec/rake_task'
 Opal::RSpec::RakeTask.new(:default) do |server, task|
   # server is an instance of Opal::Server in case you want to add to the load path, customize, etc.
   task.pattern = 'spec_alternate/**/*_spec.rb' # can also supply an array of patterns
@@ -65,7 +64,6 @@ end
 
 Excluding patterns can be setup this way:
 ```ruby
-require 'opal/rspec/rake_task'
 Opal::RSpec::RakeTask.new(:default) do |server, task|
   task.exclude_pattern = 'spec_alternate/**/*_spec.rb' # can also supply an array of patterns
 end
@@ -74,7 +72,6 @@ end
 FileLists (as in Rake FileLists) can also be supplied:
 
 ```ruby
-require 'opal/rspec/rake_task'
 Opal::RSpec::RakeTask.new(:default) do |server, task|
   task.files = FileList['spec/**/something_spec.rb]
 end
@@ -83,7 +80,6 @@ end
 PhantomJS will timeout by default after 60 seconds. If you need to lengthen the timeout value, set it like this:
 
 ```ruby
-require 'opal/rspec/rake_task'
 Opal::RSpec::RakeTask.new(:default) do |server, task|
   task.files = FileList['spec/**/something_spec.rb]
   task.timeout = 80000 # 80 seconds, unit needs to be milliseconds
@@ -95,7 +91,6 @@ end
 Same options as above, you can use the RUNNER=node environment variable or use the Rake task like so:
 
 ```ruby
-require 'opal/rspec/rake_task'
 Opal::RSpec::RakeTask.new(:default) do |server, task|
   task.runner = :node
 end
