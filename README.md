@@ -249,7 +249,7 @@ Only 'spec' will be added to the load path.
   * Not all RSpec runner options are supported yet
   * At some point, using node + Phantom's ability to read environment variables could be combined with a opal friendly optparse implementation to allow full options to be supplied/parsed
   * Expect and should syntax are both enabled. They cannot be disabled due to bugs with the `undef` keyword in Opal 0.8. Status of changing this via config has not been tested in Opal 0.9.
-  * Random order does not work yet due to lack of [srand/Random support](https://github.com/opal/opal/issues/639) and RSpec's bundled Random implementation (RSpec::Core::Backports::Random) locks the browser/Phantom. If you specify random order, it will be ignored.
+  * Random order does not work yet due to lack of [srand/Random support](https://github.com/opal/opal/issues/639) and RSpec's bundled Random implementation, `RSpec::Core::Backports::Random`, locks the browser/Phantom. If you specify random order, it will be ignored.
 * With Opal < 0.9, you can't access the example from named subject blocks (e.g. ```subject {|e| puts "example is #{e}" }```)
 * Nodejs runner
   * debug mode + source map support not there yet (see source map support - https://github.com/evanw/node-source-map-support)
