@@ -13,7 +13,9 @@ module Opal
 
       def get_opal_spec_requires
         @locator.get_opal_spec_requires.map do |file|
-          logical_path = find_asset(file).logical_path
+          asset = find_asset(file)
+          raise "Unable to find asset for file #{file} within load paths #{paths}. Check your load path/file specification." unless asset
+          logical_path = asset.logical_path
           # These will go directly into require '...' statements in Opal, so need to trim extensions
           logical_path.sub File.extname(logical_path), ''
         end
