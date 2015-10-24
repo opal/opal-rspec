@@ -63,6 +63,7 @@ end
 ```
 
 Excluding patterns can be setup this way:
+
 ```ruby
 Opal::RSpec::RakeTask.new(:default) do |server, task|
   task.exclude_pattern = 'spec_alternate/**/*_spec.rb' # can also supply an array of patterns
@@ -73,7 +74,7 @@ FileLists (as in Rake FileLists) can also be supplied:
 
 ```ruby
 Opal::RSpec::RakeTask.new(:default) do |server, task|
-  task.files = FileList['spec/**/something_spec.rb]
+  task.files = FileList['spec/**/something_spec.rb']
 end
 ```
 
@@ -81,7 +82,7 @@ PhantomJS will timeout by default after 60 seconds. If you need to lengthen the 
 
 ```ruby
 Opal::RSpec::RakeTask.new(:default) do |server, task|
-  task.files = FileList['spec/**/something_spec.rb]
+  task.files = FileList['spec/**/something_spec.rb']
   task.timeout = 80000 # 80 seconds, unit needs to be milliseconds
 end
 ```
@@ -180,9 +181,11 @@ end
 ```
 
 Advantages:
+
 * Assuming your subject under test (or matchers) return/use promises, the syntax is the same for sync or async specs
 
 Limitations (apply to both async approaches):
+
 * Right now, async `before(:context)` and `after(:context)` hooks cannot be async
 * You cannot use an around hooks on any example where before(:each)/after(:each) hooks are async or with an async implicit subject
 * `let` dependencies cannot be async, only subject
@@ -209,9 +212,11 @@ so it can move on. Any failures/expectations run inside this block will be run
 in the context of the example.
 
 Advantages:
+
 * Hides promises from the specs
 
 Disadvantages:
+
 * Requires different syntax for async specs vs. sync specs
 
 ## Opal load path
@@ -223,6 +228,7 @@ Example 1: For the example patterns above, only 'spec_alternate' will be added.
 Example 2: Single base path
 
 For a pattern of:
+
 ```ruby
 'spec/other/**/*spec.rb'
 ```
@@ -234,6 +240,7 @@ Example 3: Different base paths
 Multiple patterns are specified that share the same parent:
 
 For a pattern of:
+
 ```ruby
 ['spec/opal/**/*hooks_spec.rb', 'spec/other/**/*_spec.rb']
 ```
@@ -245,7 +252,7 @@ Only 'spec' will be added to the load path.
 * Formatting
   * Backtrace info on specs is buggy ([no Kernel::caller method in Opal](https://github.com/opal/opal/issues/894)), in Firefox w/ the browser runner, no backtraces show up with failed specs
   * Diffs are not yet available when objects do not meet expectations (diff-lcs gem dependency has not been dealt with yet in Opal)
-* Configuration  
+* Configuration
   * Not all RSpec runner options are supported yet
   * At some point, using node + Phantom's ability to read environment variables could be combined with a opal friendly optparse implementation to allow full options to be supplied/parsed
   * Expect and should syntax are both enabled. They cannot be disabled due to bugs with the `undef` keyword in Opal 0.8. Status of changing this via config has not been tested in Opal 0.9.
