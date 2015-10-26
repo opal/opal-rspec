@@ -13,6 +13,10 @@ module Opal
         'spec/rspec/expectations'
       end
 
+      def self.default_path
+        'rspec-expectations/spec'
+      end
+
       def self.spec_glob
         %w{rspec-expectations/spec/**/*_spec.rb spec/rspec/expectations/opal_alternates/**/*_spec.rb}
       end

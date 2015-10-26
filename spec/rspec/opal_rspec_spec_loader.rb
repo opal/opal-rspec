@@ -102,14 +102,29 @@ module Opal
       end
 
       def append_additional_load_paths(server)
-        baseline = ['spec/rspec/shared']
+        baseline = [base_dir, 'spec/rspec/shared']
+        baseline += tmp_load_paths
         (baseline + additional_load_paths).each { |p| server.append_path p }
+      end
+
+      def get_tmp_load_path_dir
+        dir = Dir.mktmpdir
+        at_exit do
+          FileUtils.remove_entry dir
+        end
+        # something was clearing this if it was added via Opal.append_path, so save it
+        tmp_load_paths << dir
+        dir
+      end
+
+      def tmp_load_paths
+        @tmp_load_paths ||= []
       end
 
       def replace_with_regex(regex, description, starting_file_set, files_to_replace)
         fix_these_files = starting_file_set.select { |f| files_to_replace.any? { |r| r.match(f) } }
         return starting_file_set unless fix_these_files.any?
-        dir = Dir.mktmpdir
+        dir = get_tmp_load_path_dir
         missing = []
         expressions = [*regex]
         fixed_temp_files = fix_these_files.map do |path|
@@ -130,9 +145,6 @@ module Opal
           end
           missing << path unless matching
           temp_filename
-        end
-        at_exit do
-          FileUtils.remove_entry dir
         end
         raise "Expected to #{description} in #{fix_these_files} but we didn't find any expressions in #{missing}. Check if RSpec has been upgraded" if missing.any?
         files_we_left_alone = starting_file_set - fix_these_files
@@ -166,7 +178,7 @@ module Opal
         bad_regex = /^(.*)\\$/
         fix_these_files = files.select { |f| files_with_line_continue.any? { |regex| regex.match(f) } }
         return files unless fix_these_files.any?
-        dir = Dir.mktmpdir
+        dir = get_tmp_load_path_dir
         missing = []
         fixed_temp_files = fix_these_files.map do |path|
           temp_filename = File.join dir, File.basename(path)
@@ -191,9 +203,6 @@ module Opal
           end
           missing << path unless found_blackslash
           temp_filename
-        end
-        at_exit do
-          FileUtils.remove_entry dir
         end
         raise "Expected to fix blackslash continuation in #{fix_these_files} but we didn't find any backslashes in #{missing}. Check if RSpec has been upgraded (maybe those blackslashes are gone??)" if missing.any?
         files_we_left_alone = files - fix_these_files
@@ -236,6 +245,7 @@ module Opal
           task.timeout = 80000
           stub_requires
           task.files = sub_in_files
+          task.default_path = default_path
           append_additional_load_paths server
           server.debug = ENV['OPAL_DEBUG']
         end
@@ -320,8 +330,8 @@ module Opal
         rack.run Opal::Server.new(sprockets: sprockets_env) { |s|
                    s.main = 'opal/rspec/sprockets_runner'
                    stub_requires
-                   sprockets_env.add_spec_paths_to_sprockets
                    append_additional_load_paths s
+                   sprockets_env.add_spec_paths_to_sprockets
                    s.debug = ENV['OPAL_DEBUG']
                  }
       end

@@ -17,6 +17,10 @@ module Opal
         [/support\/method_signature_verifier_spec.rb/]
       end
 
+      def self.default_path
+        'rspec-support/spec'
+      end
+
       def self.spec_glob
         %w{rspec-support/spec/**/*_spec.rb}
       end

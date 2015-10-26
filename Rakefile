@@ -14,6 +14,7 @@ task :default => [:unit_specs, :verify_opal_specs, :integration_specs, :verify_r
 desc 'Runs a set of specs in opal'
 Opal::RSpec::RakeTask.new(:opal_specs) do |_, task|
   task.pattern = 'spec/opal/**/*_spec.{rb,opal}'
+  task.default_path = 'spec/opal'
 end
 
 desc 'Generates an RSpec requires file free of dynamic requires'
@@ -36,10 +37,12 @@ end
 desc 'A more limited spec suite to test pattern usage'
 Opal::RSpec::RakeTask.new(:other_specs) do |_, task|
   task.pattern = 'spec/other/dummy_spec.rb'
+  task.default_path = 'spec/other'
 end
 
 Opal::RSpec::RakeTask.new(:color_on_by_default) do |_, task|
   task.pattern = 'spec/other/color_on_by_default_spec.rb'
+  task.default_path = 'spec/other'
 end
 
 Opal::RSpec::CoreSpecLoader.rake_tasks_for(:rspec_core_specs)

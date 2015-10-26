@@ -11,7 +11,7 @@ module Opal
 
       def get_opal_spec_requires
         files = @spec_files || FileList[*@spec_pattern].exclude(*@spec_exclude_pattern)
-        files.map do |file|
+        files.uniq.map do |file|
           File.expand_path file
         end
       end

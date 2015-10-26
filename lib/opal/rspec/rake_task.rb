@@ -11,7 +11,7 @@ module Opal
       PORT = 9999
       URL = "http://localhost:#{PORT}/"
 
-      attr_accessor :pattern, :exclude_pattern, :files, :runner, :timeout
+      attr_accessor :pattern, :exclude_pattern, :files, :default_path, :runner, :timeout
 
       def launch_phantom(timeout_value)
         command_line = %Q{phantomjs #{RUNNER} "#{URL}"#{timeout_value ? " #{timeout_value}" : ''}}
@@ -93,6 +93,7 @@ module Opal
             sprockets_env.spec_pattern = self.pattern if self.pattern
             sprockets_env.spec_exclude_pattern = self.exclude_pattern
             sprockets_env.spec_files = self.files
+            sprockets_env.default_path = self.default_path if self.default_path
             raise 'Cannot supply both a pattern and files!' if self.files and self.pattern
             sprockets_env.add_spec_paths_to_sprockets
           }

@@ -165,8 +165,25 @@ describe Opal::RSpec::RakeTask do
 
   context 'pattern' do
     let(:task_definition) do
+      Opal::RSpec::RakeTask.new(task_name) do |_, task|
+        task.pattern = 'spec/other/**/*_spec.rb'
+      end
+    end
+
+    before do
+      create_dummy_spec_files 'spec/other/dummy_spec.rb'
+    end
+
+    it { is_expected.to have_attributes pattern: 'spec/other/**/*_spec.rb' }
+    it { is_expected.to append_opal_path 'spec' }
+    it { is_expected.to require_opal_specs eq ['other/dummy_spec'] }
+  end
+
+  context 'default path' do
+    let(:task_definition) do
       Opal::RSpec::RakeTask.new(task_name) do |server, task|
         task.pattern = 'spec/other/**/*_spec.rb'
+        task.default_path = 'spec/other'
       end
     end
 
@@ -182,7 +199,7 @@ describe Opal::RSpec::RakeTask do
 
   context 'files' do
     let(:task_definition) do
-      Opal::RSpec::RakeTask.new(task_name) do |server, task|
+      Opal::RSpec::RakeTask.new(task_name) do |_, task|
         task.files = FileList['spec/other/**/*_spec.rb']
       end
     end
@@ -192,16 +209,15 @@ describe Opal::RSpec::RakeTask do
     end
 
     it { is_expected.to have_attributes files: FileList['spec/other/**/*_spec.rb'] }
-    it { is_expected.to_not append_opal_path 'spec' }
-    it { is_expected.to append_opal_path 'spec/other' }
-    it { is_expected.to require_opal_specs eq ['dummy_spec'] }
+    it { is_expected.to append_opal_path 'spec' }
+    it { is_expected.to require_opal_specs eq ['other/dummy_spec'] }
   end
 
   context 'pattern and files' do
     let(:expected_to_run) { false }
 
     let(:task_definition) do
-      Opal::RSpec::RakeTask.new(task_name) do |server, task|
+      Opal::RSpec::RakeTask.new(task_name) do |_, task|
         task.files = FileList['spec/other/**/*_spec.rb', 'util/**/*.rb']
         task.pattern = 'spec/opal/**/*hooks_spec.rb'
       end
