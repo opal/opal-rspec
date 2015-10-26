@@ -89,7 +89,7 @@ end
 
 ### Run specs in nodejs
 
-Same options as above, you can use the RUNNER=node environment variable or use the Rake task like so:
+Same options as above, you can use the `RUNNER=node` environment variable or use the Rake task like so:
 
 ```ruby
 Opal::RSpec::RakeTask.new(:default) do |server, task|
