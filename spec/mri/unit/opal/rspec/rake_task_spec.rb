@@ -131,6 +131,14 @@ describe Opal::RSpec::RakeTask do
       create_dummy_spec_files 'spec/something/dummy_spec.rb'
     end
 
+    around do |example|
+      # in case we're running on travis, etc.
+      current_env_runner = ENV['RUNNER']
+      ENV['RUNNER'] = nil
+      example.run
+      ENV['RUNNER'] = current_env_runner
+    end
+
     let(:task_definition) do
       Opal::RSpec::RakeTask.new(task_name) do |_, task|
         task.arity_checking = arity_setting if arity_setting
@@ -172,6 +180,14 @@ describe Opal::RSpec::RakeTask do
     before do
       stub_const('Opal::VERSION', '0.9.0.beta1')
       create_dummy_spec_files 'spec/something/dummy_spec.rb'
+    end
+
+    around do |example|
+      # in case we're running on travis, etc.
+      current_env_runner = ENV['RUNNER']
+      ENV['RUNNER'] = nil
+      example.run
+      ENV['RUNNER'] = current_env_runner
     end
 
     let(:task_definition) do
