@@ -11,7 +11,12 @@ module Opal
       PORT = 9999
       URL = "http://localhost:#{PORT}/"
 
-      attr_accessor :pattern, :exclude_pattern, :files, :default_path, :runner, :timeout
+      attr_accessor :pattern, :exclude_pattern, :files, :default_path, :runner, :timeout, :arity_checking
+
+      def arity_checking
+        current_opal = Gem::Dependency.new('opal', '>= 0.9').match?('opal', Gem::Version.new(Opal::VERSION).release.to_s)
+        current_opal && (@arity_checking != :disabled) ? :enabled : :disabled
+      end
 
       def launch_phantom(timeout_value)
         command_line = %Q{phantomjs #{RUNNER} "#{URL}"#{timeout_value ? " #{timeout_value}" : ''}}
@@ -97,6 +102,8 @@ module Opal
             raise 'Cannot supply both a pattern and files!' if self.files and self.pattern
             sprockets_env.add_spec_paths_to_sprockets
           }
+
+          Opal::Config.arity_check_enabled = arity_checking == :enabled
 
           # TODO: Once Opal 0.9 compatibility is established, if we're running node, add in the node stdlib requires in so RSpec can use them, also add NODE_PATH to the runner command above
 
