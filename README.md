@@ -227,6 +227,23 @@ NOTE: Only the 'spec' directory will be added to the Opal load path by default. 
 
 ## Other Limitations/Known Issues
 
+* Core Examples
+  * Example groups included like this are currently not working:
+```ruby
+module TestMod
+  def self.included(base)
+    base.class_eval do
+      describe 'foo' do
+      ...
+      end
+    end
+  end
+end
+
+RSpec.configure do |c|
+  c.include TestMod
+end
+```
 * Formatting
   * Backtrace info on specs is buggy ([no Kernel::caller method in Opal](https://github.com/opal/opal/issues/894)), in Firefox w/ the browser runner, no backtraces show up with failed specs
   * Diffs are not yet available when objects do not meet expectations (diff-lcs gem dependency has not been dealt with yet in Opal)
