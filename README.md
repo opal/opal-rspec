@@ -59,6 +59,8 @@ You can also customize the pattern of specs used similiar to how RSpec's rake ta
 Opal::RSpec::RakeTask.new(:default) do |server, task|
   # server is an instance of Opal::Server in case you want to add to the load path, customize, etc.
   task.pattern = 'spec_alternate/**/*_spec.rb' # can also supply an array of patterns
+  # NOTE: opal-rspec, like rspec, only adds 'spec' to the Opal load path unless you set default_path
+  task.default_path = 'spec_alternate'
 end
 ```
 
@@ -221,31 +223,7 @@ Disadvantages:
 
 ## Opal load path
 
-NOTE: Only the deepest directory specified will be added to the Opal load path.
-
-Example 1: For the example patterns above, only 'spec_alternate' will be added.
-
-Example 2: Single base path
-
-For a pattern of:
-
-```ruby
-'spec/other/**/*spec.rb'
-```
-
-'spec/other' will be added to the load path.
-
-Example 3: Different base paths
-
-Multiple patterns are specified that share the same parent:
-
-For a pattern of:
-
-```ruby
-['spec/opal/**/*hooks_spec.rb', 'spec/other/**/*_spec.rb']
-```
-
-Only 'spec' will be added to the load path.
+NOTE: Only the 'spec' directory will be added to the Opal load path by default. Use the Rake task's 'default_path' setting to change that
 
 ## Other Limitations/Known Issues
 

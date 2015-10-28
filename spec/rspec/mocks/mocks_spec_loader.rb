@@ -17,6 +17,10 @@ module Opal
         []
       end
 
+      def self.default_path
+        'rspec-mocks/spec'
+      end
+
       def self.spec_glob
         %w{rspec-mocks/spec/**/*_spec.rb}
       end

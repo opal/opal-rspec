@@ -17,6 +17,10 @@ module Opal
         [/core\/example_spec.rb/, /pending_spec.rb/]
       end
 
+      def self.default_path
+        'rspec-core/spec'
+      end
+
       def self.spec_glob
         %w{rspec-core/spec/**/*_spec.rb spec/rspec/core/opal_alternates/**/*_spec.rb}
       end
