@@ -265,7 +265,7 @@ end
   * arity checking is not enabled by default in Opal but it can be. It's not currently enabled because it broke a lot of Opal specs. As a result, any matcher use (particularly respond_to) that depends on arity checking will not work
   * splat methods and expect(...).to respond_to will be inconsistent in Opal 0.8 since several splat bugs were fixed with Opal 0.9
 * Mocks
-  * `allow_any_instance/any_instance_of/any_instance` will not work and may cause runner to crash due to issues with redefining the `===` operator, which breaks a case statement inside `Hooks#find_hook`
+  * `allow_any_instance/any_instance_of/any_instance` are unstable and may cause runner to crash due to issues with redefining the `===` operator, which breaks a case statement inside `Hooks#find_hook`
   * using expect/allow on `String`, `Number`, or any immutable bridged/native class, does not work since rspec-mocks uses singleton classes and those cannot be defined on immutable objects
   * mocking class methods (including `::new`) is currently broken
   * `class_double/class_spy` are not supported (it depends on `ClassVerifyingDouble` inheriting from `Module` to support transferring nested constants, but that doesn't work on Opal)
