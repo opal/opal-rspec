@@ -24,8 +24,12 @@ module Opal
         @root_node = Element.klass 'results'
       end
 
+      def current_node
+        @group_stack.last ? @group_stack.last : @root_node
+      end
+
       def flush_output
-        node = @group_stack.last ? @group_stack.last : @root_node
+        node = current_node
         new_node = Element.from_string(@output.string)
         node.append new_node
         reset_output
@@ -38,7 +42,7 @@ module Opal
       def print_example_group_start(group_id, description, number_of_parents)
         super
         @output.puts '</dl></div>'
-        parent_node = @group_stack.last ? @group_stack.last : @root_node
+        parent_node = current_node
         new_node = Element.from_string(@output.string)
         reset_output
         parent_node << new_node
@@ -60,6 +64,14 @@ module Opal
       def print_example_failed(pending_fixed, description, run_time, failure_id, exception, extra_content, escape_backtrace=false)
         super
         flush_output
+        example_we_just_wrote = current_node.get_child_by_tag_name('dd', index=-1)
+        dump_message = lambda do
+          puts "Exception for example '#{description}'\n#{exception[:backtrace]}"
+          false
+        end
+        link = Element.from_string('<a>Dump to console</a>')
+        link.on_click = dump_message
+        example_we_just_wrote << link
       end
 
       def print_example_pending(description, pending_message)

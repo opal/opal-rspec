@@ -17,7 +17,7 @@
 *   Formatters:
   * Fixed issues with RSpec's BaseTextFormatter and made ProgressFormatter the default when run via the Rake task
   * Fix redundant messages with expectation fails
-  * Browser formatter now works w/ progress bar
+  * Browser formatter now works w/ progress bar and has a 'Dump to console' link that will put a clickable stack trace for a failed example in the browser console
   * JSON formatter supported
 
 *   Fixed issues with constants/example group naming

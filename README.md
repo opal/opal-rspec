@@ -120,6 +120,9 @@ run Opal::Server.new(sprockets: sprockets_env) { |s|
 Then run the rack server `bundle exec rackup` and visit `http://localhost:9292`
 in any web browser.
 
+A new feature of opal-rspec 0.5 allows you to click 'Dump to console' on a failed example's stack trace and get a 
+clickable stack trace in the browser console. This should ease debugging with long, concatenated script files.
+
 ## Async examples
 
 `opal-rspec` adds support for async specs to rspec. These specs can be defined using 2 approaches:

@@ -31,8 +31,16 @@ module Opal
         `#@native.className`
       end
 
-      def get_child_by_tag_name(tag)
-        Element.new(`#@native.getElementsByTagName(#{tag})[0]`)
+      def get_child_by_tag_name(tag, index=0)
+        elements = `#@native.getElementsByTagName(#{tag})`
+        # is an HTMLCollection, not an array
+        element_array = []
+        %x{
+          for (var i=0; i < #{elements}.length; i++) {
+            #{element_array}.push(#{elements}[i]);
+          }
+        }
+        Element.new(element_array[index])
       end
 
       def class_name=(name)
@@ -45,6 +53,10 @@ module Opal
 
       def outer_html
         `#@native.outerHTML`
+      end
+
+      def on_click=(lambda)
+        `#@native.onclick = #{lambda}`
       end
 
       def html=(html)
