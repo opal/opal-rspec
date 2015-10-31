@@ -69,9 +69,9 @@ module Opal
           puts "Exception for example '#{description}'\n#{exception[:backtrace]}"
           false
         end
-        link = Element.from_string('<a>Dump to console</a>')
-        link.on_click = dump_message
-        example_we_just_wrote << link
+        button = Element.from_string('<form><button type="button">Console</button></form>')
+        button.on_click = dump_message
+        example_we_just_wrote << button
       end
 
       def print_example_pending(description, pending_message)
