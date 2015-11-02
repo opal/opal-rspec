@@ -113,14 +113,8 @@ module Opal
           wait_for_server
           is_phantom = runner == :phantom
           if is_phantom
-            if `phantomjs -v`.strip.to_i >= 2
-              warn <<-WARN.gsub(/^              /, '')
-                Only PhantomJS v1 is currently supported,
-                if you're using homebrew on OSX you can switch version with:
-
-                  brew switch phantomjs 1.9.8
-
-              WARN
+            if `phantomjs -v`.nil?
+              warn "Could not find phantomjs command"
               exit 1
             end
           end
