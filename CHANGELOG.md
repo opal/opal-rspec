@@ -26,6 +26,8 @@
 
 *   A lot more matchers enabled
 
+*  PhantomJS 2.0 compatibility (also still compatible with 1.9.8). Thanks to @aost. Closes out https://github.com/opal/opal-rspec/issues/42
+
 
 ## 0.4.3 (2015-06-14)
 

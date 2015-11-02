@@ -14,6 +14,12 @@ Add `opal-rspec` to your Gemfile:
 gem 'opal-rspec'
 ```
 
+## Requirements
+
+Besides what's already reflected in the GEM dependencies:
+* PhantomJS 1.9.8 or 2.0 for Rake task testing
+* Browser if you want to run and debug tests that way
+
 ### Run specs in phantomjs
 
 To run specs, a rake task can be added which will load all spec files from
