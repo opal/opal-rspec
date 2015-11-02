@@ -17,6 +17,19 @@ matrix:
     - rvm: 2.2.3
       env: RUN=default
     - rvm: 2.2.3
+      # PHANTOMJS env variable is not used but it makes it easier to differentiate this build in Travis
+      # https://github.com/travis-ci/travis-ci/issues/3225 - Easiest way to use 2.0 on Travis
+      env: RUN=default PHANTOMJS=2.0
+      before_script:
+        - "mkdir phantom20"
+        - "export PATH=`pwd`/phantom20:$PATH"
+        - "echo $PATH"
+        - "pushd ."
+        - "cd phantom20"
+        - "curl -L -O https://s3.amazonaws.com/travis-phantomjs/phantomjs-2.0.0-ubuntu-12.04.tar.bz2"
+        - "tar xjvf phantomjs-2.0.0-ubuntu-12.04.tar.bz2"
+        - "popd"
+    - rvm: 2.2.3
       env: RUN=default RUNNER=node
     - rvm: 2.2.3
       env: RUN=default
