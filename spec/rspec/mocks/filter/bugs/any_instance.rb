@@ -1,12 +1,12 @@
 rspec_filter filter '#any_instance' do
   filter '#any_instance when used after the test has finished restores the original behaviour, even if the expectation fails'
   filter '#any_instance when used after the test has finished restores the original behavior of a stubbed method'
-  filter '#any_instance when directed at a method defined on a superclass mocks the method correctly'
+  filter('#any_instance when directed at a method defined on a superclass mocks the method correctly').unless { at_least_opal_0_9? }
   filter '#any_instance when resetting post-verification existing method with stubbing private methods restores a stubbed private method after the spec is run'
   filter '#any_instance when resetting post-verification existing method with expectations private methods restores a stubbed private method after the spec is run'
   filter '#any_instance passing the receiver to the implementation block when configured to pass the instance an any instance stub does not pass the instance to and_call_original'
-  filter '#any_instance setting a message expectation with an expectation is set on a method that exists after any one instance has received a message fails if the method is invoked on a second instance'
-  filter "#any_instance setting a message expectation with an expectation is set on a method which does not exist behaves as 'exactly one instance' fails if the method is invoked on a second instance"
+  filter('#any_instance setting a message expectation with an expectation is set on a method that exists after any one instance has received a message fails if the method is invoked on a second instance').unless { at_least_opal_0_9? }
+  filter("#any_instance setting a message expectation with an expectation is set on a method which does not exist behaves as 'exactly one instance' fails if the method is invoked on a second instance").unless { at_least_opal_0_9? }
   filter('#any_instance setting a message expectation works with a SimpleDelegator subclass').unless { at_least_opal_0_9? }
   filter "#any_instance when stubbing behaves as 'every instance' handles freeze and duplication correctly"
   filter "#any_instance when stubbing behaves as 'every instance' handles method restoration on subclasses"
