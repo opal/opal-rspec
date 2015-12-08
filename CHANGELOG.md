@@ -1,4 +1,4 @@
-## 0.5.0 (edge)
+## 0.5.0 (2015-12-08)
 
 *   By default, any subject, it example block, before(:each), after(:each), and around that returns a promise will be executed asynchronously. Async is NOT yet supported for context level hooks. Async approach from < 0.4.3 will still work.
 
