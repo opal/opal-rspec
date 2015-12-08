@@ -8,8 +8,8 @@ matrix:
   fast_finish: true
 
   include:
-    - rvm: 1.9.3
-      env: RUN=default
+    # - rvm: 1.9.3
+    #   env: RUN=default
     - rvm: 2.0.0
       env: RUN=default
     - rvm: 2.1.0
