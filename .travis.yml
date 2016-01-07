@@ -36,6 +36,9 @@ matrix:
     - rvm: 2.2.3
       env: RUN=default
       gemfile: gemfiles/opal_master.gemfile
+    - rvm: 2.2.3
+      env: RUN=default
+      gemfile: gemfiles/opal_0.8.gemfile
 
 before_install:
   - git submodule update --init
