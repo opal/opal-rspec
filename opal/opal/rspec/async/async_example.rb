@@ -21,7 +21,7 @@ class ::RSpec::Core::Example
           example_group_instance.__memoized[:subject] = resolved_subject
         end
       end
-    rescue
+    rescue Exception => _ # Can't use empty rescue in Opal 0.10 because it won't catch native JS exceptions (which aren't StandardError instances)
       # Exception occurred while checking the subject, might be that the example group had a described class, was not intending on using it as the subject,
       # and the initializer for that described class failed
     end
