@@ -8,6 +8,9 @@ end
 gem 'capybara-webkit', require: false
 gem 'selenium-webdriver', require: false
 
+# mime-types GEM >= 3 does not work with Ruby 1.9.3
+gem 'mime-types', '~> 2.0' if ENV['MT_GEM_OVERRIDE']
+
 # These need to come from our local path in order for create_requires.rb to work properly
 gem 'rspec',              path: 'rspec'
 gem 'rspec-support',      path: 'rspec-support'
