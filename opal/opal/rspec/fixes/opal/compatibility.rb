@@ -68,7 +68,7 @@ module Opal
         obj.splat(*Set.new(Set.new([:foo, :bar]))) == :foo
       end
 
-      # https://github.com/opal/opal/pull/1117, status pending
+      # https://github.com/opal/opal/pull/1117, fixed in Opal 0.9
       def self.fail_raise_matches_mri?
         ex = nil
         %x{
@@ -110,12 +110,12 @@ module Opal
         !klass.new.respond_to? :bar
       end
 
-      # https://github.com/opal/opal/pull/1129
+      # https://github.com/opal/opal/pull/1129, fixed in Opal 0.9
       def self.multiline_regex_works?
         /foo.bar/m.match("foo\nbar").to_a == ["foo\nbar"]
       end
 
-      # https://github.com/opal/opal/pull/1129
+      # https://github.com/opal/opal/pull/1129, fixed in Opal 0.9
       def self.empty_regex_works?
         empty = //
         begin
@@ -125,7 +125,7 @@ module Opal
         end
       end
 
-      # https://github.com/opal/opal/pull/1129
+      # https://github.com/opal/opal/pull/1129, fixed in Opal 0.9
       def self.regex_case_compare_works?
         begin
           (/abc/ === nil) == false && (/abc/ === /abc/) == false
@@ -140,7 +140,7 @@ module Opal
       module ModuleConstTest
       end
 
-      # https://github.com/opal/opal/issues/1085
+      # https://github.com/opal/opal/issues/1085, not yet fixed as of 8-Jan-2016
       def self.constant_resolution_works_right?
         begin
           ModuleConstTest::ConstTest.new
@@ -150,17 +150,17 @@ module Opal
         end
       end
 
-      # https://github.com/opal/opal/pull/1134
+      # https://github.com/opal/opal/pull/1134, fixed in Opal 0.9
       def self.exception_inspect_matches?
         Exception.new.inspect == '#<Exception: Exception>'
       end
 
-      # https://github.com/opal/opal/pull/1151, should be fixed in Opal 0.9
+      # https://github.com/opal/opal/pull/1151, fixed in Opal 0.9
       def self.exception_exception_method_works?
         Exception.respond_to?(:exception) && Exception.exception.is_a?(Exception)
       end
 
-      # https://github.com/opal/opal/pull/1135
+      # https://github.com/opal/opal/pull/1135, fixed in Opal 0.9
       def self.ostruct_works_right?
         require 'ostruct'
 
@@ -179,6 +179,7 @@ module Opal
         include ModuleCase2
       end
 
+      # not currently needed but is referenced in space.rb fix, https://github.com/opal/opal/issues/1279 - still not fixed
       def self.module_case_works_right?
         instance = ModuleCase3.new
         ModuleCase === instance && instance.kind_of?(ModuleCase)
@@ -205,19 +206,20 @@ module Opal
         include MultModSuper3
       end
 
+      # https://github.com/opal/opal/issues/568 - still not fixed
       def self.multiple_module_include_super_works_right?
         MultModSuperClass.new.stuff == :howdy
       rescue
         false
       end
 
-      # https://github.com/opal/opal/pull/1152
+      # https://github.com/opal/opal/pull/1152, fixed in Opal 0.9
       def self.set_has_superset?
         require 'set'
         Set.new.respond_to?(:superset?)
       end
 
-      # MRI does does, Opal does not yet
+      # MRI does this properly, not yet fixed in Opal, https://github.com/opal/opal/issues/1278
       def self.lambda_zero_arg_throws_arg_error?
         !(lambda { 3 } === lambda { 4 })
       rescue
