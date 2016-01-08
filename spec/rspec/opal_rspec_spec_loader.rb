@@ -323,17 +323,19 @@ module Opal
       end
 
       def run_rack_server(rack)
-        Opal::Processor.source_map_enabled = false
+        only_name = self.name.split('::').last
 
         files = sub_in_files
         sprockets_env = Opal::RSpec::SprocketsEnvironment.new(spec_pattern=nil, spec_exclude_pattern=nil, spec_files=files)
         sprockets_env.default_path = default_path
+        sprockets_env.cache = ::Sprockets::Cache::FileStore.new(File.join('tmp', 'cache', only_name))
         rack.run Opal::Server.new(sprockets: sprockets_env) { |s|
                    s.main = 'opal/rspec/sprockets_runner'
                    stub_requires
                    append_additional_load_paths s
                    sprockets_env.add_spec_paths_to_sprockets
                    s.debug = ENV['OPAL_DEBUG']
+                   s.source_map = ENV['OPAL_DEBUG'] != nil
                  }
       end
 
