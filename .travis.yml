@@ -37,6 +37,9 @@ matrix:
     - rvm: 2.2.3
       gemfile: gemfiles/opal_0.9.stable.gemfile
 
+  allow_failures:
+    - gemfile: gemfiles/opal_master.gemfile
+
 before_install:
   - git submodule update --init
 
