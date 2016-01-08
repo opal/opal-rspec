@@ -327,6 +327,7 @@ module Opal
 
         files = sub_in_files
         sprockets_env = Opal::RSpec::SprocketsEnvironment.new(spec_pattern=nil, spec_exclude_pattern=nil, spec_files=files)
+        sprockets_env.default_path = default_path
         rack.run Opal::Server.new(sprockets: sprockets_env) { |s|
                    s.main = 'opal/rspec/sprockets_runner'
                    stub_requires
