@@ -1,6 +1,8 @@
 # opal-rspec
 
 [![Build Status](http://img.shields.io/travis/opal/opal-rspec/master.svg?style=flat)](http://travis-ci.org/opal/opal-rspec)
+[![Quality](http://img.shields.io/codeclimate/github/opal/opal-rspec.svg?style=flat-square)](https://codeclimate.com/github/opal/opal-rspec)
+[![Version](http://img.shields.io/gem/v/opal-rspec.svg?style=flat-square)](https://rubygems.org/gems/opal-rspec)
 
 An attempt at a compatibility layer of RSpec for Opal.
 
