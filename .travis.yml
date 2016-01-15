@@ -14,7 +14,9 @@ matrix:
     - rvm: 2.0.0
     - rvm: 2.1.0
     - rvm: 2.2.3
-    - rvm: 2.2.3
+    - rvm: 2.2.4
+    - rvm: 2.3.0
+    - rvm: 2.2.4
       # PHANTOMJS env variable is not used but it makes it easier to differentiate this build in Travis
       # https://github.com/travis-ci/travis-ci/issues/3225 - Easiest way to use 2.0 on Travis
       env: PHANTOMJS=2.0
@@ -29,13 +31,13 @@ matrix:
         - "popd"
         - "export DISPLAY=:99.0"
         - "sh -e /etc/init.d/xvfb start"
-    - rvm: 2.2.3
+    - rvm: 2.2.4
       env: RUNNER=node
-    - rvm: 2.2.3
+    - rvm: 2.2.4
       gemfile: gemfiles/opal_master.gemfile
-    - rvm: 2.2.3
+    - rvm: 2.2.4
       gemfile: gemfiles/opal_0.8.gemfile
-    - rvm: 2.2.3
+    - rvm: 2.2.4
       gemfile: gemfiles/opal_0.9.stable.gemfile
 
   allow_failures:
