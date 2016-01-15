@@ -1,0 +1,6 @@
+exclude_paths:
+- rspec/**/*
+- rspec-core/**/*
+- rspec-expectations/**/*
+- rspec-mocks/**/*
+- rspec-support/**/*
