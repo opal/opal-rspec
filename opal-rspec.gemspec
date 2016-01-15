@@ -1,5 +1,4 @@
 # -*- encoding: utf-8 -*-
-require 'rake'
 require File.expand_path('../lib/opal/rspec/version', __FILE__)
 
 Gem::Specification.new do |s|
@@ -11,7 +10,7 @@ Gem::Specification.new do |s|
   s.summary = 'RSpec for Opal'
   s.description = 'Opal compatible rspec library'
 
-  s.files = `git ls-files`.split("\n") + FileList['rspec*/**/*.rb']
+  s.files = `git ls-files`.split("\n") + Dir.glob('rspec*/**/*.rb')
 
   s.require_paths = ['lib']
 
