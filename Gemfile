@@ -5,6 +5,7 @@ unless Dir['rspec{,-{core,expectations,mocks,support}}'].any?
   warn 'Run: "git submodule update --init" to get RSpec sources'
 end
 
+gem 'capybara'
 gem 'selenium-webdriver', require: false
 
 # mime-types GEM >= 3 does not work with Ruby 1.9.3
