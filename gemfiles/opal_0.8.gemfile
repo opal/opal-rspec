@@ -6,7 +6,6 @@ unless Dir['rspec{,-{core,expectations,mocks,support}}'].any?
 end
 
 gem 'opal', '0.8'
-gem 'capybara-webkit', require: false
 gem 'selenium-webdriver', require: false
 
 # These need to come from our local path in order for create_requires.rb to work properly

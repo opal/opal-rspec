@@ -1,6 +1,5 @@
 require 'rspec'
 require 'capybara/rspec'
-require 'capybara-webkit'
 
 # Use Rack config exactly as shipped in the GEM
 Capybara.app = Rack::Builder.new_from_string(File.read('config.ru'))
@@ -25,7 +24,5 @@ describe 'browser formatter', type: :feature do
     end
   end
 
-  # Travis version (4.x QT) might be causing this to fail
-  #include_examples :browser, :webkit, lambda {|page| page.driver.error_messages}
   include_examples :browser, :selenium, lambda {|page| page.evaluate_script('window.jsErrors') }
 end
