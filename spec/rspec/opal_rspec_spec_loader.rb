@@ -302,9 +302,12 @@ module Opal
                 unused_exclusions.map { |e| "File: #{e[:filename]}\nLine #{e[:line_number]}\nFilter: #{e[:exclusion]}" }.join("\n---------------------\n")
             reasons << msg
           end
+          passing = total - failed - pending
+          percentage = ((passing.to_f / total) * 100).round(1)
           if reasons.empty?
             puts 'Test successful!'
             puts "#{total} total specs, #{failed} expected failures, #{pending} expected pending"
+            puts "Passing percentage: #{percentage}%"
           else
             puts "Test FAILED for the following reasons:\n"
             puts reasons.join "\n\n"
@@ -313,9 +316,10 @@ module Opal
               puts "Unexpected failures:\n\n#{remaining_failures.join("\n")}\n"
             end
             puts '-----------Summary-----------'
-            puts "Total passed count: #{total - failed - pending}"
+            puts "Total passed count: #{passing}"
             puts "Pending count #{pending}"
             puts "Total 'failure' count: #{actual_failures.length}"
+            puts "Passing percentage: #{percentage}%"
             puts "Unexpected failure count: #{remaining_failures.length}"
             raise 'Test failed!'
           end
