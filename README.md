@@ -238,6 +238,8 @@ NOTE: Only the 'spec' directory will be added to the Opal load path by default. 
 
 ## Other Limitations/Known Issues
 
+80%+ of the RSpec test suites pass so most items work but there are a few things that do not yet work.
+
 * Core Examples
   * Example groups included like this are currently not working:
 ```ruby
