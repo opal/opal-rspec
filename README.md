@@ -21,7 +21,6 @@ gem 'opal-rspec'
 Besides what's already reflected in the GEM dependencies:
 * PhantomJS 1.9.8 or 2.0 for Rake task testing
 * Browser if you want to run and debug tests that way
-* For Opal 0.9 users, 0.9.0 has a [bug](https://github.com/opal/opal/issues/1274) in it and will not work (you must use >= 0.9.1)
 
 ### Run specs in phantomjs
 

@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
 
   s.require_paths = ['lib']
 
-  s.add_dependency 'opal', ['>= 0.8.0', '< 0.10']
+  s.add_dependency 'opal', '>= 0.9.1'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'yard'
 end

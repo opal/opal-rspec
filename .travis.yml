@@ -36,8 +36,6 @@ matrix:
     - rvm: 2.2.4
       gemfile: gemfiles/opal_master.gemfile
     - rvm: 2.2.4
-      gemfile: gemfiles/opal_0.8.gemfile
-    - rvm: 2.2.4
       gemfile: gemfiles/opal_0.9.stable.gemfile
 
   allow_failures:
