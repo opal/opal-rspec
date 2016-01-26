@@ -36,14 +36,3 @@ module RSpec::ExampleGroups
     name
   end
 end
-
-# https://github.com/opal/opal/issues/1080, fixed in Opal 0.9
-unless Opal::RSpec::Compatibility.is_constants_a_clone?
-  module RSpec::ExampleGroups
-    original_constants = method(:constants)
-
-    self.class.send(:define_method, :constants) do
-      original_constants.call().dup
-    end
-  end
-end

@@ -1,36 +1,4 @@
 module Kernel
-  unless Opal::RSpec::Compatibility.clones_singleton_methods?
-    def copy_singleton_methods(other)
-      %x{
-            var name;
-            if (other.hasOwnProperty('$$meta')) {
-              var other_singleton_class_proto = Opal.get_singleton_class(other).$$proto;
-              var self_singleton_class_proto = Opal.get_singleton_class(self).$$proto;
-              for (name in other_singleton_class_proto) {
-                if (name.charAt(0) === '$' && other_singleton_class_proto.hasOwnProperty(name)) {
-                  self_singleton_class_proto[name] = other_singleton_class_proto[name];
-                }
-              }
-            }
-            for (name in other) {
-              if (name.charAt(0) === '$' && name.charAt(1) !== '$' && other.hasOwnProperty(name)) {
-                self[name] = other[name];
-              }
-            }
-          }
-    end
-
-    def clone
-      copy = self.class.allocate
-
-      copy.copy_instance_variables(self)
-      copy.copy_singleton_methods(self)
-      copy.initialize_clone(self)
-
-      copy
-    end
-  end
-
   # RSpec tries to add context with this. something like this: https://github.com/stacktracejs/stacktrace.js would be better than this but
   # avoiding adding an NPM dependency for now
   def caller
