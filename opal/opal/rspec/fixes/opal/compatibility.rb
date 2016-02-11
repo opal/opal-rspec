@@ -12,7 +12,7 @@ module Opal
         include ModuleCase2
       end
 
-      # not currently needed but is referenced in space.rb fix, https://github.com/opal/opal/issues/1279 - still not fixed
+      # not currently needed but is referenced in space.rb fix, https://github.com/opal/opal/issues/1279 - fixed in 0.10
       def self.module_case_works_right?
         instance = ModuleCase3.new
         ModuleCase === instance && instance.kind_of?(ModuleCase)
