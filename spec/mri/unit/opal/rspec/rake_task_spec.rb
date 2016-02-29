@@ -10,8 +10,8 @@ describe Opal::RSpec::RakeTask do
   RSpec::Matchers.define :invoke_runner do |expected, timeout_value=nil|
     match do
       invoked_runners == [{
-                              type: expected,
-                              timeout_value: timeout_value
+                            type: expected,
+                            timeout_value: timeout_value
                           }]
     end
   end
@@ -77,15 +77,15 @@ describe Opal::RSpec::RakeTask do
     end
     allow(task_definition).to receive(:launch_phantom) do |timeout_value|
       invoked_runners << {
-          type: :phantom,
-          timeout_value: timeout_value
+        type: :phantom,
+        timeout_value: timeout_value
       }
       nil
     end
     allow(task_definition).to receive(:launch_node) do
       invoked_runners << {
-          type: :node,
-          timeout_value: nil
+        type: :node,
+        timeout_value: nil
       }
       nil
     end
@@ -125,9 +125,9 @@ describe Opal::RSpec::RakeTask do
     it { is_expected.to invoke_runner :phantom }
   end
 
-  context 'Opal 0.8' do
+  context 'Opal 0.10' do
     before do
-      stub_const('Opal::VERSION', '0.8.0')
+      stub_const('Opal::VERSION', '0.10.0.dev')
       create_dummy_spec_files 'spec/something/dummy_spec.rb'
     end
 
@@ -148,8 +148,8 @@ describe Opal::RSpec::RakeTask do
     context 'no setting' do
       let(:arity_setting) { nil }
 
-      it { is_expected.to have_attributes arity_checking: :disabled }
-      it { is_expected.to_not enable_arity_checking }
+      it { is_expected.to have_attributes arity_checking: :enabled }
+      it { is_expected.to enable_arity_checking }
       it { is_expected.to append_opal_path 'spec' }
       it { is_expected.to require_opal_specs eq ['something/dummy_spec'] }
       it { is_expected.to invoke_runner :phantom }
@@ -158,8 +158,8 @@ describe Opal::RSpec::RakeTask do
     context 'enabled' do
       let(:arity_setting) { :enabled }
 
-      it { is_expected.to have_attributes arity_checking: :disabled }
-      it { is_expected.to_not enable_arity_checking }
+      it { is_expected.to have_attributes arity_checking: :enabled }
+      it { is_expected.to enable_arity_checking }
       it { is_expected.to append_opal_path 'spec' }
       it { is_expected.to require_opal_specs eq ['something/dummy_spec'] }
       it { is_expected.to invoke_runner :phantom }
@@ -199,8 +199,8 @@ describe Opal::RSpec::RakeTask do
     context 'no setting' do
       let(:arity_setting) { nil }
 
-      it { is_expected.to have_attributes arity_checking: :enabled }
-      it { is_expected.to enable_arity_checking }
+      it { is_expected.to have_attributes arity_checking: :disabled }
+      it { is_expected.to_not enable_arity_checking }
       it { is_expected.to append_opal_path 'spec' }
       it { is_expected.to require_opal_specs eq ['something/dummy_spec'] }
       it { is_expected.to invoke_runner :phantom }
@@ -209,8 +209,8 @@ describe Opal::RSpec::RakeTask do
     context 'enabled' do
       let(:arity_setting) { :enabled }
 
-      it { is_expected.to have_attributes arity_checking: :enabled }
-      it { is_expected.to enable_arity_checking }
+      it { is_expected.to have_attributes arity_checking: :disabled }
+      it { is_expected.to_not enable_arity_checking }
       it { is_expected.to append_opal_path 'spec' }
       it { is_expected.to require_opal_specs eq ['something/dummy_spec'] }
       it { is_expected.to invoke_runner :phantom }

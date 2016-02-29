@@ -14,7 +14,10 @@ module Opal
       attr_accessor :pattern, :exclude_pattern, :files, :default_path, :runner, :timeout, :arity_checking
 
       def arity_checking
-        current_opal = Gem::Dependency.new('opal', '>= 0.9').match?('opal', Gem::Version.new(Opal::VERSION).release.to_s)
+        current_opal = Gem::Dependency.new('opal', '>= 0.10').match?('opal', Gem::Version.new(Opal::VERSION).release.to_s)
+        if !current_opal && @arity_checking != :disabled
+          warn 'WARNING: arity checking only supported on >= Opal 0.10'
+        end
         current_opal && (@arity_checking != :disabled) ? :enabled : :disabled
       end
 
