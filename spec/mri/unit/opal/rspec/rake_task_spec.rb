@@ -148,7 +148,6 @@ describe Opal::RSpec::RakeTask do
     context 'no setting' do
       let(:arity_setting) { nil }
 
-      it { is_expected.to have_attributes arity_checking: :enabled }
       it { is_expected.to enable_arity_checking }
       it { is_expected.to append_opal_path 'spec' }
       it { is_expected.to require_opal_specs eq ['something/dummy_spec'] }
@@ -158,7 +157,6 @@ describe Opal::RSpec::RakeTask do
     context 'enabled' do
       let(:arity_setting) { :enabled }
 
-      it { is_expected.to have_attributes arity_checking: :enabled }
       it { is_expected.to enable_arity_checking }
       it { is_expected.to append_opal_path 'spec' }
       it { is_expected.to require_opal_specs eq ['something/dummy_spec'] }
@@ -168,7 +166,6 @@ describe Opal::RSpec::RakeTask do
     context 'disabled' do
       let(:arity_setting) { :disabled }
 
-      it { is_expected.to have_attributes arity_checking: :disabled }
       it { is_expected.to_not enable_arity_checking }
       it { is_expected.to append_opal_path 'spec' }
       it { is_expected.to require_opal_specs eq ['something/dummy_spec'] }
@@ -199,7 +196,6 @@ describe Opal::RSpec::RakeTask do
     context 'no setting' do
       let(:arity_setting) { nil }
 
-      it { is_expected.to have_attributes arity_checking: :disabled }
       it { is_expected.to_not enable_arity_checking }
       it { is_expected.to append_opal_path 'spec' }
       it { is_expected.to require_opal_specs eq ['something/dummy_spec'] }
@@ -209,7 +205,6 @@ describe Opal::RSpec::RakeTask do
     context 'enabled' do
       let(:arity_setting) { :enabled }
 
-      it { is_expected.to have_attributes arity_checking: :disabled }
       it { is_expected.to_not enable_arity_checking }
       it { is_expected.to append_opal_path 'spec' }
       it { is_expected.to require_opal_specs eq ['something/dummy_spec'] }
@@ -219,7 +214,6 @@ describe Opal::RSpec::RakeTask do
     context 'disabled' do
       let(:arity_setting) { :disabled }
 
-      it { is_expected.to have_attributes arity_checking: :disabled }
       it { is_expected.to_not enable_arity_checking }
       it { is_expected.to append_opal_path 'spec' }
       it { is_expected.to require_opal_specs eq ['something/dummy_spec'] }

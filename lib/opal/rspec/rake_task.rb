@@ -13,12 +13,16 @@ module Opal
 
       attr_accessor :pattern, :exclude_pattern, :files, :default_path, :runner, :timeout, :arity_checking
 
-      def arity_checking
+      def arity_checking?
         current_opal = Gem::Dependency.new('opal', '>= 0.10').match?('opal', Gem::Version.new(Opal::VERSION).release.to_s)
-        if !current_opal && @arity_checking != :disabled
+        default_setting = current_opal ? :enabled : :disabled
+        setting = @arity_checking || default_setting
+
+        if !current_opal && setting == :enabled
           warn 'WARNING: arity checking only supported on >= Opal 0.10'
         end
-        current_opal && (@arity_checking != :disabled) ? :enabled : :disabled
+
+        current_opal && setting == :enabled
       end
 
       def launch_phantom(timeout_value)
@@ -106,7 +110,7 @@ module Opal
             sprockets_env.add_spec_paths_to_sprockets
           }
 
-          Opal::Config.arity_check_enabled = arity_checking == :enabled
+          Opal::Config.arity_check_enabled = arity_checking?
 
           # TODO: Once Opal 0.9 compatibility is established, if we're running node, add in the node stdlib requires in so RSpec can use them, also add NODE_PATH to the runner command above
 
