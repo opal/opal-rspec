@@ -1,7 +1,6 @@
 rspec_filter 'hooks' do
   # promise, see opal alternates
   filter /RSpec::Core::Hooks when an error happens in.* allows the error to propagate to the user/
-  filter('RSpec::Core::Hooks#around considers the hook to have run when passed as a block to a method that yields').unless { at_least_opal_0_9? }
 
   # promise, for some reason succeeds on Opal 0.8, see opal alternates
   filter('RSpec::Core::Hooks#around does not consider the hook to have run when passed as a block to a method that does not yield').if { at_least_opal_0_9? }

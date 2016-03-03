@@ -1,9 +1,13 @@
 module Opal
   module RSpec
     module OpalVersionStuff
-      def at_least_opal_0_9?
+      def arity_checking_working?
+        greater_equal_than_version?('0.10')
+      end
+
+      def greater_equal_than_version?(version)
         # it's ok if we have a pre-release version
-        Gem::Dependency.new('opal', '>= 0.9').match?('opal', Gem::Version.new(opal_version).release.to_s)
+        Gem::Dependency.new('opal', ">= #{version}").match?('opal', Gem::Version.new(opal_version).release.to_s)
       end
     end
 
