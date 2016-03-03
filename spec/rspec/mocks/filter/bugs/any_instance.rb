@@ -1,4 +1,4 @@
-rspec_filter filter '#any_instance' do
+rspec_filter '#any_instance' do
   filter '#any_instance when used after the test has finished restores the original behaviour, even if the expectation fails'
   filter '#any_instance when used after the test has finished restores the original behavior of a stubbed method'
   filter '#any_instance when resetting post-verification existing method with stubbing private methods restores a stubbed private method after the spec is run'
