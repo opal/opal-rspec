@@ -2,6 +2,10 @@ module Opal
   module RSpec
     module OpalVersionStuff
       def arity_checking_working?
+        at_least_opal_0_10?
+      end
+
+      def at_least_opal_0_10?
         greater_equal_than_version?('0.10')
       end
 
@@ -60,7 +64,7 @@ module Opal
         @current_title = title
         yield
         @all_filters += @current_filters.map do |filter|
-          filter.merge({title: @current_title})
+          filter.merge({ title: @current_title })
         end
       end
 
@@ -68,9 +72,9 @@ module Opal
         call_info = caller[0]
         line_number = /.*:(\d+)/.match(call_info).captures[0]
         @current_filters << {
-            filename: filename,
-            line_number: line_number,
-            exclusion: value
+          filename: filename,
+          line_number: line_number,
+          exclusion: value
         }
         GuardCheck.new(@current_filters, opal_version)
       end
