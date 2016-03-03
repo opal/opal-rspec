@@ -3,6 +3,3 @@ RSpec::Expectations::Configuration configuring rspec-expectations directly behav
 RSpec::Expectations::Configuration configuring rspec-expectations directly behaves like configuring the expectation syntax can limit the syntax to :expect
 RSpec::Expectations::Configuration configuring using the rspec-core config API behaves like configuring the expectation syntax can limit the syntax to :should
 RSpec::Expectations::Configuration configuring using the rspec-core config API behaves like configuring the expectation syntax can limit the syntax to :expect
-
-# global config problem
-RSpec::Expectations::Configuration#backtrace_formatter defaults to a null formatter when rspec-core is not loaded
