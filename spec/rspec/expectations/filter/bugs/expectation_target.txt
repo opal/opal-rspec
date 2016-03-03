@@ -1,2 +1,0 @@
-# Arity
-RSpec::Expectations::ExpectationTarget when constructed via #expect raises a wrong number of args ArgumentError when given two args

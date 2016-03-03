@@ -1,2 +1,0 @@
-# Probably more related to nesting lambdas in the test than with using raise_error - https://github.com/opal/opal/pull/1117
-RSpec::Expectations does not allow expectation failures to be caught by a bare rescue
