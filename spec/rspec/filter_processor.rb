@@ -15,7 +15,7 @@ module Opal
 
       def greater_equal_than_version?(version)
         # it's ok if we have a pre-release version
-        Gem::Dependency.new('opal', ">= #{version}").match?('opal', Gem::Version.new(opal_version).release.to_s)
+        Gem::Version.new(Opal::VERSION) >= Gem::Version.new("#{version}.0.a")
       end
     end
 
