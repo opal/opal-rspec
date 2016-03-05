@@ -15,6 +15,19 @@ module ::RSpec::Core::Metadata
       metadata[:file_path]   = file_path
       metadata[:line_number] = line_number.to_i
       metadata[:location]    = file_path.empty? ? '' : "#{file_path}:#{line_number}"
+      metadata[:absolute_file_path] = file_path
+      metadata[:rerun_file_path]  ||= file_path
+      metadata[:scoped_id]          = ''
+    end
+
+
+    # Opal fix
+    def build_description_from(parent_description=nil, my_description=nil)
+      return parent_description.to_s unless my_description
+      separator = description_separator(parent_description, my_description)
+      # Opal, mutable strings
+      # (parent_description.to_s + separator) << my_description.to_s
+      (parent_description.to_s + separator) + my_description.to_s
     end
   end
 end
