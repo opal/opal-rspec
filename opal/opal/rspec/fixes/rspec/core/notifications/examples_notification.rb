@@ -10,18 +10,13 @@ module ::RSpec::Core::Notifications
 
       formatted
     end
-    
+
     def fully_formatted_pending_examples(colorizer=::RSpec::Core::Formatters::ConsoleCodes)
-      formatted = "\nPending:\n"
+      formatted = "\nPending: (Failures listed here are expected and do not affect your suite's status)\n"
 
-      pending_examples.each do |example|
-        formatted_caller = RSpec.configuration.backtrace_formatter.backtrace_line(example.location)
-
+      pending_notifications.each_with_index do |notification, index|
         # string mutation
-        formatted = formatted +
-          "  #{colorizer.wrap(example.full_description, :pending)}\n" \
-          "    # #{colorizer.wrap(example.execution_result.pending_message, :detail)}\n" \
-          "    # #{colorizer.wrap(formatted_caller, :detail)}\n"
+        formatted = formatted + notification.fully_formatted(index.next, colorizer)
       end
 
       formatted
