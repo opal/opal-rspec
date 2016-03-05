@@ -14,6 +14,8 @@ end
 Opal::Config.dynamic_require_severity = :ignore
 
 stubs = [
+  'ripper', # doesn't exist in Opal
+  'coderay', # doesn't exist in Opal
   'mutex_m', # Used with some threading operations but seems to run OK without this
   'prettyprint',
   'tempfile', # Doesn't exist in Opal
