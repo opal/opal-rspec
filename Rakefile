@@ -38,12 +38,13 @@ end
 desc 'Runs a test to test browser based specs using Opal specs in spec/opal'
 RSpec::Core::RakeTask.new :integration_specs do |t|
   t.pattern = 'spec/mri/integration/**/*_spec.rb'
+  # tests need to run under Opal
+  t.exclude_pattern = 'spec/mri/integration/opal/**/*'
 end
 
 desc 'Unit tests for MRI focused components of opal-rspec'
 RSpec::Core::RakeTask.new :unit_specs do |t|
   t.pattern = 'spec/mri/unit/**/*_spec.rb'
-  t.exclude_pattern = 'spec/mri/unit/opal/rspec/opal/**/*'
 end
 
 desc 'A more limited spec suite to test pattern usage'
