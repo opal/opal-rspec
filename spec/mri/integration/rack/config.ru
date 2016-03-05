@@ -2,7 +2,7 @@ require 'opal/rspec'
 
 Opal::Config.source_map_enabled = false
 
-sprockets_env = Opal::RSpec::SprocketsEnvironment.new(spec_pattern='spec/mri/unit/opal/rspec/opal/browser_formatter_spec.rb')
+sprockets_env = Opal::RSpec::SprocketsEnvironment.new(spec_pattern='spec/mri/integration/opal/browser_formatter_spec.rb')
 run Opal::Server.new(sprockets: sprockets_env) { |s|
       s.main = 'sprockets_runner_js_errors'
       # sprockets_runner_js_errors will not be in the opal load path by default

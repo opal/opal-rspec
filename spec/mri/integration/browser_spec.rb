@@ -2,9 +2,10 @@ require 'rspec'
 require 'capybara/rspec'
 
 # Use Rack config exactly as shipped in the GEM
-Capybara.app = Rack::Builder.new_from_string(File.read('config.ru'))
+rack_path = File.join(File.dirname(__FILE__), 'rack/config.ru')
+Capybara.app = Rack::Builder.new_from_string(File.read(rack_path))
 
-describe 'browser formatter', type: :feature do
+describe 'Opal::RSpec::BrowserFormatter', type: :feature do
   RSpec.shared_examples :browser do |driver, error_fetcher|
     context "in #{driver}", driver: driver do
       before do
@@ -19,7 +20,10 @@ describe 'browser formatter', type: :feature do
       end
 
       it 'matches test results' do
-        expect(page).to have_content '142 examples, 40 failures, 12 pending'
+        expect(page).to have_content '3 examples, 1 failure, 1 pending'
+        expect(page).to have_content 'group'
+        expect(page).to have_content 'a skipped example'
+        expect(page).to have_content 'a failed example'
       end
     end
   end
