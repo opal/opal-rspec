@@ -35,7 +35,8 @@ stubs = [
   'cgi/util',
   'minitest', # RSpec uses require to see if minitest is there, opal/sprockets won't like that, so stub it
   'minitest/unit',
-  'minitest/assertions'
+  'minitest/assertions',
+  'rspec/support/ruby_features' # we have our own implementation of this
 ]
 
 ::Opal::Config.stubbed_files.merge(stubs)
