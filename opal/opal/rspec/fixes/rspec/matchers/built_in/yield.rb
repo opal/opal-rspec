@@ -8,14 +8,4 @@ module ::RSpec::Matchers::BuiltIn
       desc
     end
   end
-
-  class YieldSuccessiveArgs
-    def description
-      desc = "yield successive args"
-      # string mutation
-      # desc << "(#{expected_arg_description})"
-      desc += "(#{expected_arg_description})"
-      desc
-    end
-  end
 end
