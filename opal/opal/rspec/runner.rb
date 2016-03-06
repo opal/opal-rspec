@@ -39,9 +39,12 @@ module ::RSpec::Core
         err, out = get_opal_closed_tty_io
         # Have to do this in 2 places. This will ensure the default formatter gets the right IO, but need to do this in config for custom formatters
         # that will be constructed BEFORE this runs, see rspec.rb
-        run(ARGV, err, out).then do |status|
-          exit_with_code status.to_i
-        end
+        # TODO: Async
+        # run(ARGV, err, out).then do |status|
+        #   exit_with_code status.to_i
+        # end
+        status = run(ARGV, err, out)
+        exit_with_code status.to_i
       end
 
       def exit_with_code(code)
