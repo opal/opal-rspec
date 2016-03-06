@@ -45,6 +45,30 @@ module Opal
       rescue Exception => _
         false
       end
+
+      module CompatOuterScope
+        module CompatSibilingModule
+          def self.howdy
+            true
+          end
+        end
+
+        CompatStructClass = Struct.new(:param)
+        class CompatStructClass
+          def self.works?
+            begin
+              CompatSibilingModule.howdy
+            rescue
+              false
+            end
+          end
+        end
+      end
+
+      # lots of Opal constant issues, see https://github.com/opal/opal/issues/1085
+      def self.constant_resolution_from_struct?
+        CompatOuterScope::CompatStructClass.works?
+      end
     end
   end
 end
