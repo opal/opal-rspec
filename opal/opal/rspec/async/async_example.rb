@@ -25,7 +25,7 @@ class ::RSpec::Core::Example
       # Exception occurred while checking the subject, might be that the example group had a described class, was not intending on using it as the subject,
       # and the initializer for that described class failed
     end
-    Promise.value
+    Promise.value(true)
   end
 
   def run_after_example
@@ -46,13 +46,13 @@ class ::RSpec::Core::Example
     start(reporter)
     Pending.mark_pending!(self, pending) if pending?
 
-    Promise.value.then do
-      Promise.value.then do
+    Promise.value(true).then do
+      Promise.value(true).then do
         if skipped?
           Pending.mark_pending! self, skip
         elsif !RSpec.configuration.dry_run?
           with_around_example_hooks do
-            Promise.value.then do
+            Promise.value(true).then do
               run_before_example.then do
                 resolve_subject
               end.then do

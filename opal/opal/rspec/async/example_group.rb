@@ -15,7 +15,7 @@ class ::RSpec::Core::ExampleGroup
 
   def self.process_descendants(our_examples_result, reporter)
     descendants = ordering_strategy.order(children)
-    return Promise.value our_examples_result if descendants.empty?
+    return Promise.value(our_examples_result) if descendants.empty?
 
     results_for_descendants = []
     # Can use true for this because we're AND'ing everything anyways
@@ -40,7 +40,7 @@ class ::RSpec::Core::ExampleGroup
     end
 
     reporter.example_group_started(self)
-    Promise.value.then do
+    Promise.value(true).then do
       run_before_context_hooks(new)
     end.then do
       run_examples(reporter)
@@ -66,7 +66,7 @@ class ::RSpec::Core::ExampleGroup
   # Promise oriented version
   def self.run_examples(reporter)
     examples = ordering_strategy.order(filtered_examples)
-    return Promise.value true if examples.empty?
+    return Promise.value(true) if examples.empty?
 
     example_promise = lambda do |example|
       next Promise.value(nil) if RSpec.world.wants_to_quit
@@ -78,7 +78,7 @@ class ::RSpec::Core::ExampleGroup
 
     results = []
     # Can use true for this because we're AND'ing everything anyways
-    seed = Promise.value true
+    seed = Promise.value(true)
     latest_promise = examples.inject(seed) do |previous_promise, next_example|
       previous_promise.then do |succeeded|
         RSpec.world.wants_to_quit = true if fail_fast? && !succeeded

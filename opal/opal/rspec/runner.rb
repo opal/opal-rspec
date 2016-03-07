@@ -78,7 +78,7 @@ module ::RSpec::Core
     def run_specs(example_groups)
       @configuration.reporter.report_async(@world.example_count(example_groups)) do |reporter|
         hook_context = SuiteHookContext.new
-        Promise.value.then do
+        Promise.value(true).then do
           @configuration.hooks.run(:before, :suite, hook_context)
           run_groups_async example_groups, reporter
         end.ensure do |result|

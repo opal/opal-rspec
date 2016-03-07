@@ -1,9 +1,21 @@
 module Opal
   module RSpec
     module OpalVersionStuff
+      def arity_checking_working?
+        at_least_opal_0_10?
+      end
+
+      def at_least_opal_0_10?
+        greater_equal_than_version?('0.10')
+      end
+
       def at_least_opal_0_9?
+        greater_equal_than_version?('0.9')
+      end
+
+      def greater_equal_than_version?(version)
         # it's ok if we have a pre-release version
-        Gem::Dependency.new('opal', '>= 0.9').match?('opal', Gem::Version.new(opal_version).release.to_s)
+        Gem::Version.new(Opal::VERSION) >= Gem::Version.new("#{version}.0.a")
       end
     end
 
@@ -52,7 +64,7 @@ module Opal
         @current_title = title
         yield
         @all_filters += @current_filters.map do |filter|
-          filter.merge({title: @current_title})
+          filter.merge({ title: @current_title })
         end
       end
 
@@ -60,9 +72,9 @@ module Opal
         call_info = caller[0]
         line_number = /.*:(\d+)/.match(call_info).captures[0]
         @current_filters << {
-            filename: filename,
-            line_number: line_number,
-            exclusion: value
+          filename: filename,
+          line_number: line_number,
+          exclusion: value
         }
         GuardCheck.new(@current_filters, opal_version)
       end

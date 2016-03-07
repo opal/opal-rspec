@@ -1,6 +1,6 @@
 require 'opal/rspec'
 
-Opal::Processor.source_map_enabled = false
+Opal::Config.source_map_enabled = false
 
 sprockets_env = Opal::RSpec::SprocketsEnvironment.new(spec_pattern='spec/opal/**/*_spec.{rb,opal}',
                                                       spec_exclude_pattern=nil,

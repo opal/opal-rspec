@@ -1,5 +1,0 @@
-# arity
-and_call_original on a partial double errors when you pass through the wrong number of args
-
-# backtrace/line #
-and_call_original on a partial double warns when you override an existing implementation
