@@ -97,7 +97,7 @@ Opal::RSpec::RakeTask.new(:default) do |server, task|
 end
 ```
 
-Arity checking is enabled by default on Opal >= 0.10 and **cannot** be used on Opal 0.9. Opal allows you to disable arity checking (faster in production this way) but for unit testing, you want information on arity mismatch, therefore, with Opal 0.10 at least, the default is enabled. If you wish to disable it, configure your Rake task like this:
+Arity checking is enabled by default. Opal allows you to disable arity checking (faster in production this way) but for unit testing, you probably want information on arity mismatch. If you wish to disable it, configure your Rake task like this:
 
 ```ruby
 Opal::RSpec::RakeTask.new(:default) do |server, task|
