@@ -19,7 +19,7 @@ matrix:
     - rvm: 2.2.4
       # PHANTOMJS env variable is not used but it makes it easier to differentiate this build in Travis
       # https://github.com/travis-ci/travis-ci/issues/3225 - Easiest way to use 2.0 on Travis
-      env: PHANTOMJS=2.1 RUN=default
+      env: PHANTOMJS=2.1 RUN=rake_only
       before_install:
         - git submodule update --init
         - "mkdir phantom211"
