@@ -52,6 +52,24 @@ module Opal
       def self.constant_resolution_from_struct?
         CompatOuterScope::CompatStructClass.works?
       end
+
+      def self.do_ival(something, &block)
+        begin
+          block[something]
+        rescue Exception => _
+          :fail
+        end
+      end
+
+      def self.method1
+        do_ival(1) { |a| "hello #{a}" }
+      end
+
+      # https://github.com/opal/opal/issues/1173
+      def self.block_method_weirdness_works_ok?
+        result = do_ival(method1) { |b| "hello #{b}" }
+        result == 'hello hello 1'
+      end
     end
   end
 end
