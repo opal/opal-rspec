@@ -43,7 +43,7 @@ module Opal
         name = server.main
         asset = sprockets[name]
         raise "Cannot find asset: #{name}" if asset.nil?
-        Opal::Processor.load_asset_code(sprockets, name)
+        Opal::Sprockets.load_asset name, sprockets
       end
 
       # TODO: Avoid the Rack server and compile directly
