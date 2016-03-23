@@ -36,4 +36,4 @@ stubs = [
   'minitest/assertions'
 ]
 
-stubs.each {|mod| Opal::Processor.stub_file mod }
+::Opal::Config.stubbed_files.merge(stubs)

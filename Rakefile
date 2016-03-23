@@ -130,7 +130,7 @@ task :dist do
   require 'fileutils'
   FileUtils.mkdir_p 'build'
 
-  builder = Opal::Builder.new(stubs: Opal::Processor.stubbed_files, # stubs already specified in lib/opal/rspec.rb
+  builder = Opal::Builder.new(stubs: Opal::Config.stubbed_files, # stubs already specified in lib/opal/rspec.rb
                               compiler_options: {dynamic_require_severity: :ignore}) # RSpec is full of dynamic requires
   src = builder.build('opal-rspec')
 

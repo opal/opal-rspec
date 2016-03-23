@@ -40,10 +40,10 @@ module Opal
       end
 
       def stub_requires
-        stubbed_requires.each { |f| Opal::Processor.stub_file f }
+        stubbed_requires.each { |f| ::Opal::Config.stubbed_files << f }
         unstub_requires.each do |f|
           puts "Unstubbing #{f} per test request"
-          Opal::Processor.stubbed_files.delete f
+          ::Opal::Config.stubbed_files.delete f
         end
       end
 
