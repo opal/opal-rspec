@@ -4,21 +4,22 @@ sudo: false
 cache:
   bundler: true
 
-env:
-  - RUN=default
-
 matrix:
   fast_finish: true
 
   include:
     - rvm: 2.0.0
+      env: RUN=default
     - rvm: 2.1.8
+      env: RUN=default
     - rvm: 2.2.4
+      env: RUN=default
     - rvm: 2.3.0
+      env: RUN=default
     - rvm: 2.2.4
       # PHANTOMJS env variable is not used but it makes it easier to differentiate this build in Travis
       # https://github.com/travis-ci/travis-ci/issues/3225 - Easiest way to use 2.0 on Travis
-      env: PHANTOMJS=2.1
+      env: PHANTOMJS=2.1 RUN=default
       before_install:
         - git submodule update --init
         - "mkdir phantom211"
