@@ -13,7 +13,9 @@ MATCHERS = Dir.glob('rspec-expectations/lib/rspec/matchers/built_in/**/*.rb').ma
   path.sub File.extname(path), ''
 end
 MOCK_STUFF = %w{matchers/expectation_customization any_instance}.map { |f| "rspec/mocks/#{f}" }
-REQUIRES = BASE_FILES + FORMATTERS + MATCHERS + MOCK_STUFF
+# Not sure why set is missing now, but RSpec needs it
+MISSING_FILES = %w(set)
+REQUIRES = BASE_FILES + FORMATTERS + MATCHERS + MOCK_STUFF + MISSING_FILES
 
 # Should not need to edit below this
 
