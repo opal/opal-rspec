@@ -81,6 +81,7 @@ end
 desc 'Will run a spec suite (rake opal_specs) and check for expected combination of failures and successes'
 task :verify_opal_specs do
   test_output = `rake opal_specs`
+  test_output.force_encoding 'UTF-8'
   raise "Expected test runner to fail due to failed tests, but got return code of #{$?.exitstatus}" if $?.success?
   count_match = /(\d+) examples, (\d+) failures, (\d+) pending/.match(test_output)
   raise 'Expected a finished count of test failures/success/etc. but did not see it' unless count_match
