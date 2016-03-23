@@ -15,6 +15,11 @@ task :default => [:phantom_node_ver,
                   :integration_specs,
                   :verify_rspec_specs]
 
+desc 'Run only tests that use the opal-rspec Rake task'
+task :rake_only => [:phantom_node_ver,
+                    :verify_opal_specs,
+                    :verify_rspec_specs]
+
 task :phantom_node_ver do
   sh 'phantomjs -v'
   sh 'node -v'
@@ -63,11 +68,11 @@ Opal::RSpec::MocksSpecLoader.rake_tasks_for(:rspec_mocks_specs)
 # These are done
 desc 'Verifies all RSpec specs'
 task :verify_rspec_specs => [
-         :verify_rspec_support_specs,
-         :verify_rspec_core_specs,
-         :verify_rspec_expectation_specs,
-         :verify_rspec_mocks_specs
-     ]
+  :verify_rspec_support_specs,
+  :verify_rspec_core_specs,
+  :verify_rspec_expectation_specs,
+  :verify_rspec_mocks_specs
+]
 
 desc 'Verifies other_spec_dir task ran correctly'
 task :verify_other_specs do
@@ -132,7 +137,7 @@ task :dist do
   FileUtils.mkdir_p 'build'
 
   builder = Opal::Builder.new(stubs: Opal::Config.stubbed_files, # stubs already specified in lib/opal/rspec.rb
-                              compiler_options: {dynamic_require_severity: :ignore}) # RSpec is full of dynamic requires
+                              compiler_options: { dynamic_require_severity: :ignore }) # RSpec is full of dynamic requires
   src = builder.build('opal-rspec')
 
   min = uglify src

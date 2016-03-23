@@ -4,6 +4,9 @@ sudo: false
 cache:
   bundler: true
 
+env:
+  - RUN=default
+
 matrix:
   fast_finish: true
 
@@ -27,7 +30,7 @@ matrix:
         - "tar xjvf phantomjs-2.0.0-ubuntu-12.04.tar.bz2"
         - "popd"
     - rvm: 2.2.4
-      env: RUNNER=node
+      env: RUNNER=node RUN=rake_only
 
 before_install:
   - git submodule update --init
@@ -48,4 +51,4 @@ notifications:
   irc: "irc.freenode.org#opal"
 
 script:
-  - "bundle exec rake"
+  - "bundle exec rake $RUN"
