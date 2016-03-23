@@ -8,9 +8,6 @@ matrix:
   fast_finish: true
 
   include:
-    - rvm: 1.9.3
-      # mime-types GEM >= 3 does not work with Ruby 1.9.3
-      env: MT_GEM_OVERRIDE="true"
     - rvm: 2.2.4
     - rvm: 2.3.0
     - rvm: 2.2.4
