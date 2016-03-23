@@ -1,8 +1,8 @@
 ## 0.6.0 - Under development
 
-*   Support for Opal 0.8 removed
+*   Support for Opal 0.8/0.9 removed
 *   Opal 0.10 support
-*   Arity checking enabled for Opal 0.10 only
+*   Arity checking enabled by default
 
 ## 0.5.0 (2015-12-08)
 
