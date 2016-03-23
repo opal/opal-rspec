@@ -110,18 +110,24 @@ module Opal
           server = Thread.new do
             Thread.current.abort_on_exception = true
             Rack::Server.start(
-                :app => app,
-                :Port => PORT,
-                :AccessLog => [],
-                :Logger => WEBrick::Log.new("/dev/null"),
+              :app => app,
+              :Port => PORT,
+              :AccessLog => [],
+              :Logger => WEBrick::Log.new("/dev/null"),
             )
           end
 
           wait_for_server
           is_phantom = runner == :phantom
           if is_phantom
-            if `phantomjs -v`.nil?
-              warn "Could not find phantomjs command"
+            version_output = begin
+              `phantomjs -v`.strip
+            rescue
+              warn 'Could not find phantomjs command on path!'
+              exit 1
+            end
+            if version_output.to_f < 2
+              warn "PhantomJS >= 2.0 is required but version #{version_output} is installed!"
               exit 1
             end
           end

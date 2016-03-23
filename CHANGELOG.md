@@ -3,6 +3,7 @@
 *   Support for Opal 0.8/0.9 removed
 *   Opal 0.10 support
 *   Arity checking enabled by default
+*   Dropped support for PhantomJS < 2.0
 
 ## 0.5.0 (2015-12-08)
 
