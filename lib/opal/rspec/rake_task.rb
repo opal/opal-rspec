@@ -14,15 +14,8 @@ module Opal
       attr_accessor :pattern, :exclude_pattern, :files, :default_path, :runner, :timeout, :arity_checking
 
       def arity_checking?
-        current_opal = Gem::Version.new(Opal::VERSION) >= Gem::Version.new('0.10.0.a')
-        default_setting = current_opal ? :enabled : :disabled
-        setting = @arity_checking || default_setting
-
-        if !current_opal && setting == :enabled
-          warn 'WARNING: arity checking only supported on >= Opal 0.10'
-        end
-
-        current_opal && setting == :enabled
+        setting = @arity_checking || :enabled
+        setting == :enabled
       end
 
       def launch_phantom(timeout_value)

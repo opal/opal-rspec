@@ -173,54 +173,6 @@ describe Opal::RSpec::RakeTask do
     end
   end
 
-  context 'Opal 0.9' do
-    before do
-      stub_const('Opal::VERSION', '0.9.0.beta1')
-      create_dummy_spec_files 'spec/something/dummy_spec.rb'
-    end
-
-    around do |example|
-      # in case we're running on travis, etc.
-      current_env_runner = ENV['RUNNER']
-      ENV['RUNNER'] = nil
-      example.run
-      ENV['RUNNER'] = current_env_runner
-    end
-
-    let(:task_definition) do
-      Opal::RSpec::RakeTask.new(task_name) do |_, task|
-        task.arity_checking = arity_setting if arity_setting
-      end
-    end
-
-    context 'no setting' do
-      let(:arity_setting) { nil }
-
-      it { is_expected.to_not enable_arity_checking }
-      it { is_expected.to append_opal_path 'spec' }
-      it { is_expected.to require_opal_specs eq ['something/dummy_spec'] }
-      it { is_expected.to invoke_runner :phantom }
-    end
-
-    context 'enabled' do
-      let(:arity_setting) { :enabled }
-
-      it { is_expected.to_not enable_arity_checking }
-      it { is_expected.to append_opal_path 'spec' }
-      it { is_expected.to require_opal_specs eq ['something/dummy_spec'] }
-      it { is_expected.to invoke_runner :phantom }
-    end
-
-    context 'disabled' do
-      let(:arity_setting) { :disabled }
-
-      it { is_expected.to_not enable_arity_checking }
-      it { is_expected.to append_opal_path 'spec' }
-      it { is_expected.to require_opal_specs eq ['something/dummy_spec'] }
-      it { is_expected.to invoke_runner :phantom }
-    end
-  end
-
   context 'explicit runner' do
     let(:task_definition) do
       Opal::RSpec::RakeTask.new(task_name)
