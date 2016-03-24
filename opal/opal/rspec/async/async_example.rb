@@ -2,6 +2,7 @@ class ::RSpec::Core::Example
   def core_block_run
     example_promise = Promise.value(@example_group_instance.instance_exec(self, &@example_block))
     example_promise.then do |result|
+      puts "core block run resul;t is #{result}"
       result
     end.rescue do |ex|
       ex ||= Exception.new 'Async promise failed for unspecified reason'
@@ -29,11 +30,9 @@ class ::RSpec::Core::Example
   end
 
   def run_after_example
-    @example_group_class.hooks.run(:after, :example, self).then do
+    assign_generated_description if defined?(::RSpec::Matchers)
+    hooks.run(:after, :example, self).then do
       verify_mocks
-      assign_generated_description if RSpec.configuration.expecting_with_rspec?
-    end.rescue do |e|
-      set_exception(e, "in an `after(:example)` hook")
     end.ensure do
       @example_group_instance.teardown_mocks_for_rspec
     end
@@ -45,7 +44,7 @@ class ::RSpec::Core::Example
     hooks.register_global_singleton_context_hooks(self, RSpec.configuration.hooks)
     RSpec.configuration.configure_example(self)
     RSpec.current_example = self
-
+    puts 'reporter start'
     start(reporter)
     Pending.mark_pending!(self, pending) if pending?
 
@@ -54,11 +53,15 @@ class ::RSpec::Core::Example
         if skipped?
           Pending.mark_pending! self, skip
         elsif !RSpec.configuration.dry_run?
+          puts 'before with_around_and_singleton_context_hooks'
           with_around_and_singleton_context_hooks do
             Promise.value(true).then do
+              puts 'before run_before_example'
               run_before_example.then do
+                puts 'kick of resolve subject'
                 resolve_subject
               end.then do
+                puts 'kick off core block run'
                 core_block_run
               end.then do
                 if pending?
