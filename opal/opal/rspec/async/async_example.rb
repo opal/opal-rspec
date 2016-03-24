@@ -17,9 +17,7 @@ class ::RSpec::Core::Example
       subj = example_group_instance.subject
       if subj.is_a? Promise
         return subj.then do |resolved_subject|
-          # This is a private method, but we're using Opal
-          hash = example_group_instance.__memoized.instance_variable_get(:@memoized)
-          hash[:subject] = resolved_subject
+          example_group_instance.__memoized.subject_resolved resolved_subject
         end
       end
     rescue Exception => _ # Can't use empty rescue in Opal 0.10 because it won't catch native JS exceptions (which aren't StandardError instances)
