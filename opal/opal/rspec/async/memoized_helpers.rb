@@ -1,13 +1,15 @@
+module Opal::RSpec::MemoizedHelpers
+  def subject_resolved(subject)
+    @memoized[:subject] = subject
+  end
+end
+
 module ::RSpec::Core::MemoizedHelpers
   class ThreadsafeMemoized
-    def subject_resolved(subject)
-      @memoized[:subject] = subject
-    end
+    include Opal::RSpec::MemoizedHelpers
   end
 
   class NonThreadSafeMemoized
-    def subject_resolved(subject)
-      @memoized[:subject] = subject
-    end
+    include Opal::RSpec::MemoizedHelpers
   end
 end
