@@ -41,6 +41,9 @@ class ::RSpec::Core::Example
 
   def run(example_group_instance, reporter)
     @example_group_instance = example_group_instance
+    @reporter = reporter
+    hooks.register_global_singleton_context_hooks(self, RSpec.configuration.hooks)
+    RSpec.configuration.configure_example(self)
     RSpec.current_example = self
 
     start(reporter)
@@ -51,7 +54,7 @@ class ::RSpec::Core::Example
         if skipped?
           Pending.mark_pending! self, skip
         elsif !RSpec.configuration.dry_run?
-          with_around_example_hooks do
+          with_around_and_singleton_context_hooks do
             Promise.value(true).then do
               run_before_example.then do
                 resolve_subject
@@ -67,10 +70,15 @@ class ::RSpec::Core::Example
                 end
               end
             end.rescue do |e|
-              # no-op, required metadata has already been set by the `skip`
-              # method.
-              unless e.is_a? Pending::SkipDeclaredInExample
+              case e
+              when Pending::SkipDeclaredInExample
+                # no-op, required metadata has already been set by the `skip`
+                # method.
+              when AllExceptionsExcludingDangerousOnesOnRubiesThatAllowIt
                 set_exception(e)
+              else
+                puts "Unexpected exception! #{e}"
+                raise e
               end
             end.ensure do
               run_after_example
@@ -78,16 +86,20 @@ class ::RSpec::Core::Example
           end
         end
       end.rescue do |e|
-        set_exception(e)
-      end.ensure do
-        @example_group_instance.instance_variables.each do |ivar|
-          @example_group_instance.instance_variable_set(ivar, nil)
+        case e
+        when Support::AllExceptionsExceptOnesWeMustNotRescue
+          set_exception(e)
+        else
+          puts "Unexpected exception! #{e}"
+          raise e
         end
-        @example_group_instance = nil
+      end.ensure do
+        @example_group_instance = nil # if you love something... let it go
       end
     end.then do
       finish(reporter)
     end.ensure do |result|
+      execution_result.ensure_timing_set(clock)
       RSpec.current_example = nil
       # promise always/ensure do not behave exactly like ensure, need to be explicit about value being returned
       result
