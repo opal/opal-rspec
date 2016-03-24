@@ -1,5 +1,15 @@
 class RSpec::Core::Example
-  # Opal changes
+  # string mutation
+  def inspect_output
+    inspect_output = "\"#{description}\""
+    unless metadata[:description].to_s.empty?
+      #inspect_output << " (#{location})"
+      inspect_output += " (#{location})"
+    end
+    inspect_output
+  end
+
+  # string mutation
   def assign_generated_description
     if metadata[:description].empty? && (description = generate_description)
       metadata[:description] = description
