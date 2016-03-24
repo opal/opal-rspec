@@ -7,9 +7,6 @@
 # File I/O
 **/directory_maker_spec.rb
 
-# OS stuff on Opal
-**/os_spec.rb
-
 # Shell not available on Opal
 **/shell_out_spec.rb
 
@@ -22,5 +19,5 @@
 # Not supported on Opal
 **/encoded_string_spec.rb
 
-# 1 example, file I/O
-**/prevent_load_time_warnings_spec.rb
+# Threading
+**/reentrant_mutex_spec.rb
