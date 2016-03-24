@@ -4,7 +4,6 @@ class RSpec::Core::Hooks::HookCollections
     #   hook.run(example_or_group)
     # end
     matching_hooks = matching_hooks_for(position, scope, example_or_group)
-    puts "matching hooks #{matching_hooks}"
     matching_hooks.inject(Promise.value(true)) do |previous_hook_promise, next_hook|
       previous_hook_promise.then do
         result = next_hook.run(example_or_group)

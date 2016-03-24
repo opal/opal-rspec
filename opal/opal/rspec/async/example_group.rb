@@ -15,7 +15,6 @@ class ::RSpec::Core::ExampleGroup
 
   def self.process_descendants(our_examples_result, reporter)
     descendants = ordering_strategy.order(children)
-    puts 'no desc!' if descendants.empty?
     return Promise.value(our_examples_result) if descendants.empty?
 
     results_for_descendants = []
@@ -24,7 +23,6 @@ class ::RSpec::Core::ExampleGroup
     latest_descendant = descendants.inject(seed) do |previous_promise, next_descendant|
       previous_promise.then do |result|
         results_for_descendants << result
-        puts "running descendant #{next_descendant}"
         next_descendant.run reporter
       end
     end
@@ -42,16 +40,12 @@ class ::RSpec::Core::ExampleGroup
 
     should_run_context_hooks = descendant_filtered_examples.any?
     Promise.value(true).then do
-      puts 'example group run before context'
       run_before_context_hooks(new('before(:context) hook')) if should_run_context_hooks
     end.then do
-      puts 'run examples'
       run_examples(reporter)
     end.then do |result_for_this_group|
-      puts "process descendants result is #{result_for_this_group}"
       process_descendants(result_for_this_group, reporter)
     end.rescue do |ex|
-      puts "deal with ex #{ex}"
       case ex
       when Pending::SkipDeclaredInExample
         for_filtered_examples(reporter) { |example| example.skip_with_exception(reporter, ex) }
@@ -65,11 +59,8 @@ class ::RSpec::Core::ExampleGroup
         raise ex
       end
     end.ensure do |result|
-      puts 'run after hooks begin'
       run_after_context_hooks(new('after(:context) hook')) if should_run_context_hooks
-      puts 'run after hooks end'
       reporter.example_group_finished(self)
-      puts "reported too, result is #{result}"
       # promise always do not behave exactly like ensure, need to be explicit about value being returned
       result
     end
@@ -85,9 +76,7 @@ class ::RSpec::Core::ExampleGroup
       instance = new(example.inspect_output)
       set_ivars(instance, before_context_ivars)
       # Always returns a promise since we modified the Example class
-      r = example.run(instance, reporter)
-      puts "for example #{example}, result is #{r}"
-      r
+      example.run(instance, reporter)
     end
 
     results = []
@@ -95,7 +84,6 @@ class ::RSpec::Core::ExampleGroup
     seed = Promise.value(true)
     latest_promise = examples.inject(seed) do |previous_promise, next_example|
       previous_promise.then do |succeeded|
-        puts "previous_promise succeed #{succeeded}"
         if !succeeded && reporter.fail_fast_limit_met?
           RSpec.world.wants_to_quit = true
         end
@@ -105,7 +93,6 @@ class ::RSpec::Core::ExampleGroup
     end
 
     latest_promise.then do |succeeded|
-      puts "last pormiser succeed #{succeeded}"
       if !succeeded && reporter.fail_fast_limit_met?
         RSpec.world.wants_to_quit = true
       end
