@@ -19,5 +19,5 @@ RSpec.configure do |config|
   end
 
   # Legacy helpers
-  #config.include Opal::RSpec::AsyncHelpers
+  config.include Opal::RSpec::AsyncHelpers
 end

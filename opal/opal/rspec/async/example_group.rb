@@ -34,29 +34,32 @@ class ::RSpec::Core::ExampleGroup
 
   # Promise oriented version
   def self.run(reporter)
-    if RSpec.world.wants_to_quit
-      RSpec.world.clear_remaining_example_groups if top_level?
-      return
-    end
-
+    # new
+    return if RSpec.world.wants_to_quit
     reporter.example_group_started(self)
+
+    should_run_context_hooks = descendant_filtered_examples.any?
     Promise.value(true).then do
-      run_before_context_hooks(new)
+      run_before_context_hooks(new('before(:context) hook')) if should_run_context_hooks
     end.then do
       run_examples(reporter)
-    end.then do |our_examples_result|
-      process_descendants(our_examples_result, reporter)
+    end.then do |result_for_this_group|
+      process_descendants(result_for_this_group, reporter)
     end.rescue do |ex|
-      result = if ex.is_a? Pending::SkipDeclaredInExample
+      case ex
+      when Pending::SkipDeclaredInExample
         for_filtered_examples(reporter) { |example| example.skip_with_exception(reporter, ex) }
-      else
-        RSpec.world.wants_to_quit = true if fail_fast?
+        true
+      when Support::AllExceptionsExceptOnesWeMustNotRescue
         for_filtered_examples(reporter) { |example| example.fail_with_exception(reporter, ex) }
+        RSpec.world.wants_to_quit = true if reporter.fail_fast_limit_met?
+        false
+      else
+        puts "Unexpected exception! #{ex}"
+        raise ex
       end
-      result
-    end.always do |result|
-      run_after_context_hooks(new)
-      before_context_ivars.clear
+    end.ensure do |result|
+      run_after_context_hooks(new('after(:context) hook')) if should_run_context_hooks
       reporter.example_group_finished(self)
       # promise always do not behave exactly like ensure, need to be explicit about value being returned
       result
@@ -65,12 +68,13 @@ class ::RSpec::Core::ExampleGroup
 
   # Promise oriented version
   def self.run_examples(reporter)
+    # old
     examples = ordering_strategy.order(filtered_examples)
     return Promise.value(true) if examples.empty?
 
     example_promise = lambda do |example|
       next Promise.value(nil) if RSpec.world.wants_to_quit
-      instance = new
+      instance = new(example.inspect_output)
       set_ivars(instance, before_context_ivars)
       # Always returns a promise since we modified the Example class
       example.run(instance, reporter)
@@ -81,14 +85,18 @@ class ::RSpec::Core::ExampleGroup
     seed = Promise.value(true)
     latest_promise = examples.inject(seed) do |previous_promise, next_example|
       previous_promise.then do |succeeded|
-        RSpec.world.wants_to_quit = true if fail_fast? && !succeeded
+        if !succeeded && reporter.fail_fast_limit_met?
+          RSpec.world.wants_to_quit = true
+        end
         results << succeeded
         example_promise[next_example]
       end
     end
 
     latest_promise.then do |succeeded|
-      RSpec.world.wants_to_quit = true if fail_fast? && !succeeded
+      if !succeeded && reporter.fail_fast_limit_met?
+        RSpec.world.wants_to_quit = true
+      end
       results << succeeded
       results.all?
     end
