@@ -42,7 +42,7 @@ module Opal
       # https://github.com/opal/opal/issues/568 - still not fixed
       def self.multiple_module_include_super_works_right?
         MultModSuperClass.new.stuff == :howdy
-      rescue
+      rescue Exception => _
         false
       end
 
