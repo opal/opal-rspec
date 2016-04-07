@@ -212,6 +212,12 @@ module Opal
       def execute_specs(name)
         command_line = "SPEC_OPTS=\"--format Opal::RSpec::ProgressJsonFormatter\" rake #{name}"
         puts "Running #{command_line}"
+        pinger = Thread.new {
+          while true
+            sleep 60
+            puts 'still alive' # travis/keep alive
+          end
+        }
         example_info = []
         state = :progress
         IO.popen(command_line).each do |line|
@@ -229,6 +235,7 @@ module Opal
                       state
                   end
         end.close
+        pinger.exit
         {
             example_info: example_info,
             success: $?.success?
