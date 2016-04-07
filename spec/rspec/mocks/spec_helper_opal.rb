@@ -1,3 +1,4 @@
+require 'corelib/marshal' # marshal is not in the standard opal install
 require 'rspec/support/spec'
 require 'rspec/support/ruby_features'
 

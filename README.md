@@ -288,9 +288,10 @@ end
   * mocking class methods (including `::new`) is currently broken
   * `class_double/class_spy` are not supported (it depends on `ClassVerifyingDouble` inheriting from `Module` to support transferring nested constants, but that doesn't work on Opal)
   * `object_spy` is not supported (depends on proper initializer behavior in `ObjectVerifyingDoubleMethods`)
-  * verifying partial doubles do not fully work yet
+  * verifying partial doubles do not fully work yet (arity issues with Opal)
   * chaining and_return after do...end does not work
   * duck_type argument matching is still buggy
+  * RSpec's marshal support does not yet work with Opal's marshaller (so patch_marshal_to_support_partial_doubles config setting is not supported)
 
 ## Contributing
 

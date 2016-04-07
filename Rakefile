@@ -9,7 +9,7 @@ require_relative 'spec/rspec/expectations/expectation_spec_loader'
 require_relative 'spec/rspec/support/support_spec_loader'
 require_relative 'spec/rspec/mocks/mocks_spec_loader'
 
-desc 'Run the full suite'
+desc 'Run the full suite, this can time out on Travis'
 task :default => [:phantom_node_ver,
                   :unit_specs,
                   :verify_opal_specs,
