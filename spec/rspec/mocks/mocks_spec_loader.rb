@@ -6,7 +6,7 @@ module Opal
       extend Opal::RSpec::OpalRSpecSpecLoader
 
       def self.expected_pending_count
-        10
+        11
       end
 
       def self.base_dir
