@@ -1,3 +1,0 @@
-# arity/block
-RSpec::Mocks::Double yields 0 args.*
-RSpec::Mocks::Double yields many args.*

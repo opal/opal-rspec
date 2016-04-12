@@ -1,6 +1,7 @@
 require 'corelib/marshal' # marshal is not in the standard opal install
 require 'rspec/support/spec'
 require 'rspec/support/ruby_features'
+require 'opal-parser'
 
 require 'opal/progress_json_formatter' # verify case uses this
 # Only doing this because any_instance causes the runner itself to break
