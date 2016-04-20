@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe "RSpec mocks" do
   describe "stubs" do
     it "can stub basic methods" do

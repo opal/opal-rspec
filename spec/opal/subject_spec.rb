@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe 'subject' do
   context 'sync' do
     context 'named' do

@@ -1,8 +1,10 @@
+require 'spec_helper'
+
 describe 'skip' do
   it 'in example, no promise' do
     skip 'want to skip within'
   end
-  
+
   it 'no implementation provided'
 
   skip 'entire group' do
@@ -30,14 +32,14 @@ describe 'pending' do
       it 'would fail otherwise' do
         pending 'want to pend within example'
         obj = [1, 2, 3, 4]
-        obj.should == [2, 2, 3, 4]    
+        obj.should == [2, 2, 3, 4]
       end
-  
+
       it 'would not fail otherwise, thus fails properly' do
         pending 'want to pend within example'
         obj = [1, 2, 3, 4]
-        obj.should == [1, 2, 3, 4]    
+        obj.should == [1, 2, 3, 4]
       end
     end
-  end  
+  end
 end

@@ -1,10 +1,12 @@
+require 'spec_helper'
+
 describe "be_truthy" do
   it "passes with truthy values" do
     expect(true).to be_truthy
     expect(1.0).to be_truthy
     expect([]).to be_truthy
   end
-  
+
   it 'fails properly with truthy values' do
     expect(false).to be_truthy
   end

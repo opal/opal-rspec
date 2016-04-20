@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe 'hooks' do
   describe 'around' do
     RSpec.shared_context :around_count do

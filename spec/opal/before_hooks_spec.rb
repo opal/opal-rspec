@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe 'hooks' do
   describe 'before' do
     context 'async' do
@@ -101,83 +103,83 @@ describe 'hooks' do
         end
       end
     end
-  
+
     context 'sync' do
       context 'with sync subject' do
         subject { 42 }
-      
+
         context 'context' do
           context 'success' do
             before :context do
               @@before_context_both_sync = 22
             end
-        
+
             before do
               raise "@@before_context_both_sync should already be 22!" unless @@before_context_both_sync == 22
               @test_value = 42
             end
-        
-            it { is_expected.to eq @test_value }          
+
+            it { is_expected.to eq @test_value }
           end
-        
+
           context 'fails properly' do
             before :context do
               raise 'it failed in the before context!'
               @@before_context_both_sync = 55
             end
-        
+
             before do
               raise "we reached before:each and we should not have!" if @@before_context_both_sync == 55
             end
-        
+
             it 'should not reach the example' do
               fail 'we reached the example and we should not have!'
             end
           end
         end
-  
+
         context 'succeeds' do
           before do
             @test_value = 42
           end
-    
+
           it { is_expected.to eq @test_value }
         end
-  
+
         context 'before :each fails properly' do
           before do
             raise 'before :each failed properly'
           end
-    
+
           it 'should not reach the example' do
             fail 'we reached the example and we should not have!'
           end
         end
-      
+
         context 'first before :each in chain triggers failure' do
           before do
             raise 'first before :each fails, this is correct'
           end
-        
+
           context 'inner context' do
             before do
               raise 'we reached the inner before :each and we should not have'
             end
-          
+
             it 'should not reach the example' do
               fail 'we reached the example and we should not have!'
             end
           end
         end
-  
+
         context 'match fails properly' do
           before do
             @test_value = 42
           end
-    
+
           it { is_expected.to_not eq @test_value }
         end
       end
-    end  
+    end
   end
 end

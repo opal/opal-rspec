@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 module SomeHelpers
   def opal_rspec_helper
     let(:defined_opal_helper) { :it_works }
@@ -166,9 +168,9 @@ describe 'exception handling' do
   it "should fail properly if an exception is raised" do
     raise 'problem'
   end
-  
+
   it "should ignore an exception after a failed assertion" do
     expect(42).to eq(43)
     raise 'problem'
-  end  
+  end
 end

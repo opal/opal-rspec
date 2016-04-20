@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe "One-liner should syntax" do
   subject { 42 }
 

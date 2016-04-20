@@ -1,10 +1,12 @@
+require 'spec_helper'
+
 describe 'legacy async' do
   let(:foo) { 100 }
 
   before do
     @model = Object.new
   end
-  
+
   async "fails properly after a long delay" do
     obj = [2, 2, 3, 4]
 
@@ -12,7 +14,7 @@ describe 'legacy async' do
       async { obj.should == [1, 2, 3, 4] }
     end
   end
-  
+
   async 'allows overriding the timeout', timeout: 15 do
     delay(11) do
       async { expect(42).to eq(42) }
@@ -52,18 +54,18 @@ describe 'legacy async' do
 end
 
 describe 'promise' do
-  let(:foo) { 100 }    
-  
+  let(:foo) { 100 }
+
   it 'matcher fails properly' do
     delay_with_promise 0 do
       1.should == 2
-    end      
+    end
   end
 
   it 'matcher succeeds' do
     delay_with_promise 0 do
       1.should == 1
-    end      
+    end
   end
 
   context 'non-assertion failure in promise' do
@@ -89,7 +91,7 @@ describe 'promise' do
       end
     end
   end
-  
+
   context 'skipped' do
     it 'via variable', skip: true do
       obj = [1, 2, 3, 4]
@@ -105,30 +107,30 @@ describe 'promise' do
       delay_with_promise 0 do
         obj.should == [2, 2, 3, 4]
       end
-    end    
-  
+    end
+
     it 'in example, inside promise' do
       delay_with_promise 0 do
         skip 'want to skip within'
       end
     end
-  
+
     it 'in example, outside promise' do
       skip 'want to skip within'
       delay_with_promise 0 do
         1.should == 1
-      end      
-    end    
+      end
+    end
   end
-  
+
   context 'pending' do
     it 'in example' do
       obj = [1, 2, 3, 4]
 
       delay_with_promise 0 do
         pending 'want to pend within'
-        obj.should == [2, 2, 3, 4]        
-      end      
+        obj.should == [2, 2, 3, 4]
+      end
     end
 
     it 'via variable', pending: 'the reason' do
@@ -137,8 +139,8 @@ describe 'promise' do
       delay_with_promise 0 do
         obj.should == [2, 2, 3, 4]
       end
-    end    
-  end  
+    end
+  end
 
   it "should make example fail properly before async block reached" do
     expect(:foo).to eq(:baz)
@@ -146,18 +148,18 @@ describe 'promise' do
     delay_with_promise(0) do
       expect(nil).to eq 'we reached this assertion and we should not have'
     end
-  end  
+  end
 end
 
 describe 'async/sync mix' do
   it 'fails properly if a sync test is among async tests' do
     1.should == 2
   end
-  
+
   it 'is an async test between 2 sync tests' do
     delay_with_promise 0 do
       1.should == 1
-    end    
+    end
   end
 
   it 'passes correctly if a sync test is among async tests' do
