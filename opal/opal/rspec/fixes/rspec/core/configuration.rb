@@ -9,6 +9,11 @@ class ::RSpec::Core::Configuration
     # can't change requires @ this stage, this method calls RubyProject which will crash on Opal
   end
 
+  # Do not support persisting this right now
+  def last_run_statuses
+    Hash.new(UNKNOWN_STATUS)
+  end
+
   def configure_example(example)
     singleton_group = example.example_group_instance.singleton_class
 

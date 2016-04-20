@@ -27,10 +27,11 @@ module Opal
 
       def self.stubbed_requires
         [
-            'rubygems',
-            'rspec/support/spec/shell_out', # only does stuff Opal can't support anyways,
-            'spec', # we have our own version of this in spec_helper that's compatible
-            'simplecov', # hooks aren't available on Opal
+          'rubygems',
+          'rspec/support/spec/shell_out', # only does stuff Opal can't support anyways,
+          'spec', # we have our own version of this in spec_helper that's compatible
+          'simplecov', # hooks aren't available on Opal
+          'rspec/support/spec/library_wide_checks' # Includes backticks which get interpreted as JS
         ]
       end
     end

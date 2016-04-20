@@ -281,6 +281,7 @@ RSpec.configure do |c|
 end
 ```
 * Formatting/Reporting
+  * Last run status/persisting is not supported
   * Specs will not have file path/line number information on them unless they are supplied from user metadata or they fail, see [this issue](https://github.com/opal/opal-rspec/issues/36)
   * In Firefox w/ the browser runner, no backtraces show up with failed specs
   * Diffs are not yet available when objects do not meet expectations (diff-lcs gem dependency has not been dealt with yet in Opal)

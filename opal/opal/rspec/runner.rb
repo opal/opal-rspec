@@ -84,5 +84,9 @@ module ::RSpec::Core
         end
       end
     end
+
+    def persist_example_statuses
+      # We don't support this right now, so make it a noop
+    end
   end
 end
