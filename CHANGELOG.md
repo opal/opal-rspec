@@ -5,6 +5,9 @@
 *   Arity checking enabled by default
 *   Dropped support for PhantomJS < 2.0
 
+## 0.5.1
+*   Wrap all example executions in a promise to avoid awkward pauses in result reporting with a mix of sync/async tests
+
 ## 0.5.0 (2015-12-08)
 
 *   By default, any subject, it example block, before(:each), after(:each), and around that returns a promise will be executed asynchronously. Async is NOT yet supported for context level hooks. Async approach from < 0.4.3 will still work.

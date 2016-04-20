@@ -1,12 +1,15 @@
 class ::RSpec::Core::Example
   def core_block_run
-    example_promise = Promise.value(@example_group_instance.instance_exec(self, &@example_block))
-    example_promise.then do |result|
-      result
-    end.rescue do |ex|
-      ex ||= Exception.new 'Async promise failed for unspecified reason'
-      ex = Exception.new ex unless ex.kind_of?(Exception)
-      ex
+    # Use EG's method to avoid awkward pauses in result reporting with mix of sync/async examples
+    @example_group_instance.delay_with_promise 0 do
+      example_promise = Promise.value(@example_group_instance.instance_exec(self, &@example_block))
+      example_promise.then do |result|
+        result
+      end.rescue do |ex|
+        ex ||= Exception.new 'Async promise failed for unspecified reason'
+        ex = Exception.new ex unless ex.kind_of?(Exception)
+        ex
+      end
     end
   end
 
