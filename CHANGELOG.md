@@ -1,8 +1,11 @@
 ## 0.7.0 - Under development
-*   TBD
+*   New RSpec versions
+  * rspec-core - 3.3.4
+  * rspec-expectations - 3.4.0
+  * rspec-mocks - 3.4.1
+  * rspec-support - 3.4.1
 
 ## 0.6.0 (2016-08-29)
-
 *   Support for Opal 0.8/0.9 removed
 *   Opal 0.10 support
 *   Arity checking enabled by default
