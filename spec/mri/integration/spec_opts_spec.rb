@@ -38,7 +38,7 @@ describe 'spec_opts' do
                       'description' => 'should eq 42',
                       'full_description' => 'foobar should eq 42',
                       'status' => 'passed',
-                      'file_path' => /\S+/,
+                      'file_path' => '',
                       'line_number' => be_a(Fixnum),
                       'run_time' => be_a(Float)}
               ],

@@ -266,8 +266,9 @@ RSpec.configure do |c|
   c.include TestMod
 end
 ```
-* Formatting
-  * Backtrace info on specs is buggy ([no Kernel::caller method in Opal](https://github.com/opal/opal/issues/894)), in Firefox w/ the browser runner, no backtraces show up with failed specs
+* Formatting/Reporting
+  * Specs will not have file path/line number information on them unless they are supplied from user metadata or they fail, see [this issue](https://github.com/opal/opal-rspec/issues/36)
+  * In Firefox w/ the browser runner, no backtraces show up with failed specs
   * Diffs are not yet available when objects do not meet expectations (diff-lcs gem dependency has not been dealt with yet in Opal)
 * Configuration
   * Not all RSpec runner options are supported yet
