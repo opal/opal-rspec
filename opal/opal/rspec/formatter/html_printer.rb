@@ -65,7 +65,7 @@ module Opal
         super
         flush_output
         example_we_just_wrote = current_node.get_child_by_tag_name('dd', index=-1)
-        dump_message = lambda do
+        dump_message = lambda do |*|
           puts "Exception for example '#{description}'\n#{exception[:backtrace]}"
           false
         end
