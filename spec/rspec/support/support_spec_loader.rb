@@ -6,7 +6,7 @@ module Opal
       extend Opal::RSpec::OpalRSpecSpecLoader
 
       def self.expected_pending_count
-        0
+        1 # 1 threading based test will mark itself pending
       end
 
       def self.base_dir
