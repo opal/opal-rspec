@@ -1,4 +1,20 @@
 module ::RSpec::Core::Metadata
+  def self.relative_path(line)
+    # Opal, caller.first will be passed in here but we have no caller, so handle nil
+    return nil unless line
+    # end Opal patch
+    line = line.sub(relative_path_regex, "\\1.\\2".freeze)
+    # opal, regex fix since \A is not supported
+    line = line.sub(/^([^:]+:\d+)$/, '\\1'.freeze)
+    #line = line.sub(/\A([^:]+:\d+)$/, '\\1'.freeze)
+    return nil if line == '-e:1'.freeze
+    line
+  rescue SecurityError
+    # :nocov:
+    nil
+    # :nocov:
+  end
+
   class HashPopulator
     def populate_location_attributes
       backtrace = user_metadata.delete(:caller)
@@ -12,12 +28,12 @@ module ::RSpec::Core::Metadata
                                  ['', -1]
                                end
 
-      metadata[:file_path]   = file_path
+      metadata[:file_path] = file_path
       metadata[:line_number] = line_number.to_i
-      metadata[:location]    = file_path.empty? ? '' : "#{file_path}:#{line_number}"
+      metadata[:location] = file_path.empty? ? '' : "#{file_path}:#{line_number}"
       metadata[:absolute_file_path] = file_path
-      metadata[:rerun_file_path]  ||= file_path
-      metadata[:scoped_id]          = ''
+      metadata[:rerun_file_path] ||= file_path
+      metadata[:scoped_id] = ''
     end
 
 
