@@ -285,6 +285,7 @@ end
   * In Firefox w/ the browser runner, no backtraces show up with failed specs
   * Diffs are not yet available when objects do not meet expectations (diff-lcs gem dependency has not been dealt with yet in Opal)
 * Configuration
+  * `let` does not work properly when shared context is applied to a single example - see [RSpec issue](https://github.com/rspec/rspec-core/pull/1912)
   * Not all RSpec runner options are supported yet
   * At some point, using node + Phantom's ability to read environment variables could be combined with a opal friendly optparse implementation to allow full options to be supplied/parsed
   * Expect and should syntax are both enabled. They cannot be disabled due to past bugs with the `undef` keyword in Opal. Status of changing this via config has not been retested.
