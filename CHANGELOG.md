@@ -4,6 +4,7 @@
 *   Opal 0.10 support
 *   Arity checking enabled by default
 *   Dropped support for PhantomJS < 2.0
+*   Removed `Kernel#caller` monkey patch so test file/line metadata is only available if supplied via test metadata or for failures. Should improve performance since an exception isn't thrown for every test to gather the data
 
 ## 0.5.0 (2015-12-08)
 

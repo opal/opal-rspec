@@ -2,20 +2,19 @@ module ::RSpec::Core::Metadata
   class HashPopulator
     def populate_location_attributes
       backtrace = user_metadata.delete(:caller)
+      # Throwing exceptions to get code location is expensive, so use this if the user supplied it, otherwise
+      # keep empty stuff around so filter code does not crash
 
-      file_path, line_number = if backtrace
+      # might have an empty array from caller which file_path_and_line_number_from doesn't like
+      file_path, line_number = if backtrace && !backtrace.empty?
                                  file_path_and_line_number_from(backtrace)
-                                 # Opal 0.9 has a stub for this but it does not return anything
-                               # elsif block.respond_to?(:source_location)
-                               #   block.source_location
                                else
-                                 file_path_and_line_number_from(caller)
+                                 ['', -1]
                                end
 
-      file_path = Metadata.relative_path(file_path)
-      metadata[:file_path] = file_path
+      metadata[:file_path]   = file_path
       metadata[:line_number] = line_number.to_i
-      metadata[:location] = "#{file_path}:#{line_number}"
+      metadata[:location]    = file_path.empty? ? '' : "#{file_path}:#{line_number}"
     end
   end
 end
