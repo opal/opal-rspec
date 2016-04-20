@@ -136,7 +136,7 @@ run Opal::Server.new(sprockets: sprockets_env) { |s|
 Then run the rack server `bundle exec rackup` and visit `http://localhost:9292`
 in any web browser.
 
-A new feature of opal-rspec 0.5 allows you to click a 'Console' button in the browser's test results and get a 
+A new feature as of opal-rspec 0.5 allows you to click a 'Console' button in the browser's test results and get a 
 clickable stack trace in the browser console. This should ease debugging with long, concatenated script files and trying
 to navigate to where an exception occurred.
 
@@ -272,7 +272,7 @@ end
 * Configuration
   * Not all RSpec runner options are supported yet
   * At some point, using node + Phantom's ability to read environment variables could be combined with a opal friendly optparse implementation to allow full options to be supplied/parsed
-  * Expect and should syntax are both enabled. They cannot be disabled due to bugs with the `undef` keyword in Opal 0.8. Status of changing this via config has not been tested in Opal 0.9.
+  * Expect and should syntax are both enabled. They cannot be disabled due to past bugs with the `undef` keyword in Opal. Status of changing this via config has not been retested.
   * Random order does not work yet due to lack of [srand/Random support](https://github.com/opal/opal/issues/639) and RSpec's bundled Random implementation, `RSpec::Core::Backports::Random`, locks the browser/Phantom. If you specify random order, it will be ignored.
 * Nodejs runner
   * debug mode + source map support not there yet (see source map support - https://github.com/evanw/node-source-map-support)
@@ -281,7 +281,7 @@ end
   * predicate matchers (be_some_method_on_your_subject) do not currently work with delegate objects (Opal `DelegateClass` is incomplete)
   * equal and eq matchers function largely the same right now since `==` and `equal?` in Opal are largely the same
   * time based matching is not yet tested
-  * arity checking is only enabled for opal >= 0.10. Due to known issues with splats and arity in Opal, respond_to matchers may not work properly on methods with splats)
+  * Due to some issues with splats and arity in Opal, respond_to matchers may not work properly on methods with splats
 * Mocks
   * `allow_any_instance/any_instance_of/any_instance` are unstable and may cause runner to crash due to issues with redefining the `===` operator, which breaks a case statement inside `Hooks#find_hook`
   * using expect/allow on `String`, `Number`, or any immutable bridged/native class, does not work since rspec-mocks uses singleton classes and those cannot be defined on immutable objects
