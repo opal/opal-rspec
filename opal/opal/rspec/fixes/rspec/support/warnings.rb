@@ -8,7 +8,7 @@ module ::RSpec
         message += " Use #{options[:replacement]} instead." if options[:replacement]
         # message << " Called from #{call_site}." if call_site
         message += " Called from #{call_site}." if call_site
-        ::Kernel.warn message
+        Support.warning_notifier.call message
       end
 
       alias_method :support_warn_with, :warn_with
