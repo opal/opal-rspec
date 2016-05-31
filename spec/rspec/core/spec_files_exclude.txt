@@ -1,41 +1,41 @@
 # InSubProcess - requires forking
-**/dsl_spec.rb
-**/core/configuration_spec.rb
-**/shared_example_group_spec.rb
+rspec/core/dsl_spec.rb
+rspec/core/configuration_spec.rb
+rspec/core/shared_example_group_spec.rb
 
 # requires running services
-**/drb_spec.rb
+rspec/core/drb_spec.rb
 
 # opal does not like %W on line 107
-**/rspec/core/configuration_options_spec.rb
+rspec/core/configuration_options_spec.rb
 
 # Nokogiri/filesystem heavy
-**/html_formatter_spec.rb
+rspec/core/formatters/html_formatter_spec.rb
 
 # Coderay gem/opal
-**/snippet_extractor_spec.rb
+rspec/core/formatters/snippet_extractor_spec.rb
 
 # Don't have Rake in Opal
-**/rake_task_spec.rb
+rspec/core/rake_task_spec.rb
 
 # Do not have the option parser std lib
-**/option_parser_spec.rb
+rspec/core/option_parser_spec.rb
 
 # We have to use our own runner anyways
-**/runner_spec.rb
+rspec/core/runner_spec.rb
 
 # uses heavy I/O
-**/order_spec.rb
+integration/order_spec.rb
 
 # I/O heavy test
-**/backtrace_formatter_spec.rb
+rspec/core/backtrace_formatter_spec.rb
 
 # Random - RSpec::Core::Backports::Random locks up the browser
-**/ordering_spec.rb
+rspec/core/ordering_spec.rb
 **/random_spec.rb
 
 # I/O heavy and opal-rspec has to do its own initializing anyways
-**/project_initializer_spec.rb
+rspec/core/project_initializer_spec.rb
 
 # profiling isn't supported on Opal
-**/profile_formatter_spec.rb
+rspec/core/formatters/profile_formatter_spec.rb

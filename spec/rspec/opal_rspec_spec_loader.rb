@@ -49,9 +49,9 @@ module Opal
 
       def symbols_replace_regexes
         [
-            /(fail_\w+)\((.*)\)/,
-            /(expect.*description\)\.to eq)\((.*)\)/,
-            /(expect.*description\)\.to eq) (.*)/
+          /(fail_\w+)\((.*)\)/,
+          /(expect.*description\)\.to eq)\((.*)\)/,
+          /(expect.*description\)\.to eq) (.*)/
         ]
       end
 
@@ -82,19 +82,25 @@ module Opal
         end
       end
 
+      def get_missing_exclusions(baseline_list, exclude_these_specs)
+        baseline_list = baseline_list.to_a
+        exclude_these_specs.reject do |exclude|
+          baseline_list.find { |actual_file| actual_file == File.join(default_path, exclude[:exclusion]) }
+        end
+      end
+
       def get_file_list
         exclude_these_specs = get_compact_text_expressions File.join(base_dir, 'spec_files_exclude.txt'), wrap_in_regex=false
         exclude_globs_only = exclude_these_specs.map { |f| f[:exclusion] }
-        files = FileList[
-            File.join(base_dir, 'require_specs.rb'), # need our code to go in first
-            *spec_glob
-        ].exclude(*exclude_globs_only)
-        missing_exclusions = exclude_these_specs.reject do |exclude|
-          FileList[exclude[:exclusion]].any?
-        end
+        baseline_list = FileList[
+          File.join(base_dir, 'require_specs.rb'), # need our code to go in first
+          *spec_glob
+        ]
+        missing_exclusions = get_missing_exclusions baseline_list, exclude_these_specs
         if missing_exclusions.any?
           raise "Expected to exclude #{missing_exclusions} as noted in spec_files_exclude.txt but we didn't find these files. Has RSpec been upgraded?"
         end
+        files = baseline_list.exclude(*exclude_globs_only)
         files += post_requires.map { |r| File.join(base_dir, r) }
         puts 'Running the following RSpec specs:'
         files.each { |f| puts f }
@@ -155,12 +161,12 @@ module Opal
       def remove_multiline_regexes(files)
         replace_with_regex /(%r%$.*%)$/m, 'fix multiline regex', files, files_with_multiline_regex do |match, temp_filename|
           multi_line_regex = match
-                                 .captures[0]
-                                 .gsub("\n", '')
+                               .captures[0]
+                               .gsub("\n", '')
           parsed = instance_eval multi_line_regex # can just have ruby do this for us
           escaped = parsed
-                        .source
-                        .gsub('/', '\/')
+                      .source
+                      .gsub('/', '\/')
           replace = "/#{escaped}/m"
           puts "Replacing multiline regex with #{replace} in new temp file #{temp_filename}"
           replace
@@ -223,22 +229,22 @@ module Opal
         IO.popen(command_line).each do |line|
           line.force_encoding 'UTF-8'
           case state
-            when :progress
-              puts line
-            when :example_info
-              example_info << line
+          when :progress
+            puts line
+          when :example_info
+            example_info << line
           end
           state = case line
-                    when /BEGIN JSON/
-                      :example_info
-                    else
-                      state
+                  when /BEGIN JSON/
+                    :example_info
+                  else
+                    state
                   end
         end.close
         pinger.exit
         {
-            example_info: example_info,
-            success: $?.success?
+          example_info: example_info,
+          success: $?.success?
         }
       end
 
@@ -266,7 +272,7 @@ module Opal
           failed = summary['failure_count']
           pending = summary['pending_count']
           actual_failures = parsed_results['examples']
-                                .select { |ex| ex['status'] == 'failed' }
+                              .select { |ex| ex['status'] == 'failed' }
           expected_failures = get_ignored_spec_failures
           used_exclusions = []
           remaining_failures = actual_failures.reject do |actual|
@@ -274,12 +280,12 @@ module Opal
               exclusion = expected[:exclusion]
               actual_descr = actual['full_description']
               matches = case exclusion
-                          when Regexp
-                            exclusion.match actual_descr
-                          when String
-                            exclusion == actual_descr
-                          else
-                            raise "Unknown filter expression type #{exclusion.class} in #{expected}!"
+                        when Regexp
+                          exclusion.match actual_descr
+                        when String
+                          exclusion == actual_descr
+                        else
+                          raise "Unknown filter expression type #{exclusion.class} in #{expected}!"
                         end
               used_exclusions << expected if matches
               matches
@@ -290,10 +296,10 @@ module Opal
           remaining_failures = remaining_failures.map do |example|
             index += 1
             [
-                each_header,
-                "Example #{index}: #{example['full_description']}",
-                each_header,
-                example['exception']['message']
+              each_header,
+              "Example #{index}: #{example['full_description']}",
+              each_header,
+              example['exception']['message']
             ].join "\n"
           end
           reasons = []
@@ -306,7 +312,7 @@ module Opal
           unused_exclusions = expected_failures.uniq - used_exclusions.uniq
           if unused_exclusions.any?
             msg = "WARNING: The following #{unused_exclusions.length} exclusion rules did not match an actual failure. Time to update exclusions? Duplicate exclusions??\n" +
-                unused_exclusions.map { |e| "File: #{e[:filename]}\nLine #{e[:line_number]}\nFilter: #{e[:exclusion]}" }.join("\n---------------------\n")
+              unused_exclusions.map { |e| "File: #{e[:filename]}\nLine #{e[:line_number]}\nFilter: #{e[:exclusion]}" }.join("\n---------------------\n")
             reasons << msg
           end
           passing = total - failed - pending
@@ -342,13 +348,13 @@ module Opal
         sprockets_env.cache = ::Sprockets::Cache::FileStore.new(File.join('tmp', 'cache', only_name))
         Opal::Config.arity_check_enabled = true
         rack.run Opal::Server.new(sprockets: sprockets_env) { |s|
-                   s.main = 'opal/rspec/sprockets_runner'
-                   stub_requires
-                   append_additional_load_paths s
-                   sprockets_env.add_spec_paths_to_sprockets
-                   s.debug = ENV['OPAL_DEBUG']
-                   s.source_map = ENV['OPAL_DEBUG'] != nil
-                 }
+          s.main = 'opal/rspec/sprockets_runner'
+          stub_requires
+          append_additional_load_paths s
+          sprockets_env.add_spec_paths_to_sprockets
+          s.debug = ENV['OPAL_DEBUG']
+          s.source_map = ENV['OPAL_DEBUG'] != nil
+        }
       end
 
       private
@@ -358,15 +364,15 @@ module Opal
         File.read(filename).split("\n").map do |line|
           line_num += 1
           {
-              exclusion: line,
-              filename: filename,
-              line_number: line_num
+            exclusion: line,
+            filename: filename,
+            line_number: line_num
           }
         end.reject do |line|
           exclusion = line[:exclusion]
           exclusion.empty? or exclusion.start_with? '#'
         end.map do |filter|
-          wrap_in_regex ? filter.merge({exclusion: Regexp.new(filter[:exclusion])}) : filter
+          wrap_in_regex ? filter.merge({ exclusion: Regexp.new(filter[:exclusion]) }) : filter
         end
       end
     end
