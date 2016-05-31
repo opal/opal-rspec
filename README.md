@@ -243,7 +243,21 @@ Disadvantages:
 
 ## Opal load path
 
-NOTE: Only the 'spec' directory will be added to the Opal load path by default. Use the Rake task's 'default_path' setting to change that
+NOTE: Only the 'spec' directory will be added to the Opal load path by default. Use the Rake task's `default_path` setting to change that. Here's an example of that.
+
+```ruby
+Opal::RSpec::RakeTask.new do |server, task|
+  task.default_path = 'spec/javascripts'
+end
+```
+
+If you need to add additional load paths to run your specs, then use the `append_path` method like this:
+
+```ruby
+Opal::RSpec::RakeTask.new do |server, task|
+  server.append_path 'some_path'
+end
+```
 
 ## Other Limitations/Known Issues
 
