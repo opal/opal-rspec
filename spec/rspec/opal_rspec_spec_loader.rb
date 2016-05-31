@@ -82,29 +82,26 @@ module Opal
         end
       end
 
-      def get_missing_exclusions(baseline_list, exclude_these_specs)
-        baseline_list = baseline_list.to_a
+      def remove_exclusions(baseline_list, exclude_these_specs)
         exclude_these_specs.reject do |exclude|
-          baseline_list.find { |actual_file| actual_file == File.join(default_path, exclude[:exclusion]) }
+          baseline_list.reject! { |actual_file| actual_file == File.join(default_path, exclude[:exclusion]) }
         end
       end
 
       def get_file_list
         exclude_these_specs = get_compact_text_expressions File.join(base_dir, 'spec_files_exclude.txt'), wrap_in_regex=false
-        exclude_globs_only = exclude_these_specs.map { |f| f[:exclusion] }
-        baseline_list = FileList[
+        run_files = FileList[
           File.join(base_dir, 'require_specs.rb'), # need our code to go in first
           *spec_glob
-        ]
-        missing_exclusions = get_missing_exclusions baseline_list, exclude_these_specs
+        ].to_a
+        missing_exclusions = remove_exclusions run_files, exclude_these_specs
         if missing_exclusions.any?
           raise "Expected to exclude #{missing_exclusions} as noted in spec_files_exclude.txt but we didn't find these files. Has RSpec been upgraded?"
         end
-        files = baseline_list.exclude(*exclude_globs_only)
-        files += post_requires.map { |r| File.join(base_dir, r) }
+        run_files += post_requires.map { |r| File.join(base_dir, r) }
         puts 'Running the following RSpec specs:'
-        files.each { |f| puts f }
-        files
+        run_files.each { |f| puts f }
+        run_files
       end
 
       def append_additional_load_paths(server)

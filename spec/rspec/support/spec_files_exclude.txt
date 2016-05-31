@@ -1,23 +1,23 @@
 # InSubprocess / forking
-**/in_sub_process_spec.rb
+rspec/support/spec/in_sub_process_spec.rb
 
 # No diff support yet on Opal
-**/differ_spec.rb
+rspec/support/differ_spec.rb
 
 # File I/O
-**/directory_maker_spec.rb
+rspec/support/directory_maker_spec.rb
 
 # Shell not available on Opal
-**/shell_out_spec.rb
+rspec/support/spec/shell_out_spec.rb
 
 # File I/O
-**/caller_filter_spec.rb
+rspec/support/caller_filter_spec.rb
 
 # Uses eval
-**/method_signature_verifier_spec.rb
+rspec/support/method_signature_verifier_spec.rb
 
 # Not supported on Opal
-**/encoded_string_spec.rb
+rspec/support/encoded_string_spec.rb
 
 # Threading
-**/reentrant_mutex_spec.rb
+rspec/support/reentrant_mutex_spec.rb
