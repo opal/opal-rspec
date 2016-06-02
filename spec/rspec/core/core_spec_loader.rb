@@ -32,7 +32,9 @@ module Opal
             'simplecov', # hooks aren't available on Opal
             'tmpdir',
             'rspec/support/spec/shell_out', # only does stuff Opal can't support anyways
-            'rspec/support/spec/prevent_load_time_warnings'
+            'rspec/support/spec/prevent_load_time_warnings',
+            'thread_order', # not using threads
+            'rspec/support/spec/library_wide_checks' # Includes backticks which get interpreted as JS
         ]
       end
 

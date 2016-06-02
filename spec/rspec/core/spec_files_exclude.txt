@@ -32,7 +32,14 @@ rspec/core/backtrace_formatter_spec.rb
 
 # Random - RSpec::Core::Backports::Random locks up the browser
 rspec/core/ordering_spec.rb
-**/random_spec.rb
+
+# Bisect server, which uses DRb, etc.
+rspec/core/bisect/server_spec.rb
+rspec/core/bisect/example_minimizer_spec.rb
+rspec/core/bisect/runner_spec.rb
+# I/O, shell, and unsupported syntax - %w[ 2.rb[1:1] ]
+rspec/core/bisect/coordinator_spec.rb
+integration/bisect_spec.rb
 
 # I/O heavy and opal-rspec has to do its own initializing anyways
 rspec/core/project_initializer_spec.rb
