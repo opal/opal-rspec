@@ -7,14 +7,12 @@ cache:
   - node_modules
   - phantom20
 
+gemfile: gemfiles/opal_release.gemfile
+
 matrix:
   fast_finish: true
 
   include:
-    - rvm: 2.0.0
-      env: RUN=mri_sanity_check
-    - rvm: 2.1.8
-      env: RUN=mri_sanity_check
     - rvm: 2.2.4
       env: RUN=mri_sanity_check
     - rvm: 2.3.0
@@ -31,6 +29,12 @@ matrix:
         - "echo $PATH"
     - rvm: 2.3.0
       env: RUNNER=node RUN=rake_only
+    - rvm: 2.3.0
+      env: RUN=rake_only
+      gemfile: gemfiles/opal_master.gemfile
+    - rvm: 2.3.0
+      env: RUN=rake_only
+      gemfile: gemfiles/opal_0.10_stable.gemfile
 
 before_install:
   - git submodule update --init
