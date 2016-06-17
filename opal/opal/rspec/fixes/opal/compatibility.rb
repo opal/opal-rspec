@@ -45,13 +45,6 @@ module Opal
       rescue Exception => _
         false
       end
-
-      # MRI does this properly, not yet fixed in Opal, https://github.com/opal/opal/issues/1278
-      def self.lambda_zero_arg_throws_arg_error?
-        !(lambda { 3 } === lambda { 4 })
-      rescue
-        true
-      end
     end
   end
 end
