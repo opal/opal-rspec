@@ -7,8 +7,6 @@ cache:
   - node_modules
   - phantom20
 
-gemfile: gemfiles/opal_release.gemfile
-
 matrix:
   fast_finish: true
 
