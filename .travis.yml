@@ -35,9 +35,7 @@ matrix:
       gemfile: gemfiles/opal_0.10_stable.gemfile
 
   allow_failures:
-    - rvm: 2.3.0
-      env: RUN=rake_only
-      gemfile: gemfiles/opal_master.gemfile
+    - gemfile: gemfiles/opal_master.gemfile
 
 before_install:
   # Attempt to work around Travis issues - https://github.com/vcr/vcr/issues/582
