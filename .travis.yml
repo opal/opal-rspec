@@ -22,7 +22,6 @@ matrix:
       env: PHANTOMJS=2.1 RUN=rake_only
       before_install:
         - gem update --system
-        - git submodule update --init
         - npm install phantomjs-prebuilt # get rate limits from bitbucket download source
         - "export PATH=`pwd`/node_modules/phantomjs-prebuilt/bin:$PATH"
         - "echo $PATH"
@@ -35,10 +34,14 @@ matrix:
       env: RUN=rake_only
       gemfile: gemfiles/opal_0.10_stable.gemfile
 
+  allow_failures:
+    - rvm: 2.3.0
+      env: RUN=rake_only
+      gemfile: gemfiles/opal_master.gemfile
+
 before_install:
   # Attempt to work around Travis issues - https://github.com/vcr/vcr/issues/582
   - gem update --system
-  - git submodule update --init
   - "mkdir -p phantom20"
   - "export PATH=`pwd`/phantom20:$PATH"
   - "echo $PATH"
