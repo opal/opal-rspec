@@ -31,14 +31,14 @@ describe 'Opal RSpec::Matchers::DSL::Matcher' do
 
       expect {
         expect(Fixnum).to descend_from(Array)
-      }.to fail_with(/expected Numeric to descend from Array/)
+      }.to fail_with(/expected Number to descend from Array/)
       # Fixnum = Numeric on Opal
       #}.to fail_with(/expected Fixnum to descend from Array/)
 
       expect {
         expect(Fixnum).not_to descend_from(Object)
         # Fixnum = Numeric on Opal
-      }.to fail_with(/expected Numeric not to descend from Object/)
+      }.to fail_with(/expected Number not to descend from Object/)
       #}.to fail_with(/expected Fixnum not to descend from Object/)
     end
 
