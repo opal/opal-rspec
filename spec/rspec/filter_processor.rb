@@ -13,6 +13,10 @@ module Opal
         greater_equal_than_version?('0.9')
       end
 
+      def at_least_opal_0_11?
+        greater_equal_than_version?('0.11')
+      end
+
       def greater_equal_than_version?(version)
         # it's ok if we have a pre-release version
         Gem::Version.new(Opal::VERSION) >= Gem::Version.new("#{version}.0.a")
