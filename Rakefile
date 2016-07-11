@@ -10,27 +10,18 @@ require_relative 'spec/rspec/support/support_spec_loader'
 require_relative 'spec/rspec/mocks/mocks_spec_loader'
 
 desc 'Run the full suite, this can time out on Travis'
-task :default => [:phantom_node_ver,
-                  :unit_specs,
+task :default => [:unit_specs,
                   :verify_opal_specs,
                   :integration_specs,
                   :verify_rspec_specs]
 
 desc 'Run only tests that use the opal-rspec Rake task'
-task :rake_only => [:phantom_node_ver,
-                    :verify_opal_specs,
-                    :verify_rspec_specs]
+task :rake_only => [:verify_rspec_specs,
+                    :verify_opal_specs]
 
 desc 'Sanity checks a given version of MRI and run a basic check'
-task :mri_sanity_check => [:phantom_node_ver,
-                           :unit_specs,
+task :mri_sanity_check => [:unit_specs,
                            :integration_specs]
-
-task :phantom_node_ver do
-  sh 'phantomjs -v'
-  sh 'node -v'
-  sh 'firefox --version'
-end
 
 desc 'Runs a set of specs in opal'
 Opal::RSpec::RakeTask.new(:opal_specs) do |_, task|
