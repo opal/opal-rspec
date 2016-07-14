@@ -70,6 +70,21 @@ module Opal
         result = do_ival(method1) { |b| "hello #{b}" }
         result == 'hello hello 1'
       end
+
+      class SubclassModule < Module
+        def initialize(foo)
+          @foo = foo
+        end
+      end
+
+      # https://github.com/opal/opal/issues/1476
+      # https://github.com/opal/opal/pull/1530
+      def self.module_subclass_works?
+        SubclassModule.new('the mod')
+        true
+      rescue
+        false
+      end
     end
   end
 end
