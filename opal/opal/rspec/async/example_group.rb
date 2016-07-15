@@ -33,7 +33,7 @@ class ::RSpec::Core::ExampleGroup
   end
 
   # Promise oriented version
-  def self.run(reporter)
+  def self.run(reporter=RSpec::Core::NullReporter)
     # new
     return if RSpec.world.wants_to_quit
     reporter.example_group_started(self)
