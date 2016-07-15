@@ -11,3 +11,6 @@ RSpec::Core::ExampleGroup#metadata adds the line_number to metadata
 
 # Back trace, line number
 RSpec::Core::ExampleGroup.pending sets the backtrace to the example definition so it can be located by the user
+
+# Opal + async methods, see alternates
+RSpec::Core::ExampleGroup minimizes the number of methods that users could inadvertantly overwrite

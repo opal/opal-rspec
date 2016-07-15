@@ -141,5 +141,25 @@ module RSpec::Core
         end
       end
     end
+
+    it 'minimizes the number of methods that users could inadvertantly overwrite' do
+      rspec_core_methods = ExampleGroup.instance_methods -
+        RSpec::Matchers.instance_methods -
+        RSpec::Mocks::ExampleMethods.instance_methods -
+        Object.instance_methods -
+        ["singleton_class"]
+
+      # exclude extra Opal methods
+      rspec_core_methods = rspec_core_methods - %w(__init_memoized __memoized delay delay_with_promise initialize)
+
+      # Feel free to expand this list if you intend to add another public API
+      # for users. RSpec internals should not add methods here, though.
+      expect(rspec_core_methods.map(&:to_sym)).to contain_exactly(
+                                                    :described_class, :subject,
+                                                    :is_expected, :should, :should_not,
+                                                    :pending, :skip,
+                                                    :setup_mocks_for_rspec, :teardown_mocks_for_rspec, :verify_mocks_for_rspec
+                                                  )
+    end
   end
 end

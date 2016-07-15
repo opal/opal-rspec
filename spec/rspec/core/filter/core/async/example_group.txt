@@ -1,6 +1,3 @@
-# delay methods defined for async testing cause this to fail
-RSpec::Core::ExampleGroup minimizes the number of methods that users could inadvertantly overwrite
-
 # Invokes RSpec::Core::ExampleGroup#run directly, so of course it gets a promise back rather than false
 # see opal alternates
 RSpec::Core::ExampleGroup#before, after, and around hooks treats an error in before.* as a failure
