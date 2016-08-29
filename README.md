@@ -6,8 +6,6 @@
 
 An attempt at a compatibility layer of RSpec for Opal.
 
-#### For the README for the latest release, click [here](https://github.com/opal/opal-rspec/blob/releases/0-5-stable/README.md).
-
 ## Usage
 
 Add `opal-rspec` to your Gemfile:
