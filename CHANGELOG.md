@@ -1,4 +1,4 @@
-## 0.6.0 - Under development
+## 0.6.0 (2016-08-29)
 
 *   Support for Opal 0.8/0.9 removed
 *   Opal 0.10 support
