@@ -21,7 +21,15 @@ task :rake_only => [:verify_rspec_specs,
 
 desc 'Sanity checks a given version of MRI and run a basic check'
 task :mri_sanity_check => [:unit_specs,
-                           :integration_specs]
+                           :integration_specs,
+                           :verify_rake_requires]
+
+desc 'Runs Rake via shell to verify requires without all of our test requires'
+task :verify_rake_requires do
+  Dir.chdir 'spec/other' do
+    sh 'rake'
+  end
+end
 
 desc 'Runs a set of specs in opal'
 Opal::RSpec::RakeTask.new(:opal_specs) do |_, task|

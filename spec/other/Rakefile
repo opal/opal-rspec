@@ -1,0 +1,8 @@
+# test Rakefile for running standalone
+require 'opal/rspec/rake_task'
+
+Opal::RSpec::RakeTask.new(:default) do |_, task|
+  task.pattern = '*_spec.rb'
+  # Node code path has more dependencies
+  task.runner = :node
+end
