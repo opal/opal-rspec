@@ -10,7 +10,7 @@ describe 'browser formatter', type: :feature do
       before do
         visit '/'
         # Specs should run in 12 seconds but in case Travis takes longer, provide some cushion
-        Capybara.default_wait_time = 40
+        Capybara.default_max_wait_time = 40
       end
 
       after do
