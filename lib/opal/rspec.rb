@@ -1,4 +1,5 @@
 require 'opal'
+require 'opal/sprockets'
 require 'opal/rspec/version'
 require 'opal/rspec/sprockets_environment'
 

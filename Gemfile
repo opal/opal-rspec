@@ -5,6 +5,16 @@ unless Dir['rspec{,-{core,expectations,mocks,support}}'].any?
   warn 'Run: "git submodule update --init" to get RSpec sources'
 end
 
+case (opal_version = ENV['OPAL_VERSION'])
+when 'master'
+  gem 'opal', github: 'opal/opal', branch: 'master'
+  gem 'opal-sprockets', github: 'opal/opal-sprockets'
+when nil
+  gem 'opal' # let bundler pick a version
+else
+  gem 'opal', opal_version
+end
+
 gem 'capybara'
 gem 'selenium-webdriver', require: false
 
