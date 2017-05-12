@@ -4,4 +4,5 @@ end
 
 appraise 'opal-master' do
   gem 'opal', git: 'https://github.com/opal/opal.git'
+  gem 'opal-sprockets', github: 'opal/opal-sprockets'
 end
