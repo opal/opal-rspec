@@ -237,8 +237,8 @@ module Opal
         end.close
         pinger.exit
         {
-            example_info: example_info,
-            success: $?.success?
+          example_info: example_info,
+          success: $?.success?
         }
       end
 
