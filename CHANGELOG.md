@@ -1,10 +1,22 @@
+## 0.6.1 - 2017-05-25
+
+- Fixed compatibility with Rake 12
+
+- Open up to opal 0.11 (not officially supported yet)
+
+
 ## 0.6.0 - 2016-08-29
 
 - Support for Opal 0.8/0.9 removed
+
 - Opal 0.10 support
+
 - Arity checking enabled by default
+
 - Dropped support for PhantomJS < 2.0
+
 - Removed `Kernel#caller` monkey patch so test file/line metadata is only available if supplied via test metadata or for failures. Should improve performance since an exception isn't thrown for every test to gather the data
+
 
 ## 0.5.0 - 2015-12-08
 
@@ -19,14 +31,14 @@
 - Remove copy of source from opal-rspec git repo (and just rely on git submodule fetch)
 
 - Rake task improvements:
-  * supports passing a test pattern (include and exclude) and FileLists besides 'spec/**/*_spec.rb
-  * colors, formatter, and additional requires can be supplied from the command line via the SPEC_OPTS environment variable
+  - supports passing a test pattern (include and exclude) and FileLists besides 'spec/**/*_spec.rb
+  - colors, formatter, and additional requires can be supplied from the command line via the SPEC_OPTS environment variable
 
 - Formatters:
-  * Fixed issues with RSpec's BaseTextFormatter and made ProgressFormatter the default when run via the Rake task
-  * Fix redundant messages with expectation fails
-  * Browser formatter now works w/ progress bar and has a 'Dump to console' link that will put a clickable stack trace for a failed example in the browser console
-  * JSON formatter supported
+  - Fixed issues with RSpec's BaseTextFormatter and made ProgressFormatter the default when run via the Rake task
+  - Fix redundant messages with expectation fails
+  - Browser formatter now works w/ progress bar and has a 'Dump to console' link that will put a clickable stack trace for a failed example in the browser console
+  - JSON formatter supported
 
 - Fixed issues with constants/example group naming
 
@@ -43,9 +55,11 @@
 - Fix some threading issues
 - Avoid some other calls to mutable-strings methods
 
+
 ## 0.4.2 - 2015-03-28
 
 - Avoid phantomjs warning messages
+
 
 ## 0.4.1 - 2015-02-25
 
