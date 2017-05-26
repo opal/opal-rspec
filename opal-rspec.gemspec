@@ -14,7 +14,11 @@ Gem::Specification.new do |s|
 
   s.require_paths = ['lib']
 
-  s.add_dependency 'opal', ['>= 0.10.0', '< 0.11']
+  s.add_dependency 'opal', ['>= 0.10.0', '< 0.12']
   s.add_development_dependency 'rake'
   s.add_development_dependency 'yard'
+  s.add_development_dependency 'poltergeist'
+  s.add_development_dependency 'capybara'
+  s.add_development_dependency 'launchy'
+  s.add_development_dependency 'appraisal'
 end

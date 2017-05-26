@@ -43,6 +43,7 @@ module Opal
       def launch_node(server)
         compiled = Tempfile.new 'opal_rspec.js'
         begin
+          require 'net/http'
           uri = URI(URL)
           Net::HTTP.start uri.hostname, uri.port do |http|
             resp = http.get File.join('/assets', server.main)
