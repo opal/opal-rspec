@@ -1,24 +1,36 @@
-# -*- encoding: utf-8 -*-
-require File.expand_path('../lib/opal/rspec/version', __FILE__)
+# coding: utf-8
+lib = File.expand_path("../lib", __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
+require "opal/rspec/version"
 
-Gem::Specification.new do |s|
-  s.name = 'opal-rspec'
-  s.version = Opal::RSpec::VERSION
-  s.author = 'Adam Beynon'
-  s.email = 'adam.beynon@gmail.com'
-  s.homepage = 'http://opalrb.org'
-  s.summary = 'RSpec for Opal'
-  s.description = 'Opal compatible rspec library'
+Gem::Specification.new do |spec|
+  spec.name          = "opal-rspec"
+  spec.version       = Opal::RSpec::VERSION
+  spec.authors       = ['Adam Beynon', 'Brady Wied', 'Elia Schito']
+  spec.email         = ['elia@schito.me']
 
-  s.files = `git ls-files`.split("\n") + Dir.glob('rspec*/**/*.rb')
+  spec.summary       = %q{RSpec for Opal}
+  spec.description   = %q{Opal compatible RSpec library}
+  spec.homepage      = 'https://github.com/opal/opal-rspec'
+  spec.license       = "MIT"
 
-  s.require_paths = ['lib']
+  spec.files         = `git ls-files -z`.split("\x0").reject do |f|
+    f.match(%r{^(test|spec|features)/})
+  end
+  spec.bindir        = "exe"
+  spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
+  spec.require_paths = ["lib"]
 
-  s.add_dependency 'opal', ['>= 0.10.0', '< 0.12']
-  s.add_development_dependency 'rake'
-  s.add_development_dependency 'yard'
-  s.add_development_dependency 'poltergeist'
-  s.add_development_dependency 'capybara'
-  s.add_development_dependency 'launchy'
-  s.add_development_dependency 'appraisal'
+  spec.add_dependency 'opal', ['>= 0.10.0', '< 0.12']
+  spec.add_dependency 'opal-sprockets'
+
+  spec.add_development_dependency "bundler", "~> 1.15"
+  spec.add_development_dependency "rake", "~> 12.0"
+  spec.add_development_dependency 'yard'
+  spec.add_development_dependency 'chromedriver-helper'
+  spec.add_development_dependency 'selenium-webdriver'
+  spec.add_development_dependency 'capybara'
+  spec.add_development_dependency 'launchy'
+  spec.add_development_dependency 'appraisal'
 end
+
