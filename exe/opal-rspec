@@ -1,0 +1,60 @@
+#!/usr/bin/env ruby
+
+# Error codes are taken from /usr/include/sysexits.h
+
+require 'rake'
+require 'opal/rspec/runner'
+
+require 'shellwords'
+require 'optparse'
+
+options = {}
+OptionParser.new do |parser|
+  parser.on('-c', '--[no-]color', '--[no-]colour', 'Enable color in the output.') do |o|
+    options[:color] = o
+  end
+
+  parser.on('-f', '--format FORMATTER', 'Choose a formatter.',
+            '  [p]rogress (default - dots)',
+            '  [d]ocumentation (group and example names)',
+            '  [h]tml',
+            '  [j]son',
+            '  custom formatter class name') do |o|
+    options[:formatters] ||= []
+    options[:formatters] << [o]
+  end
+  parser.on('-r', '--require PATH', 'Require a file.') do |path|
+    options[:requires] ||= []
+    options[:requires] << path
+  end
+  parser.on('-I PATH', 'Specify PATH to add to $LOAD_PATH (may be used more than once).') do |dir|
+    options[:libs] ||= []
+    options[:libs] << dir
+  end
+  parser.on('-P', '--pattern PATTERN', 'Load files matching pattern (default: "spec/**/*_spec.rb").') do |o|
+    options[:pattern] = o
+  end
+  parser.on('--default-path PATH', 'Set the default path where RSpec looks for examples (can',
+            '  be a path to a file or a directory).') do |path|
+    options[:default_path] = path
+  end
+end.parse!
+p options: options
+
+runner = Opal::RSpec::Runner.new do |server, config|
+  spec_opts = []
+  spec_opts += ['--color', options[:color]] if options[:color]
+  options[:requires].each {|req| spec_opts += ['-r', req]} if options[:requires]
+  raise "can accept only one formatter at this time" if options[:formatters] && options[:formatters].size != 1
+  spec_opts += ['--format', options[:formatters].flatten.first] if options[:formatters]
+  files = ARGV
+
+  options[:includes].each {|dir| server.append_path dir} if options[:includes]
+  config.default_path = options[:default_path]           if options[:default_path]
+  config.spec_opts    = spec_opts.shelljoin
+  config.files        = files
+end
+
+puts runner.command
+runner.run
+
