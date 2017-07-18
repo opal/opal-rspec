@@ -16,8 +16,8 @@ RSpec.describe 'Opal::RSpec::BrowserFormatter', type: :feature, js: true do
   end
 
   after do
-    js_errors = error_fetcher
-    puts "Javascript errors: #{js_errors}" if js_errors.any?
+    # js_errors = error_fetcher
+    # puts "Javascript errors: #{js_errors}" if js_errors.any?
   end
 
   it 'matches test results' do
