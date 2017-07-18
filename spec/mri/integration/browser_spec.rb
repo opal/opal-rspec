@@ -1,7 +1,10 @@
 require 'mri/spec_helper'
 
 RSpec.describe 'browser formatter', type: :feature do
-  before { Capybara.app = Rack::Builder.new_from_string(File.read("#{__dir__}/../../../config.ru")) }
+  before do
+    file = "#{__dir__}/rack/config.ru"
+    Capybara.app = Rack::Builder.new_from_string(File.read(file), file)
+  end
 
   before do
     visit '/'

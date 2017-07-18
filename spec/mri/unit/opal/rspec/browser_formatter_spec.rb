@@ -2,7 +2,10 @@ require 'mri/spec_helper'
 
 RSpec.describe 'Opal::RSpec::BrowserFormatter', type: :feature, js: true do
   # Use Rack config exactly as shipped in the GEM
-  before { Capybara.app = Rack::Builder.new_from_string(File.read("#{__dir__}/rack/config.ru")) }
+  before do
+    file = "#{__dir__}/rack/config.ru"
+    Capybara.app = Rack::Builder.new_from_string(File.read(file), file)
+  end
 
   let(:error_fetcher) { page.evaluate_script('window.jsErrors') }
 
