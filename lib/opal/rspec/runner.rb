@@ -6,7 +6,7 @@ require 'socket'
 module Opal
   module RSpec
     class Runner
-      attr_accessor :pattern, :exclude_pattern, :files, :default_path, :runner, :timeout, :arity_checking, :spec_opts
+      attr_accessor :pattern, :exclude_pattern, :files, :default_path, :runner, :timeout, :arity_checking, :spec_opts, :cli_options
 
       def arity_checking?
         setting = @arity_checking || :enabled
@@ -14,7 +14,7 @@ module Opal
       end
 
       def runner
-        @runner ||= ((via_env = ENV['RUNNER']) && via_env.to_sym) || @runner || :nodejs
+        @runner ||= ENV['RUNNER']
       end
 
       def spec_opts
@@ -62,12 +62,14 @@ module Opal
 
         options = []
         options << '--arity-check' if arity_checking?
+        options += ['--runner', runner] if runner
         options << '-ropal/platform'
         options << '-ropal-rspec'
         options += @legacy_server_proxy.to_cli_options
         (Opal.paths+pre_locator.get_spec_load_paths).each { |p| options << "-I#{p}" }
         post_locator.get_opal_spec_requires.each          { |p| options << "-r#{p}" }
         ::Opal::Config.stubbed_files.each                 { |p| options << "-s#{p}" }
+        options += @cli_options if @cli_options
         tempfile_path = "/tmp/opal-rspec-runner-#{$$}.rb"
 
         File.write tempfile_path, [
