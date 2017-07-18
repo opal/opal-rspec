@@ -1,9 +1,9 @@
 require 'rspec'
 require 'opal/rspec/rake_task'
 require 'rack'
-require_relative 'temp_dir_helper'
+require 'mri/unit/opal/rspec/temp_dir_helper'
 
-describe Opal::RSpec::RakeTask do
+RSpec.describe Opal::RSpec::RakeTask do
   include_context :temp_dir
   let(:captured_opal_server) { {} }
 

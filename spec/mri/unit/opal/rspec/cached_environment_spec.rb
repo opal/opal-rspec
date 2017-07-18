@@ -1,9 +1,9 @@
 require 'rspec'
 require 'opal/rspec/cached_environment'
 require 'opal/rspec/sprockets_environment'
-require_relative 'temp_dir_helper'
+require 'mri/unit/opal/rspec/temp_dir_helper'
 
-describe Opal::RSpec::CachedEnvironment do
+RSpec.describe Opal::RSpec::CachedEnvironment do
   let(:pattern) { nil }
   let(:exclude_pattern) { nil }
   let(:default_path) { nil }

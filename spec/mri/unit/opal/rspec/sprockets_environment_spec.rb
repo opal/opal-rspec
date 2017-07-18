@@ -1,8 +1,8 @@
 require 'rspec'
 require 'opal/rspec/sprockets_environment'
-require_relative 'temp_dir_helper'
+require 'mri/unit/opal/rspec/temp_dir_helper'
 
-describe Opal::RSpec::SprocketsEnvironment do
+RSpec.describe Opal::RSpec::SprocketsEnvironment do
   include_context :temp_dir
   let(:args) { [] }
   subject(:env) { Opal::RSpec::SprocketsEnvironment.new *args }
