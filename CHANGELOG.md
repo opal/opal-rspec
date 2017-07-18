@@ -1,6 +1,6 @@
 ## 0.7.0 - Under development
 
-- TBD
+- Drop support for the legacy async syntax
 
 
 ## 0.6.1 - 2017-05-25
