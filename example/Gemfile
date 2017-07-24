@@ -1,4 +1,6 @@
 source 'https://rubygems.org'
 
 gem 'rake'
-gem 'opal-rspec', :path => '../'
+gem 'opal-rspec', path: '../'
+gem 'opal-sprockets', github: 'opal/opal-sprockets'
+
