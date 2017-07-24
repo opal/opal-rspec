@@ -15,11 +15,6 @@ RSpec.describe 'Opal::RSpec::BrowserFormatter', type: :feature, js: true do
     Capybara.default_max_wait_time = 40
   end
 
-  after do
-    # js_errors = error_fetcher
-    # puts "Javascript errors: #{js_errors}" if js_errors.any?
-  end
-
   it 'matches test results' do
     expect(page).to have_content '3 examples, 1 failure, 1 pending'
     expect(page).to have_content 'group'
