@@ -89,3 +89,5 @@ end
 
 require 'rspec'
 require 'mri/support/capybara'
+require 'opal'
+Opal.raise_on_deprecation = true
