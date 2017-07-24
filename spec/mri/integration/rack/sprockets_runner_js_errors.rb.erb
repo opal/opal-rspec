@@ -1,7 +1,7 @@
 # This file is used by Opal::Server to basically load all spec files that
 # can be found in the spec/ directory.
 
-require 'opal'
+
 # Hard to capture errors w/ Selenium
 %x{
   window.jsErrors = [];
@@ -10,11 +10,9 @@ require 'opal'
   };
 }
 
-require 'opal-rspec'
-
-<%
-environment.get_opal_spec_requires.each do |s| %>
-require <%= s.inspect %>
-<% end %>
+require 'opal/rspec/autorun'
 require 'opal/rspec/spec_opts'
-::RSpec::Core::Runner.autorun
+
+#ERB <% environment.get_opal_spec_requires.each do |s| %>
+require <%= s.inspect %>
+#ERB <% end %>
