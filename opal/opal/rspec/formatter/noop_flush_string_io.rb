@@ -1,3 +1,5 @@
+require 'stringio'
+
 module Opal
   module RSpec
     class NoopFlushStringIO < StringIO

@@ -1,4 +1,5 @@
 require 'opal/rspec'
+require 'opal/sprockets/server'
 
 Opal::Config.source_map_enabled = false
 Opal::Config.arity_check_enabled = true
