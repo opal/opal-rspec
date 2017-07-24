@@ -1,10 +1,12 @@
 require 'tmpdir'
 require_relative 'filter_processor'
+require_relative 'support/colors'
 
 module Opal
   module RSpec
     module OpalRSpecSpecLoader
       include Rake::DSL
+      include Colors
 
       def files_with_line_continue
         []
@@ -77,7 +79,7 @@ module Opal
           fail_with_wo_symbols = between_parens.gsub(symbol_matcher, replace_pattern)
           fail_type = match.captures[0]
           new = "#{fail_type}(#{fail_with_wo_symbols})"
-          puts "#{temp_filename} - symbol fix -replacing #{match.to_s} with #{new} in new temp file"
+          patching("symbol-fix: replacing #{match.to_s} with #{new}", temp_filename)
           new
         end
       end
@@ -96,7 +98,7 @@ module Opal
           raise "Expected to exclude #{missing_exclusions} as noted in spec_files_exclude.txt but we didn't find these files. Has RSpec been upgraded?"
         end
         files += post_requires.map { |r| File.join(base_dir, r) }
-        puts 'Running the following RSpec specs:'
+        puts color('========= Running the following RSpec specs: =========', :yellow)
         files.each { |f| puts f }
         files
       end
@@ -162,7 +164,7 @@ module Opal
                         .source
                         .gsub('/', '\/')
           replace = "/#{escaped}/m"
-          puts "Replacing multiline regex with #{replace} in new temp file #{temp_filename}"
+          patching("Replacing multiline regex with #{replace}", temp_filename)
           replace
         end
       end
@@ -190,7 +192,7 @@ module Opal
                 if (a_match = bad_regex.match existing_lines.last)
                   found_blackslash = true
                   line_num = existing_lines.length
-                  puts "Replacing trailing backlash, line #{line_num} in #{path} in new temp file #{temp_filename}"
+                  patching "Replacing trailing backlash, line #{line_num} in #{path} in new temp file", temp_filename
                   without_last_line = existing_lines[0..-2]
                   without_backlash = a_match.captures[0]
                   without_last_line << (without_backlash + ' ' + line2)

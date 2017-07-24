@@ -1,4 +1,5 @@
 require_relative '../opal_rspec_spec_loader'
+require_relative '../support/colors'
 
 module Opal
   module RSpec
@@ -62,7 +63,7 @@ module Opal
           contains_operator = /a_value [<>]/.match(body) || /a_value <=/.match(body)
           next match.to_s unless contains_operator
           fixed = "specify 'alias example #{example_number}' do\n#{body}\nend"
-          puts "#{temp_filename} - anonymous examples we cannot filter - replacing #{match.to_s} with #{fixed}"
+          Opal::RSpec::Colors.patching "anonymous examples we cannot filter - replacing #{match.to_s} with #{fixed}", temp_filename
           fixed
         end
       end
@@ -78,7 +79,7 @@ module Opal
           has_integers = integer_regex.match(match.captures[0])
           next match.to_s unless has_integers
           fixed = match.to_s.gsub(integer_regex, "\\1")
-          puts "#{temp_filename} - float/integer fix, replacing #{match.to_s} with #{fixed} in new temp file"
+          Opal::RSpec::Colors.patching "float/integer fix, replacing #{match.to_s} with #{fixed}", temp_filename
           fixed
         end
       end
