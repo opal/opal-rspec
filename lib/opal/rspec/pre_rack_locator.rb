@@ -13,11 +13,11 @@ module Opal
 
       attr_accessor :spec_pattern, :spec_exclude_pattern, :spec_files, :default_path
 
-      def initialize(spec_pattern=nil, spec_exclude_pattern=nil, spec_files=nil, default_path=nil)
-        @spec_pattern = spec_pattern || DEFAULT_PATTERN
-        @spec_exclude_pattern = spec_exclude_pattern
-        @spec_files = spec_files
-        @default_path = default_path || DEFAULT_DEFAULT_PATH
+      def initialize(pattern: nil, exclude_pattern: nil, files: nil, default_path: nil)
+        @spec_pattern         = pattern || DEFAULT_PATTERN
+        @spec_exclude_pattern = exclude_pattern
+        @spec_files           = files
+        @default_path         = default_path || DEFAULT_DEFAULT_PATH
       end
 
       def determine_root

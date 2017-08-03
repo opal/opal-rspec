@@ -5,11 +5,13 @@ module Opal
   module RSpec
     class RakeTask
       include Rake::DSL
+      DEFAULT_NAME = 'opal:rspec'
+      attr_reader :rake_task
 
-      def initialize(name = 'opal:rspec', &block)
+      def initialize(name = DEFAULT_NAME, &block)
         runner = ::Opal::RSpec::Runner.new(&block)
         desc 'Run Opal specs'
-        task name do
+        @rake_task = task name do
           sh runner.command
         end
       end

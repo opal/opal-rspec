@@ -21,7 +21,7 @@ module Opal
                      :default_path
 
       def initialize(spec_pattern=nil, spec_exclude_pattern=nil, spec_files=nil, default_path=nil)
-        @locator = RSpec::PreRackLocator.new spec_pattern, spec_exclude_pattern, spec_files, default_path
+        @locator = RSpec::PreRackLocator.new(pattern: spec_pattern, exclude_pattern: spec_exclude_pattern, files: spec_files, default_path: default_path)
         super()
       end
 
