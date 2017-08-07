@@ -3,7 +3,7 @@ require 'mri/spec_helper'
 RSpec.describe 'Opal::RSpec::BrowserFormatter', type: :feature, js: true do
   # Use Rack config exactly as shipped in the GEM
   before do
-    file = "#{__dir__}/rack/config.ru"
+    file = "#{SPEC_ROOT}/../spec-opal/browser-formatter/config.ru"
     Capybara.app = Rack::Builder.new_from_string(File.read(file), file)
   end
 

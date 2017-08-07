@@ -1,4 +1,4 @@
-describe 'Opal::RSpec::BrowserFormatter' do
+RSpec.describe 'Opal::RSpec::BrowserFormatter' do
   context 'group' do
     it 'passes' do
       expect(42).to eq 42
