@@ -8,6 +8,10 @@ module Opal
     class Runner
       attr_accessor :pattern, :exclude_pattern, :files, :default_path, :runner, :arity_checking, :spec_opts, :cli_options
 
+      def timeout= _
+        warn "deprecated: setting timeout has no effect"
+      end
+
       def arity_checking?
         setting = @arity_checking || :enabled
         setting == :enabled
