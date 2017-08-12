@@ -1,6 +1,7 @@
 require 'tmpdir'
 require_relative 'filter_processor'
 require_relative 'support/colors'
+require 'opal-rspec'
 
 module Opal
   module RSpec
@@ -51,9 +52,9 @@ module Opal
 
       def symbols_replace_regexes
         [
-            /(fail_\w+)\((.*)\)/,
-            /(expect.*description\)\.to eq)\((.*)\)/,
-            /(expect.*description\)\.to eq) (.*)/
+          /(fail_\w+)\((.*)\)/,
+          /(expect.*description\)\.to eq)\((.*)\)/,
+          /(expect.*description\)\.to eq) (.*)/
         ]
       end
 
@@ -88,7 +89,7 @@ module Opal
         exclude_these_specs = get_compact_text_expressions File.join(base_dir, 'spec_files_exclude.txt'), wrap_in_regex=false
         exclude_globs_only = exclude_these_specs.map { |f| f[:exclusion] }
         files = FileList[
-            File.join(base_dir, 'require_specs.rb'), # need our code to go in first
+            # "#{__dir__}/../../lib-opal-spec-support/opal-rspec-core/require_specs.rb", # need our code to go in first
             *spec_glob
         ].exclude(*exclude_globs_only)
         missing_exclusions = exclude_these_specs.reject do |exclude|
@@ -98,8 +99,7 @@ module Opal
           raise "Expected to exclude #{missing_exclusions} as noted in spec_files_exclude.txt but we didn't find these files. Has RSpec been upgraded?"
         end
         files += post_requires.map { |r| File.join(base_dir, r) }
-        puts color('========= Running the following RSpec specs: =========', :yellow)
-        files.each { |f| puts f }
+        files.each { |f| running_file f }
         files
       end
 
@@ -211,146 +211,51 @@ module Opal
         files_we_left_alone + fixed_temp_files
       end
 
-      def execute_specs(name)
-        command_line = "SPEC_OPTS=\"--format Opal::RSpec::ProgressJsonFormatter\" rake #{name}"
-        puts "Running #{command_line}"
-        pinger = Thread.new {
-          while true
-            sleep 60
-            puts 'still alive' # travis/keep alive
-          end
-        }
-        example_info = []
-        state = :progress
-        IO.popen(command_line).each do |line|
-          line.force_encoding 'UTF-8'
-          case state
-            when :progress
-              puts line
-            when :example_info
-              example_info << line
-          end
-          state = case line
-                    when /BEGIN JSON/
-                      :example_info
-                    else
-                      state
-                  end
-        end.close
-        pinger.exit
-        {
-          example_info: example_info,
-          success: $?.success?
-        }
+      def run_specs
+        command_line = runner.command
+        command_line = "SPEC_OPTS=\"--format Opal::RSpec::ProgressJsonFormatter\" #{command_line}"
+        # puts "Running #{command_line}"
+        lines = []
+
+        keepalive_travis do
+          IO.popen(command_line).each do |line|
+            lines << line.force_encoding('UTF-8')
+          end.close
+        end
+        success = $?.success?
+        output = lines.join
+        # default_formatted, json_formatted = output.split(/BEGIN JSON/)
+        puts output.gsub(/(\A|\n)/, '\1> ')
+
+        Result.new(output, success)
+      end
+
+      Result = Struct.new(:output, :success)
+
+      def keepalive_travis
+        return yield unless ENV['TRAVIS']
+        travis_keepalive = Thread.new { loop { sleep 60; puts 'still alive' } }
+        result = yield
+        travis_keepalive.exit
+        result
       end
 
       def parse_results(results)
-        JSON.parse results[:example_info].join("\n")
+        # JSON.parse results.output
+        JSON.parse File.read('/tmp/spec_results.json')
       end
 
-      def rake_tasks_for(name)
-        Opal::RSpec::RakeTask.new(name) do |server, task|
+      def runner
+        @runner ||= ::Opal::RSpec::Runner.new do |server, task|
           # A lot of specs, can take longer on slower machines
-          task.timeout = 80000
+          # task.timeout = 80000
           stub_requires
           task.files = sub_in_files
           task.default_path = default_path
           append_additional_load_paths server
           server.debug = ENV['OPAL_DEBUG']
+          task.requires += ["opal/rspec/upstream-specs-support/#{short_name}/require_specs"]
         end
-
-        desc "Verifies that #{name} work correctly"
-        task "verify_#{name}" do
-          results = execute_specs name
-          parsed_results = parse_results results
-          summary = parsed_results['summary']
-          total = summary['example_count']
-          failed = summary['failure_count']
-          pending = summary['pending_count']
-          actual_failures = parsed_results['examples']
-                                .select { |ex| ex['status'] == 'failed' }
-          expected_failures = get_ignored_spec_failures
-          used_exclusions = []
-          remaining_failures = actual_failures.reject do |actual|
-            expected_failures.any? do |expected|
-              exclusion = expected[:exclusion]
-              actual_descr = actual['full_description']
-              matches = case exclusion
-                          when Regexp
-                            exclusion.match actual_descr
-                          when String
-                            exclusion == actual_descr
-                          else
-                            raise "Unknown filter expression type #{exclusion.class} in #{expected}!"
-                        end
-              used_exclusions << expected if matches
-              matches
-            end
-          end
-          each_header = '----------------------------------------------------'
-          index = 0
-          remaining_failures = remaining_failures.map do |example|
-            index += 1
-            [
-                each_header,
-                "Example #{index}: #{example['full_description']}",
-                each_header,
-                example['exception']['message']
-            ].join "\n"
-          end
-          reasons = []
-          unless remaining_failures.empty?
-            reasons << 'Unexpected failures'
-          end
-          reasons << "Expected #{expected_pending_count} pending but got #{pending}" unless pending == expected_pending_count
-          reasons << 'no specs found' unless total > 0
-          reasons << 'No failures, but Rake task did not succeed' if (failed == 0 && !results[:success])
-          unused_exclusions = expected_failures.uniq - used_exclusions.uniq
-          if unused_exclusions.any?
-            msg = "WARNING: The following #{unused_exclusions.length} exclusion rules did not match an actual failure. Time to update exclusions? Duplicate exclusions??\n" +
-                unused_exclusions.map { |e| "File: #{e[:filename]}\nLine #{e[:line_number]}\nFilter: #{e[:exclusion]}" }.join("\n---------------------\n")
-            reasons << msg
-          end
-          passing = total - failed - pending
-          percentage = ((passing.to_f / total) * 100).round(1)
-          if reasons.empty?
-            puts 'Test successful!'
-            puts "#{total} total specs, #{failed} expected failures, #{pending} expected pending"
-            puts "Passing percentage: #{percentage}%"
-          else
-            puts "Test FAILED for the following reasons:\n"
-            puts reasons.join "\n\n"
-            if remaining_failures.any?
-              puts
-              puts "Unexpected failures:\n\n#{remaining_failures.join("\n")}\n"
-            end
-            puts '-----------Summary-----------'
-            puts "Total passed count: #{passing}"
-            puts "Pending count #{pending}"
-            puts "Total 'failure' count: #{actual_failures.length}"
-            puts "Passing percentage: #{percentage}%"
-            puts "Unexpected failure count: #{remaining_failures.length}"
-            raise 'Test failed!'
-          end
-        end
-      end
-
-      def run_rack_server(rack)
-        only_name = self.name.split('::').last
-
-        files = sub_in_files
-        sprockets_env = Opal::RSpec::SprocketsEnvironment.new(spec_pattern=nil, spec_exclude_pattern=nil, spec_files=files)
-        sprockets_env.default_path = default_path
-        sprockets_env.cache = ::Sprockets::Cache::FileStore.new(File.join('tmp', 'cache', only_name))
-        Opal::Config.arity_check_enabled = true
-        rack.run Opal::Server.new(sprockets: sprockets_env) { |s|
-                   s.main = 'opal/rspec/sprockets_runner'
-                   stub_requires
-                   append_additional_load_paths s
-                   sprockets_env.add_spec_paths_to_sprockets
-                   s.debug = ENV['OPAL_DEBUG']
-                   s.source_map = ENV['OPAL_DEBUG'] != nil
-                 }
       end
 
       private

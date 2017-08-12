@@ -6,7 +6,7 @@ require 'socket'
 module Opal
   module RSpec
     class Runner
-      attr_accessor :pattern, :exclude_pattern, :files, :default_path, :runner, :arity_checking, :spec_opts, :cli_options
+      attr_accessor :pattern, :requires, :exclude_pattern, :files, :default_path, :runner, :arity_checking, :spec_opts, :cli_options
 
       def timeout= _
         warn "deprecated: setting timeout has no effect"
@@ -19,6 +19,10 @@ module Opal
 
       def runner
         (@runner ||= ENV['RUNNER']).to_s
+      end
+
+      def requires
+        @requires ||= []
       end
 
       def spec_opts
@@ -49,7 +53,7 @@ module Opal
         def to_cli_options
           options = []
           @paths.map do |path|
-            options << "-r#{path.shellescape}"
+            options << "-I#{path.shellescape}"
           end
           options
         end
@@ -61,8 +65,7 @@ module Opal
 
         raise 'Cannot supply both a pattern and files!' if self.files and self.pattern
 
-        pre_locator = RSpec::PreRackLocator.new pattern: self.pattern, exclude_pattern: self.exclude_pattern, files: self.files, default_path: self.default_path
-        post_locator = RSpec::PostRackLocator.new pre_locator
+        locator = ::Opal::RSpec::Locator.new pattern: self.pattern, exclude_pattern: self.exclude_pattern, files: self.files, default_path: self.default_path
 
         options = []
         options << '--arity-check' if arity_checking?
@@ -70,9 +73,13 @@ module Opal
         options << '-ropal/platform'
         options << '-ropal-rspec'
         options += @legacy_server_proxy.to_cli_options
-        (Opal.paths+pre_locator.get_spec_load_paths).each { |p| options << "-I#{p}" }
-        post_locator.get_opal_spec_requires.each          { |p| options << "-r#{p}" }
-        ::Opal::Config.stubbed_files.each                 { |p| options << "-s#{p}" }
+
+        Opal.paths.each                     { |p| options << "-I#{p}" }
+        locator.get_spec_load_paths.each    { |p| options << "-I#{p}" }
+        requires.each                       { |p| options << "-r#{p}" }
+        locator.get_opal_spec_requires.each { |p| options << "-r#{p}" }
+        ::Opal::Config.stubbed_files.each   { |p| options << "-s#{p}" }
+
         options += @cli_options if @cli_options
         bootstrap_code = [
           ::Opal::RSpec.spec_opts_code(spec_opts),

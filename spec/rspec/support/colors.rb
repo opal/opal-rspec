@@ -20,9 +20,15 @@ module Opal::RSpec::Colors
   end
 
   def patching text, filename = nil
+    return unless $DEBUG
     filename = File.basename filename if filename
     text = "[patch][#{filename}] #{text}"
     _height, width = IO.console.winsize
     puts color(text.size > width ? text[0...width-1]+'…' : text, :cyan)
+  end
+
+  def running_file filename
+    return unless $DEBUG
+    puts color("[running] #{filename}", :yellow)
   end
 end

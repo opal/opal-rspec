@@ -19,7 +19,7 @@ module Opal
       end
 
       def self.spec_glob
-        %w{rspec-expectations/spec/**/*_spec.rb spec/rspec/expectations/opal_alternates/**/*_spec.rb}
+        %w{rspec-expectations/spec/**/*_spec.rb spec-opal-rspec/expectations/**/*_spec.rb}
       end
 
       def self.files_with_line_continue

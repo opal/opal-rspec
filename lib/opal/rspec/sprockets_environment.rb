@@ -1,7 +1,7 @@
 require 'sprockets'
 require 'pathname'
 require 'opal/rspec/cached_environment'
-require 'opal/rspec/pre_rack_locator'
+require 'opal/rspec/locator'
 require 'forwardable'
 
 module Opal
@@ -21,12 +21,14 @@ module Opal
                      :default_path
 
       def initialize(spec_pattern=nil, spec_exclude_pattern=nil, spec_files=nil, default_path=nil)
-        @locator = RSpec::PreRackLocator.new(pattern: spec_pattern, exclude_pattern: spec_exclude_pattern, files: spec_files, default_path: default_path)
+        @locator = Opal::RSpec::Locator.new(pattern: spec_pattern, exclude_pattern: spec_exclude_pattern, files: spec_files, default_path: default_path)
         super()
       end
 
+      attr_reader :locator
+
       def add_spec_paths_to_sprockets
-        @locator.get_spec_load_paths.each { |p| append_path p }
+        locator.get_spec_load_paths.each { |p| append_path p }
       end
 
       def cached

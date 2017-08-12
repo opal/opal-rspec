@@ -2,9 +2,10 @@ require 'opal'
 require 'opal-sprockets'
 require 'opal/rspec/version'
 require 'opal/rspec/sprockets_environment'
+require 'opal/rspec/runner'
 
 # Just register our opal code path with opal build tools
-Opal.append_path File.expand_path('../../../opal', __FILE__)
+Opal.append_path File.expand_path('../../../lib-opal', __FILE__)
 Opal.append_path File.expand_path('../../../stubs', __FILE__)
 
 # Catch our git submodule included directories
@@ -29,7 +30,7 @@ module Opal
           code << "config.instance_variable_set(:@color, #{color_value})"
         end
 
-        if (requires = spec_opts.scan(/--require \S+/)).any?
+        if (requires = spec_opts.scan(/(?:--require|-r) \S+/)).any?
           requires.map {|r| /--require (.*)/.match(r).captures[0]}.each do |req|
             code << %{require "#{req}"}
           end
