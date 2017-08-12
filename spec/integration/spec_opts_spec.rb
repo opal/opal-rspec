@@ -1,7 +1,7 @@
-require 'rspec'
+require 'spec_helper'
 require 'json'
 
-describe 'spec_opts' do
+RSpec.describe 'spec_opts' do
   let(:rake_task) { 'other_specs' }
   subject(:output) { `SPEC_OPTS="#{spec_opts}" rake #{rake_task}` }
 

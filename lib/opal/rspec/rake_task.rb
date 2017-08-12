@@ -5,7 +5,7 @@ module Opal
   module RSpec
     class RakeTask
       include Rake::DSL
-      DEFAULT_NAME = 'opal:rspec'
+      DEFAULT_NAME = 'spec:opal'
       attr_reader :rake_task
 
       def initialize(name = DEFAULT_NAME, &block)

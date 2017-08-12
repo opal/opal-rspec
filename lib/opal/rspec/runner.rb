@@ -66,6 +66,7 @@ module Opal
 
         options = []
         options << '--arity-check' if arity_checking?
+        # options << '--no-exit'
         options += ['--runner', runner] unless runner.empty?
         options << '-ropal/platform'
         options << '-ropal-rspec'

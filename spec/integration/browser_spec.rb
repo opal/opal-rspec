@@ -1,8 +1,8 @@
-require 'mri/spec_helper'
+require 'spec_helper'
 
 RSpec.describe 'browser formatter', type: :feature do
   before do
-    file = "#{__dir__}/rack/config.ru"
+    file = "#{__dir__}/browser_spec.ru"
     Capybara.app = Rack::Builder.new_from_string(File.read(file), file)
   end
 
@@ -13,7 +13,7 @@ RSpec.describe 'browser formatter', type: :feature do
   end
 
   after do
-    js_errors = page.evaluate_script('window.jsErrors')
+    js_errors = page.evaluate_script('window.jsErrors') || []
     puts "Javascript errors: #{js_errors}" if js_errors.any?
   end
 

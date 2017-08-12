@@ -11,9 +11,9 @@ module RSpec::Core
           def ok?; true; end
           def not_ok?; false; end
 
-          it { should eq(self) }
-          it { should be_ok }
-          it { should_not be_not_ok }
+          it { is_expected.to eq(self) }
+          it { is_expected.to be_ok }
+          it { is_expected.to_not be_not_ok }
         end
 
         #expect(group.run).to be true

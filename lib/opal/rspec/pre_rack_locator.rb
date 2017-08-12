@@ -8,8 +8,8 @@ module Opal
     class PreRackLocator
       include ::RSpec::Core::RubyProject
 
-      DEFAULT_PATTERN = 'spec/**/*_spec.{rb,opal}'
-      DEFAULT_DEFAULT_PATH = 'spec'
+      DEFAULT_PATTERN = 'spec-opal/**/*_spec.{rb,opal}'
+      DEFAULT_DEFAULT_PATH = 'spec-opal'
 
       attr_accessor :spec_pattern, :spec_exclude_pattern, :spec_files, :default_path
 

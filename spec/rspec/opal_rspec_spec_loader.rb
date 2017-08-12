@@ -98,8 +98,7 @@ module Opal
           raise "Expected to exclude #{missing_exclusions} as noted in spec_files_exclude.txt but we didn't find these files. Has RSpec been upgraded?"
         end
         files += post_requires.map { |r| File.join(base_dir, r) }
-        puts color('========= Running the following RSpec specs: =========', :yellow)
-        files.each { |f| puts f }
+        files.each { |f| running_file f }
         files
       end
 

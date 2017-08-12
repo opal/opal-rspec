@@ -1,7 +1,7 @@
-require 'mri/spec_helper'
+require 'spec_helper'
 require 'rspec'
 require 'opal/rspec/runner'
-require 'mri/unit/opal/rspec/temp_dir_helper'
+require 'unit/opal/rspec/temp_dir_helper'
 
 RSpec.describe Opal::RSpec::Runner do
   include_context :temp_dir
@@ -150,7 +150,7 @@ RSpec.describe Opal::RSpec::Runner do
   context 'pattern and files' do
     let(:expected_to_run) { false }
     let(:files) { FileList['spec/other/**/*_spec.rb', 'util/**/*.rb'] }
-    let(:pattern) { 'spec/opal/**/*hooks_spec.rb' }
+    let(:pattern) { 'spec-opal/**/*hooks_spec.rb' }
     subject { described_class.new { |_, task| task.files = files; task.pattern = pattern } }
 
     it 'cannot accept both files and a pattern' do

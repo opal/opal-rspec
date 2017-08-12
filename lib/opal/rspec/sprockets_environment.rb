@@ -25,8 +25,10 @@ module Opal
         super()
       end
 
+      attr_reader :locator
+
       def add_spec_paths_to_sprockets
-        @locator.get_spec_load_paths.each { |p| append_path p }
+        locator.get_spec_load_paths.each { |p| append_path p }
       end
 
       def cached

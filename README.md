@@ -124,7 +124,7 @@ server. Add the following to a `config.ru` file (see config.ru in this GEM):
 
 ```ruby
 require 'opal/rspec'
-# or use Opal::RSpec::SprocketsEnvironment.new(spec_pattern='spec/opal/**/*_spec.{rb,opal}') to customize the pattern
+# or use Opal::RSpec::SprocketsEnvironment.new(spec_pattern='spec-opal/**/*_spec.{rb,opal}') to customize the pattern
 sprockets_env = Opal::RSpec::SprocketsEnvironment.new
 run Opal::Server.new(sprockets: sprockets_env) { |s|
   s.main = 'opal/rspec/sprockets_runner'
