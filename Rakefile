@@ -50,8 +50,7 @@ end
 
 desc 'Unit tests for MRI focused components of opal-rspec'
 RSpec::Core::RakeTask.new :unit_specs do |t|
-  t.pattern = 'spec/unit/**/*_spec.rb'
-  t.exclude_pattern = 'spec/unit/opal/rspec/opal/**/*'
+  t.pattern = 'spec/opal/rspec/**/*_spec.rb'
 end
 
 desc 'A more limited spec suite to test pattern usage'

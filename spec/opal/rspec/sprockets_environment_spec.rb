@@ -1,6 +1,6 @@
 require 'rspec'
 require 'opal/rspec/sprockets_environment'
-require 'unit/opal/rspec/temp_dir_helper'
+require 'opal/rspec/temp_dir_helper'
 
 RSpec.describe Opal::RSpec::SprocketsEnvironment do
   include_context :temp_dir
