@@ -43,6 +43,7 @@ end
 # Rake.application.last_comment was removed in Rake v12.0
 # https://github.com/ruby/rake/commit/e76242ce7ef94568399a50b69bda4b723dab7c75
 def (Rake.application).last_comment; last_description; end unless Rake.application.respond_to? :last_comment
+
 desc 'Runs a test to test browser based specs using Opal specs in spec-opal'
 RSpec::Core::RakeTask.new :integration_specs do |t|
   t.pattern = 'spec/integration/**/*_spec.rb'
