@@ -33,23 +33,23 @@ RSpec.describe Opal::RSpec::SprocketsEnvironment do
 
     context 'default path not set' do
       before do
-        create_dummy_spec_files 'spec/foobar/dummy_spec.rb', 'spec/foobar/ignored_spec.opal'
+        create_dummy_spec_files 'spec-opal/foobar/dummy_spec.rb', 'spec-opal/foobar/ignored_spec.opal'
       end
 
-      let(:pattern) { 'spec/foobar/**/*_spec.rb' }
+      let(:pattern) { 'spec-opal/foobar/**/*_spec.rb' }
 
-      it { is_expected.to have_pathnames ['spec'] }
+      it { is_expected.to have_pathnames ['spec-opal'] }
     end
 
     context 'default path set' do
       before do
-        create_dummy_spec_files 'spec/foobar/dummy_spec.rb', 'spec/foobar/ignored_spec.opal'
+        create_dummy_spec_files 'spec-opal/foobar/dummy_spec.rb', 'spec-opal/foobar/ignored_spec.opal'
       end
 
-      let(:pattern) { 'spec/foobar/**/*_spec.rb' }
-      let(:default_path) { 'spec/foobar' }
+      let(:pattern) { 'spec-opal/foobar/**/*_spec.rb' }
+      let(:default_path) { 'spec-opal/foobar' }
 
-      it { is_expected.to have_pathnames ['spec/foobar'] }
+      it { is_expected.to have_pathnames ['spec-opal/foobar'] }
     end
   end
 end

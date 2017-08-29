@@ -23,28 +23,28 @@ RSpec.describe Opal::RSpec::CachedEnvironment do
 
     context 'no default path set' do
       before do
-        create_dummy_spec_files 'spec/foobar/dummy_spec.rb', 'spec/foobar/ignored_spec.opal'
+        create_dummy_spec_files 'spec-opal/foobar/dummy_spec.rb', 'spec-opal/foobar/ignored_spec.opal'
       end
 
-      let(:pattern) { 'spec/foobar/**/*_spec.rb' }
+      let(:pattern) { 'spec-opal/foobar/**/*_spec.rb' }
 
       it { is_expected.to eq ['foobar/dummy_spec'] }
     end
 
     context 'default path set' do
       before do
-        create_dummy_spec_files 'spec/foobar/dummy_spec.rb', 'spec/foobar/ignored_spec.opal'
+        create_dummy_spec_files 'spec-opal/foobar/dummy_spec.rb', 'spec-opal/foobar/ignored_spec.opal'
       end
 
-      let(:pattern) { 'spec/foobar/**/*_spec.rb' }
-      let(:default_path) { 'spec/foobar' }
+      let(:pattern) { 'spec-opal/foobar/**/*_spec.rb' }
+      let(:default_path) { 'spec-opal/foobar' }
 
       it { is_expected.to eq ['dummy_spec'] }
     end
 
     context 'multiple pattern' do
       before do
-        create_dummy_spec_files 'spec/foobar/hello1_spec.rb', 'spec/foobar/hello2_spec.rb', 'spec/foobar/bye1_spec.rb', 'spec/foobar/bye2_spec.rb'
+        create_dummy_spec_files 'spec-opal/foobar/hello1_spec.rb', 'spec-opal/foobar/hello2_spec.rb', 'spec-opal/foobar/bye1_spec.rb', 'spec-opal/foobar/bye2_spec.rb'
       end
 
       let(:pattern) { %w(**/*/*1_spec.rb **/*/bye*_spec.rb) }
@@ -54,10 +54,10 @@ RSpec.describe Opal::RSpec::CachedEnvironment do
 
     context 'exclude pattern' do
       before do
-        create_dummy_spec_files 'spec/foobar/hello1_spec.rb', 'spec/foobar/hello2_spec.rb', 'spec/foobar/bye1_spec.rb', 'spec/foobar/bye2_spec.rb'
+        create_dummy_spec_files 'spec-opal/foobar/hello1_spec.rb', 'spec-opal/foobar/hello2_spec.rb', 'spec-opal/foobar/bye1_spec.rb', 'spec-opal/foobar/bye2_spec.rb'
       end
 
-      let(:pattern) { 'spec/**/*_spec.rb' }
+      let(:pattern) { 'spec-opal/**/*_spec.rb' }
 
       context 'single' do
         let(:exclude_pattern) { '**/*/*1_spec.rb' }
@@ -74,10 +74,10 @@ RSpec.describe Opal::RSpec::CachedEnvironment do
 
     context 'files' do
       before do
-        create_dummy_spec_files 'spec/foobar/hello1_spec.rb', 'spec/foobar/hello2_spec.rb', 'spec/foobar/bye1_spec.rb', 'spec/foobar/bye2_spec.rb'
+        create_dummy_spec_files 'spec-opal/foobar/hello1_spec.rb', 'spec-opal/foobar/hello2_spec.rb', 'spec-opal/foobar/bye1_spec.rb', 'spec-opal/foobar/bye2_spec.rb'
       end
 
-      let(:files) { FileList['spec/**/h*_spec.rb'] }
+      let(:files) { FileList['spec-opal/**/h*_spec.rb'] }
 
       it { is_expected.to eq %w(foobar/hello1_spec foobar/hello2_spec) }
     end

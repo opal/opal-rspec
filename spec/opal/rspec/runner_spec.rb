@@ -1,3 +1,4 @@
+require 'shellwords'
 require 'spec_helper'
 require 'rspec'
 require 'opal/rspec/runner'
@@ -57,19 +58,19 @@ RSpec.describe Opal::RSpec::Runner do
     end
   end
 
-#   let(:invoked_runners) { [] }
-#   let(:task_name) { :foobar }
-#   let(:expected_to_run) { true }
-#
+  # let(:invoked_runners) { [] }
+  # let(:task_name) { :foobar }
+  # let(:expected_to_run) { true }
+
   context 'default options' do
-    before { create_dummy_spec_files 'spec/something/dummy_spec.rb' }
+    before { create_dummy_spec_files 'spec-opal/something/dummy_spec.rb' }
     let(:command) { subject.command }
 
     it 'has default options' do
       expect(command).not_to include(' -R')
       expect(command).not_to include(' --runner')
-      expect(command).to include(" -I#{temp_dir}/spec ")
-      expect(subject).to require_opal_specs("#{temp_dir}/spec/something/dummy_spec.rb")
+      expect(command).to include(" -I#{temp_dir}/spec-opal ")
+      expect(subject).to require_opal_specs("#{temp_dir}/spec-opal/something/dummy_spec.rb")
     end
   end
 
