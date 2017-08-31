@@ -61,8 +61,7 @@ module Opal
 
         raise 'Cannot supply both a pattern and files!' if self.files and self.pattern
 
-        pre_locator = RSpec::PreRackLocator.new pattern: self.pattern, exclude_pattern: self.exclude_pattern, files: self.files, default_path: self.default_path
-        post_locator = RSpec::PostRackLocator.new pre_locator
+        locator = ::Opal::RSpec::Locator.new pattern: self.pattern, exclude_pattern: self.exclude_pattern, files: self.files, default_path: self.default_path
 
         options = []
         options << '--arity-check' if arity_checking?
@@ -71,9 +70,11 @@ module Opal
         options << '-ropal/platform'
         options << '-ropal-rspec'
         options += @legacy_server_proxy.to_cli_options
-        (Opal.paths+pre_locator.get_spec_load_paths).each { |p| options << "-I#{p}" }
-        post_locator.get_opal_spec_requires.each          { |p| options << "-r#{p}" }
-        ::Opal::Config.stubbed_files.each                 { |p| options << "-s#{p}" }
+
+        (Opal.paths+locator.get_spec_load_paths).each { |p| options << "-I#{p}" }
+        locator.get_opal_spec_requires.each           { |p| options << "-r#{p}" }
+        ::Opal::Config.stubbed_files.each             { |p| options << "-s#{p}" }
+
         options += @cli_options if @cli_options
         bootstrap_code = [
           ::Opal::RSpec.spec_opts_code(spec_opts),

@@ -1,14 +1,13 @@
 require 'sprockets'
-require 'opal/rspec/post_rack_locator'
 
 module Opal
   module RSpec
     class CachedEnvironment < ::Sprockets::CachedEnvironment
       # this class is accessible from the ERB/runner file
 
-      def initialize(env, pre_run_locator)
+      def initialize(env, locator)
         super env
-        @locator = RSpec::PostRackLocator.new(pre_run_locator)
+        @locator = locator
       end
 
       def get_opal_spec_requires

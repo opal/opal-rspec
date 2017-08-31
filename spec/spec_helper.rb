@@ -90,5 +90,6 @@ end
 require 'rspec'
 require 'support/capybara'
 require 'opal'
+require 'opal/rspec'
 Opal.raise_on_deprecation = true
 SPEC_ROOT = __dir__
