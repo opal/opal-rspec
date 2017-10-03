@@ -2,6 +2,8 @@ require 'shellwords'
 require 'opal/rspec'
 require 'tempfile'
 require 'socket'
+require 'opal/cli_options'
+require 'opal/cli'
 
 module Opal
   module RSpec
@@ -86,7 +88,7 @@ module Opal
           '::RSpec::Core::Runner.autorun',
         ].join(';')
 
-        @command = "opal #{options.map(&:shellescape).join ' '} -e #{bootstrap_code.shellescape}"
+        @args = "#{options.map(&:shellescape).join ' '} -e #{bootstrap_code.shellescape}"
       end
 
       def options
@@ -101,13 +103,24 @@ module Opal
         }
       end
 
-
       def command
-        @command
+        @command ||= "opal #{@args}"
+      end
+
+      def cli_options
+        @cli_options ||= begin
+          option_parser = Opal::CLIOptions.new
+          option_parser.parse!(@args.shellsplit)
+          option_parser.options
+        end
+      end
+
+      def cli
+        @cli ||= ::Opal::CLI.new(cli_options)
       end
 
       def run
-        system command
+        cli.run
       end
     end
   end

@@ -55,6 +55,6 @@ runner = Opal::RSpec::Runner.new do |server, config|
   config.files        = files
 end
 
-puts runner.command
+# puts runner.command
 runner.run
 
