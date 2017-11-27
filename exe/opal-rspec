@@ -38,6 +38,13 @@ OptionParser.new do |parser|
             '  be a path to a file or a directory).') do |path|
     options[:default_path] = path
   end
+
+  parser.separator 'Opal specific options:'
+
+  parser.on('-R', '--runner NAME', 'Use a different JS runner (default is nodejs)') do |name|
+    options[:runner] = name
+  end
+
 end.parse!
 # p options: options
 
