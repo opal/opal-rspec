@@ -36,7 +36,8 @@ module Opal
         name = server.main
         asset = sprockets[name]
         raise "Cannot find asset: #{name}" if asset.nil?
-        Opal::Sprockets.load_asset name, sprockets
+        # Opal::Sprockets.load_asset name, sprockets
+        ''
       end
 
       class LegacyServerProxy
