@@ -37,7 +37,7 @@ end
 desc 'Generates an RSpec requires file free of dynamic requires'
 task :generate_requires do
   # Do this free of any requires used to make this Rake task happen
-  sh 'ruby -Irspec/lib -Irspec-core/lib/rspec -Irspec-support/lib/rspec util/create_requires.rb'
+  sh 'bin/generate_requires'
 end
 
 # Rake.application.last_comment was removed in Rake v12.0

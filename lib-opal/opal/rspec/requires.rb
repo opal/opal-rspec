@@ -1,4 +1,5 @@
-# Generated automatically by util/normalize_requires.rb, triggered by Rake task :generate_requires, do not edit
+# Generated automatically by bin/generate_requires
+require 'cgi/escape'
 require 'cgi/util'
 require 'diff/lcs'
 require 'diff/lcs/block'
@@ -139,6 +140,8 @@ require 'rspec/support/ruby_features'
 require 'rspec/support/version'
 require 'rspec/support/warnings'
 require 'rspec/version'
+require 'rubygems/bundler_version_finder'
+require 'rubygems/util'
 require 'set'
 require 'shellwords'
 require 'stringio'
