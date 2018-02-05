@@ -200,7 +200,7 @@ module Opal
 
       class Result < Struct.new(:exit_status, :output, :json)
         def quoted_output
-          output.gsub(/(\A|\n)/, '\1> ')
+          "> "+output.gsub(/(\n)/, '\1> ')
         end
 
         def successful?

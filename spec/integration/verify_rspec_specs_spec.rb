@@ -6,16 +6,19 @@ RSpec.describe 'RSpec specs:' do
   def expect_results_to_be(expected_results)
     results = run_specs
     failures = results.json[:examples].select { |ex| ex[:status] == 'failed' }
-
-    unless failures.empty?
-      puts "=========== Output of failed run ============"
-      puts results.quoted_output
-      puts "============================================="
-    end
+    print_results(results) unless failures.empty?
 
     expect(results.json[:summary_line]).to eq(expected_results)
     expect(failures).to eq([])
     expect(results).to be_successful
+  rescue
+    print_results(results)
+  end
+
+  def print_results(results)
+    puts "=========== Output of failed run ============"
+    puts results.quoted_output
+    puts "============================================="
   end
 
   def spec_glob
