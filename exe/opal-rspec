@@ -28,8 +28,8 @@ OptionParser.new do |parser|
     options[:requires] << path
   end
   parser.on('-I PATH', 'Specify PATH to add to $LOAD_PATH (may be used more than once).') do |dir|
-    options[:libs] ||= []
-    options[:libs] << dir
+    options[:includes] ||= []
+    options[:includes] << dir
   end
   parser.on('-P', '--pattern PATTERN', 'Load files matching pattern (default: "spec-opal/**/*_spec.rb").') do |o|
     options[:pattern] = o
