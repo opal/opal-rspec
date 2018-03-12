@@ -36,11 +36,9 @@ module OpalFilters
   end
 end
 
-
 RSpec.configure do |config|
   config.around(:each) do |example|
-    p example.full_description if example.full_description.include? 'when closing the formatter'
-
+    # puts '|||'+example.full_description+'|||' if example.full_description.include? 'when a custom order'
     pending OpalFilters.pending_message(example) if OpalFilters.filtered?(example)
     example.call
   end

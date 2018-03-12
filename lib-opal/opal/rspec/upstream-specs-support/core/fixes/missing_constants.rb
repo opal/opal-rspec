@@ -2,6 +2,10 @@ def Dir.[](_glob)
   []
 end
 
+def Dir.mktmpdir(*)
+  ''
+end
+
 module Aruba
   module Api
   end
@@ -28,4 +32,3 @@ class OptionParser
   def parse!(_opts)
   end
 end
-

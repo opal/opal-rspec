@@ -9,33 +9,24 @@ module Opal
       include Rake::DSL
       include Colors
 
-      def files_with_multiline_regex
-        []
-      end
-
       def additional_load_paths
-        []
+        ["lib-opal-spec-support"]
       end
 
       def post_requires
         []
       end
 
-      def get_ignored_spec_failures
-        text_based = FileList[File.join(base_dir, 'filter/**/*.txt')].map do |filename|
-          get_compact_text_expressions filename, wrap_in_regex=true
-        end.flatten
-        processor = FilterProcessor.new
-        FileList[File.join(base_dir, 'filter/**/*.rb')].exclude('**/sandbox/**/*').each do |filename|
-          processor.filename = filename
-          contents = File.read filename
-          processor.instance_eval contents
-        end
-        text_based + processor.all_filters
-      end
-
       def stub_requires
-        stubbed_requires.each { |f| ::Opal::Config.stubbed_files << f }
+        [
+          'rubygems',
+          'aruba/api', # Cucumber lib that supports file creation during testing, N/A for us
+          'simplecov', # hooks aren't available on Opal
+          'tmpdir',
+          'rspec/support/spec/shell_out', # only does stuff Opal can't support anyways
+          'rspec/support/spec/prevent_load_time_warnings',
+          'timeout',
+        ].each { |f| ::Opal::Config.stubbed_files << f }
       end
 
       def symbols_replace_regexes
@@ -48,29 +39,6 @@ module Opal
 
       def symbol_do_not_replace_regexes
         []
-      end
-
-      def symbols_in_expectations(files)
-        matching = symbols_replace_regexes
-        # fail_with(/expected .* to respond to :some_method/)
-        replace_with_regex matching, 'fix symbols in message expectations', files, symbol_files do |match, temp_filename|
-          next match.to_s if symbol_do_not_replace_regexes.any? { |exp| exp.match match.to_s }
-          # Don't want to match #<Object:.*>
-          between_parens = match.captures[1]
-          symbol_matcher = /:([a-zA-Z]\w*)/
-          next match.to_s unless symbol_matcher.match(between_parens)
-          # Escape quotes if in a string
-          replace_pattern = if between_parens.start_with? '"'
-                              "\\\"\\1\\\""
-                            else
-                              "\"\\1\""
-                            end
-          fail_with_wo_symbols = between_parens.gsub(symbol_matcher, replace_pattern)
-          fail_type = match.captures[0]
-          new = "#{fail_type}(#{fail_with_wo_symbols})"
-          patching("symbol-fix: replacing #{match.to_s} with #{new}", temp_filename)
-          new
-        end
       end
 
       def get_file_list
@@ -91,24 +59,12 @@ module Opal
         files
       end
 
-      def append_additional_load_paths(server)
-        baseline = [base_dir, 'spec/rspec/shared']
-        baseline += tmp_load_paths
-        (baseline + additional_load_paths).each { |p| server.append_path p }
-      end
-
       def get_tmp_load_path_dir
         dir = Dir.mktmpdir
-        at_exit do
-          FileUtils.remove_entry dir
-        end
+        at_exit { FileUtils.remove_entry dir }
         # something was clearing this if it was added via Opal.append_path, so save it
         tmp_load_paths << dir
         dir
-      end
-
-      def tmp_load_paths
-        @tmp_load_paths ||= []
       end
 
       def replace_with_regex(regex, description, starting_file_set, files_to_replace)
@@ -143,40 +99,17 @@ module Opal
 
       # https://github.com/opal/opal/issues/1125
       def remove_multiline_regexes(files)
-        replace_with_regex /(%r%$.*%)$/m, 'fix multiline regex', files, files_with_multiline_regex do |match, temp_filename|
-          multi_line_regex = match
-                                 .captures[0]
-                                 .gsub("\n", '')
+        replace_with_regex /(%r%$.*%)$/m, 'fix multiline regex', files, [] do |match, temp_filename|
+          multi_line_regex = match.captures[0].gsub("\n", '')
           parsed = instance_eval multi_line_regex # can just have ruby do this for us
-          escaped = parsed
-                        .source
-                        .gsub('/', '\/')
+          escaped = parsed.source.gsub('/', '\/')
           replace = "/#{escaped}/m"
           patching("Replacing multiline regex with #{replace}", temp_filename)
           replace
         end
       end
 
-      def sub_in_files
-        files = get_file_list
-        remove_multiline_regexes files
-      end
-
       def run_specs
-        # command_line = runner.command
-        # # command_line = "SPEC_OPTS=\"--format Opal::RSpec::ProgressJsonFormatter\" #{command_line}"
-        # command_line = "bundle exec #{command_line}"
-        # puts "Running #{command_line}"
-        # lines = []
-
-        # keepalive_travis do
-        #   IO.popen(command_line).each do |line|
-        #     lines << line.force_encoding('UTF-8')
-        #   end.close
-        # end
-        # success = $?.success?
-        # output = lines.join
-        # default_formatted, json_formatted = output.split(/BEGIN JSON/)
         output_io = StringIO.new
         previous_stdout = $stdout
         previous_stderr = $stderr
@@ -226,21 +159,22 @@ module Opal
         "spec/rspec/#{short_name}"
       end
 
-      def default_path
-        "rspec-#{short_name}/spec"
-      end
-
-
       def runner
         @runner ||= ::Opal::RSpec::Runner.new do |server, task|
           # A lot of specs, can take longer on slower machines
           # task.timeout = 80000
           stub_requires
+          sub_in_files = remove_multiline_regexes(get_file_list)
+
           task.files = sub_in_files
-          task.default_path = default_path
-          append_additional_load_paths server
+          task.default_path = "rspec-#{short_name}/spec"
+          ([base_dir, 'spec/rspec/shared'] + additional_load_paths).each do |path|
+            server.append_path path
+          end
           server.debug = ENV['OPAL_DEBUG']
-          task.requires += ["opal/rspec/upstream-specs-support/#{short_name}/require_specs"]
+          task.requires.unshift "opal/rspec/upstream-specs-support/#{short_name}/require_specs"
+          warn *task.requires
+          # warn *sub_in_files
         end
       end
 
@@ -251,9 +185,9 @@ module Opal
         File.read(filename).split("\n").map do |line|
           line_num += 1
           {
-              exclusion: line,
-              filename: filename,
-              line_number: line_num
+            exclusion: line,
+            filename: filename,
+            line_number: line_num
           }
         end.reject do |line|
           exclusion = line[:exclusion]

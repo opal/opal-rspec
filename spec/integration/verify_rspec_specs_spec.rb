@@ -25,33 +25,12 @@ RSpec.describe 'RSpec specs:' do
     ["rspec-#{short_name}/spec/**/*_spec.rb",]
   end
 
-  def stubbed_requires
-    [
-      'rubygems',
-      'aruba/api', # Cucumber lib that supports file creation during testing, N/A for us
-      'simplecov', # hooks aren't available on Opal
-      'tmpdir',
-      'rspec/support/spec/shell_out', # only does stuff Opal can't support anyways
-      'rspec/support/spec/prevent_load_time_warnings',
-      'timeout',
-    ]
-  end
-
-  def additional_load_paths
-    [
-      # 'rspec-core/spec' # a few spec support files live outside of rspec-core/spec/rspec and live in support
-      # "#{__dir__}../../../lib-opal-spec-support",
-      "lib-opal-spec-support",
-    ]
-  end
-
-
   context 'Core' do
     include Opal::RSpec::OpalRSpecSpecLoader
     let(:short_name) { 'core' }
 
     it 'runs correctly' do
-      expect_results_to_be("727 examples, 0 failures, 111 pending")
+      expect_results_to_be('801 examples, 0 failures, 139 pending')
     end
   end
 
@@ -60,7 +39,7 @@ RSpec.describe 'RSpec specs:' do
     let(:short_name) { 'support' }
 
     it 'runs correctly' do
-      expect_results_to_be("66 examples, 0 failures, 14 pending")
+      expect_results_to_be('66 examples, 0 failures, 14 pending')
     end
   end
 
@@ -69,7 +48,7 @@ RSpec.describe 'RSpec specs:' do
     let(:short_name) { 'expectations' }
 
     it 'runs correctly' do
-      expect_results_to_be("65 examples, 0 failures, 13 pending")
+      expect_results_to_be('65 examples, 0 failures, 13 pending')
     end
   end
 
