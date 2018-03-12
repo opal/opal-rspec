@@ -10,7 +10,7 @@ class ::RSpec::Core::ExampleGroup
   def delay_with_promise(duration, &block)
     result = Promise.new
     delay(duration) { result.resolve }
-    result.then &block
+    result.then(&block)
   end
 
   def self.process_descendants(our_examples_result, reporter)

@@ -212,19 +212,24 @@ module Opal
       end
 
       def run_specs
-        command_line = runner.command
-        command_line = "SPEC_OPTS=\"--format Opal::RSpec::ProgressJsonFormatter\" #{command_line}"
+        # command_line = runner.command
+        # # command_line = "SPEC_OPTS=\"--format Opal::RSpec::ProgressJsonFormatter\" #{command_line}"
+        # command_line = "bundle exec #{command_line}"
         # puts "Running #{command_line}"
-        lines = []
+        # lines = []
 
-        keepalive_travis do
-          IO.popen(command_line).each do |line|
-            lines << line.force_encoding('UTF-8')
-          end.close
-        end
-        success = $?.success?
-        output = lines.join
+        # keepalive_travis do
+        #   IO.popen(command_line).each do |line|
+        #     lines << line.force_encoding('UTF-8')
+        #   end.close
+        # end
+        # success = $?.success?
+        # output = lines.join
         # default_formatted, json_formatted = output.split(/BEGIN JSON/)
+
+        $stdout = StringIO.new
+        output = cli.run
+
         puts output.gsub(/(\A|\n)/, '\1> ')
 
         Result.new(output, success)

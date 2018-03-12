@@ -58,7 +58,7 @@ Opal::RSpec::RakeTask.new(:color_on_by_default) do |_, task|
   task.pattern = 'spec-opal/other/color_on_by_default_spec.rb'
 end
 
-Opal::RSpec::CoreSpecLoader.rake_tasks_for(:rspec_core_specs)
+# Opal::RSpec::CoreSpecLoader.rake_tasks_for(:rspec_core_specs)
 # Opal::RSpec::ExpectationSpecLoader.rake_tasks_for(:rspec_expectation_specs)
 # Opal::RSpec::SupportSpecLoader.rake_tasks_for(:rspec_support_specs)
 # Opal::RSpec::MocksSpecLoader.rake_tasks_for(:rspec_mocks_specs)

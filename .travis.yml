@@ -10,35 +10,35 @@ cache:
 matrix:
   fast_finish: true
 
-  include:
-    - rvm: 2.2.4
-      env: RUN=mri_sanity_check
-    - rvm: 2.3.4
-      env: RUN=mri_sanity_check
-    - rvm: 2.4.1
-      env: RUN=mri_sanity_check
-    - rvm: 2.4.1
-      env: RUN=rake_only
-    - rvm: 2.4.1
-      # PHANTOMJS env variable is not used but it makes it easier to differentiate this build in Travis
-      env: PHANTOMJS=2.1 RUN=rake_only
-      before_install:
-        # Attempt to work around Travis issues and Ruby 2.3 - https://github.com/vcr/vcr/issues/582
-        - gem update --system
-        - "export PATH=`pwd`/node_modules/phantomjs-prebuilt/bin:$PATH"
-        - "echo $PATH"
-        - phantomjs -v | grep 2.1 || npm install phantomjs-prebuilt # get rate limits from bitbucket download source, so get from NPM if we don't have it already
-    - rvm: 2.4.1
-      env: RUNNER=node RUN=rake_only
-    - rvm: 2.4.1
-      env: RUN=rake_only
-      gemfile: gemfiles/opal_master.gemfile
-    - rvm: 2.4.1
-      env: RUN=rake_only
-      gemfile: gemfiles/opal_0.10_stable.gemfile
-
-  allow_failures:
-    - gemfile: gemfiles/opal_master.gemfile
+  # include:
+  #   - rvm: 2.2.4
+  #     env: RUN=mri_sanity_check
+  #   - rvm: 2.3.4
+  #     env: RUN=mri_sanity_check
+  #   - rvm: 2.4.1
+  #     env: RUN=mri_sanity_check
+  #   - rvm: 2.4.1
+  #     env: RUN=rake_only
+  #   - rvm: 2.4.1
+  #     # PHANTOMJS env variable is not used but it makes it easier to differentiate this build in Travis
+  #     env: PHANTOMJS=2.1 RUN=rake_only
+  #     before_install:
+  #       # Attempt to work around Travis issues and Ruby 2.3 - https://github.com/vcr/vcr/issues/582
+  #       - gem update --system
+  #       - "export PATH=`pwd`/node_modules/phantomjs-prebuilt/bin:$PATH"
+  #       - "echo $PATH"
+  #       - phantomjs -v | grep 2.1 || npm install phantomjs-prebuilt # get rate limits from bitbucket download source, so get from NPM if we don't have it already
+  #   - rvm: 2.4.1
+  #     env: RUNNER=node RUN=rake_only
+  #   - rvm: 2.4.1
+  #     env: RUN=rake_only
+  #     gemfile: gemfiles/opal_master.gemfile
+  #   - rvm: 2.4.1
+  #     env: RUN=rake_only
+  #     gemfile: gemfiles/opal_0.10_stable.gemfile
+  #
+  # allow_failures:
+  #   - gemfile: gemfiles/opal_master.gemfile
 
 before_install:
   # Attempt to work around Travis issues and Ruby 2.3 - https://github.com/vcr/vcr/issues/582
@@ -59,8 +59,7 @@ before_install:
 #   - "node -v"
 #   - "firefox --version"
 
-notifications:
-  irc: "irc.freenode.org#opal"
-
 script:
-  - "bundle exec rake $RUN"
+  # - "bundle exec rake $RUN"
+  - "bundle exec rspec spec/opal/rspec/cached_environment_spec.rb"
+  - "bundle exec exe/opal-rspec spec-opal-passing"

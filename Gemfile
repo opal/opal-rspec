@@ -13,7 +13,7 @@ end
 # else
 #   gem 'opal', opal_version
 # end
-gem 'opal', path: '../opal'
+gem 'opal', github: 'opal', branch: :master
 gem 'opal-sprockets', github: 'opal/opal-sprockets'
 
 # These need to come from our local path in order for create_requires.rb to work properly

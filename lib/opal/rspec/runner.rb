@@ -49,6 +49,11 @@ module Opal
           @paths << path
         end
 
+        def index_path=path
+          @index_path = path
+        end
+        attr_reader :index_path
+
         # noop options
         attr_accessor :debug
 
