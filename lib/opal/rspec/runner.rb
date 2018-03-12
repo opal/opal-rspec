@@ -80,6 +80,7 @@ module Opal
         options += ['--runner', runner] unless runner.empty?
         options << '-ropal/platform'
         options << '-ropal-rspec'
+        options << '--missing-require=ignore'
         options += @legacy_server_proxy.to_cli_options
 
         Opal.paths.each                     { |p| options << "-I#{p}" }
