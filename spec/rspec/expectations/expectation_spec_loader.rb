@@ -22,10 +22,6 @@ module Opal
         %w{rspec-expectations/spec/**/*_spec.rb spec-opal-rspec/expectations/**/*_spec.rb}
       end
 
-      def self.files_with_line_continue
-        [/matchers\/dsl_spec.rb/]
-      end
-
       def self.files_with_multiline_regex
         [/matchers\/built_in\/match_spec.rb/]
       end

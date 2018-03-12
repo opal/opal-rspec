@@ -13,10 +13,6 @@ module Opal
         'spec/rspec/mocks'
       end
 
-      def self.files_with_line_continue
-        []
-      end
-
       def self.default_path
         'rspec-mocks/spec'
       end

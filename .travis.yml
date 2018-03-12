@@ -61,5 +61,5 @@ before_install:
 
 script:
   # - "bundle exec rake $RUN"
-  - "bundle exec rspec spec/opal/rspec/cached_environment_spec.rb"
+  - "bundle exec rspec spec/opal/rspec/cached_environment_spec.rb spec/integration/verify_rspec_specs_spec.rb"
   - "bundle exec exe/opal-rspec spec-opal-passing"

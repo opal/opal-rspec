@@ -15,10 +15,6 @@ module Opal
         'spec-opal-rspec/rspec/support'
       end
 
-      def files_with_line_continue
-        [/support\/method_signature_verifier_spec.rb/]
-      end
-
       def default_path
         'rspec-support/spec'
       end

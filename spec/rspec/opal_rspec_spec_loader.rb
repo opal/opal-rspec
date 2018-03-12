@@ -9,15 +9,7 @@ module Opal
       include Rake::DSL
       include Colors
 
-      def files_with_line_continue
-        []
-      end
-
       def files_with_multiline_regex
-        []
-      end
-
-      def unstub_requires
         []
       end
 
@@ -44,10 +36,6 @@ module Opal
 
       def stub_requires
         stubbed_requires.each { |f| ::Opal::Config.stubbed_files << f }
-        unstub_requires.each do |f|
-          puts "Unstubbing #{f} per test request"
-          ::Opal::Config.stubbed_files.delete f
-        end
       end
 
       def symbols_replace_regexes
@@ -171,44 +159,7 @@ module Opal
 
       def sub_in_files
         files = get_file_list
-        with_sub = sub_in_end_of_line files
-        remove_multiline_regexes with_sub
-      end
-
-      # https://github.com/opal/opal/issues/821
-      def sub_in_end_of_line(files)
-        bad_regex = /^(.*)\\$/
-        fix_these_files = files.select { |f| files_with_line_continue.any? { |regex| regex.match(f) } }
-        return files unless fix_these_files.any?
-        dir = get_tmp_load_path_dir
-        missing = []
-        fixed_temp_files = fix_these_files.map do |path|
-          temp_filename = File.join dir, File.basename(path)
-          found_blackslash = false
-          File.open path, 'r' do |input_file|
-            File.open temp_filename, 'w' do |output_file|
-              fixed_lines = input_file.inject do |line1, line2|
-                existing_lines = [*line1]
-                if (a_match = bad_regex.match existing_lines.last)
-                  found_blackslash = true
-                  line_num = existing_lines.length
-                  patching "Replacing trailing backlash, line #{line_num} in #{path} in new temp file", temp_filename
-                  without_last_line = existing_lines[0..-2]
-                  without_backlash = a_match.captures[0]
-                  without_last_line << (without_backlash + ' ' + line2)
-                else
-                  existing_lines << line2
-                end
-              end
-              fixed_lines.each { |l| output_file << l }
-            end
-          end
-          missing << path unless found_blackslash
-          temp_filename
-        end
-        raise "Expected to fix blackslash continuation in #{fix_these_files} but we didn't find any backslashes in #{missing}. Check if RSpec has been upgraded (maybe those blackslashes are gone??)" if missing.any?
-        files_we_left_alone = files - fix_these_files
-        files_we_left_alone + fixed_temp_files
+        remove_multiline_regexes files
       end
 
       def run_specs
@@ -226,16 +177,42 @@ module Opal
         # success = $?.success?
         # output = lines.join
         # default_formatted, json_formatted = output.split(/BEGIN JSON/)
+        output_io = StringIO.new
+        previous_stdout = $stdout
+        previous_stderr = $stderr
+        $stdout = output_io
+        $stderr = output_io
+        begin
+          exit_status = runner.run
+        ensure
+          $stdout = previous_stdout
+          $stderr = previous_stderr
+        end
 
-        $stdout = StringIO.new
-        output = cli.run
+        output_io.rewind
 
-        puts output.gsub(/(\A|\n)/, '\1> ')
-
-        Result.new(output, success)
+        Result.new(
+          exit_status,
+          output_io.read,
+          JSON.parse(File.read('/tmp/spec_results.json'), symbolize_names: true),
+        )
       end
 
-      Result = Struct.new(:output, :success)
+      class Result < Struct.new(:exit_status, :output, :json)
+        def quoted_output
+          output.gsub(/(\A|\n)/, '\1> ')
+        end
+
+        def successful?
+          exit_status == 0
+        end
+
+        def inspect
+          "#<struct #{self.class.name} exit_status=#{exit_status} summary=#{json[:summary_line].inspect}>"
+        end
+
+        alias to_s inspect
+      end
 
       def keepalive_travis
         return yield unless ENV['TRAVIS']
@@ -245,10 +222,14 @@ module Opal
         result
       end
 
-      def parse_results(results)
-        # JSON.parse results.output
-        JSON.parse File.read('/tmp/spec_results.json')
+      def base_dir
+        "spec/rspec/#{short_name}"
       end
+
+      def default_path
+        "rspec-#{short_name}/spec"
+      end
+
 
       def runner
         @runner ||= ::Opal::RSpec::Runner.new do |server, task|

@@ -126,6 +126,7 @@ module Opal
       end
 
       def run
+        ENV['OPAL_CLI_RUNNERS_SERVER_STATIC_FOLDER'] = default_path
         cli.run
       end
     end

@@ -10,8 +10,6 @@ module ::RSpec
         message += " Called from #{call_site}." if call_site
         ::Kernel.warn message
       end
-
-      alias_method :support_warn_with, :warn_with
     end
   end
   extend RSpec::Support::Warnings
