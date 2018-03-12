@@ -1,0 +1,3 @@
+#!/usr/bin/env ruby
+
+exec 'bundle', 'exec', 'opal', *ARGV
