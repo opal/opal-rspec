@@ -26,6 +26,7 @@ module Opal
           'rspec/support/spec/shell_out', # only does stuff Opal can't support anyways
           'rspec/support/spec/prevent_load_time_warnings',
           'timeout',
+          'yaml',
         ].each { |f| ::Opal::Config.stubbed_files << f }
       end
 

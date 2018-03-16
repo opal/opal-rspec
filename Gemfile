@@ -22,3 +22,5 @@ gem 'rspec-support',      path: 'rspec-support'
 gem 'rspec-core',         path: 'rspec-core'
 gem 'rspec-mocks',        path: 'rspec-mocks'
 gem 'rspec-expectations', path: 'rspec-expectations'
+
+gem 'pry'

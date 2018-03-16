@@ -21,25 +21,44 @@ module OpalFilters
     @name = old_name
   end
 
-  def fails full_description, note = nil
+  FIXME = 'FIXME'
+
+  def fails(full_description, note = nil)
     note = "#{name}: #{note || FIXME}"
     @filters[full_description] = note || full_description
   end
 
-  def filtered?(example)
-    @filters[example.full_description]
+  alias fails_context fails
+
+  def filtered?(full_description)
+    @filters[full_description]
   end
 
-  def pending_message(example)
-    note = @filters[example.full_description]
+  def pending_message(full_description)
+    note = @filters[full_description]
     "#{@name}: #{note}"
   end
 end
 
+module SkipContextSupport
+  def context(description, *args, &block)
+    full_description = metadata[:full_description] + ' ' + description
+    if OpalFilters.filtered?(full_description)
+      puts "SKIPPING #{full_description}"
+    else
+      super
+    end
+  end
+end
+
 RSpec.configure do |config|
+  config.extend(SkipContextSupport)
+
   config.around(:each) do |example|
-    # puts '|||'+example.full_description+'|||' if example.full_description.include? 'when a custom order'
-    pending OpalFilters.pending_message(example) if OpalFilters.filtered?(example)
-    example.call
+    if OpalFilters.filtered?(example.full_description)
+      pending OpalFilters.pending_message(example.full_description)
+    else
+      example.call
+    end
   end
 end
