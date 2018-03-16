@@ -11,11 +11,13 @@ RSpec.describe 'RSpec specs:' do
     expect(results.json[:summary_line]).to eq(expected_results)
     expect(failures).to eq([])
     expect(results).to be_successful
-  rescue
+  rescue => e
     print_results(results)
+    raise e
   end
 
   def print_results(results)
+    return if results.nil?
     puts "=========== Output of failed run ============"
     puts results.quoted_output
     puts "============================================="
@@ -52,4 +54,12 @@ RSpec.describe 'RSpec specs:' do
     end
   end
 
+  context 'Mocks' do
+    include Opal::RSpec::OpalRSpecSpecLoader
+    let(:short_name) { 'mocks' }
+
+    it 'runs correctly' do
+      expect_results_to_be('1306 examples, 0 failures, 102 pending')
+    end
+  end
 end
