@@ -55,10 +55,26 @@ RSpec.configure do |config|
   config.extend(SkipContextSupport)
 
   config.around(:each) do |example|
-    if OpalFilters.filtered?(example.full_description)
-      pending OpalFilters.pending_message(example.full_description)
+    desc = example.full_description
+    pending_message = OpalFilters.pending_message(desc)
+
+    if OpalFilters.filtered?(desc)
+      pending(pending_message)
     else
       example.call
+
+      # Hacky hack: some examples don't have description (like it {})
+      # and RSpec generates it *after* running the test
+      # (basically it generates it from the expectation)
+      desc = example.full_description
+      pending_message = OpalFilters.pending_message(desc)
+      if OpalFilters.filtered?(desc)
+        # Flushing instance variable `@exception`
+        # allows marking the test as pending after running
+        # (Note: newer versions of RSpec don't require it)
+        RSpec.current_example.instance_variable_set(:@exception, nil)
+        pending("In runtime: #{pending_message}")
+      end
     end
   end
 end
