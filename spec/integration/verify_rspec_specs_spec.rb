@@ -32,7 +32,7 @@ RSpec.describe 'RSpec specs:' do
     let(:short_name) { 'core' }
 
     it 'runs correctly' do
-      expect_results_to_be('801 examples, 0 failures, 139 pending')
+      expect_results_to_be('976 examples, 0 failures, 186 pending')
     end
   end
 
