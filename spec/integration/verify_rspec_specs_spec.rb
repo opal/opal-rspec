@@ -50,7 +50,7 @@ RSpec.describe 'RSpec specs:' do
     let(:short_name) { 'expectations' }
 
     it 'runs correctly' do
-      expect_results_to_be('65 examples, 0 failures, 13 pending')
+      expect_results_to_be('1775 examples, 0 failures, 172 pending')
     end
   end
 

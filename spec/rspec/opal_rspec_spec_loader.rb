@@ -27,6 +27,7 @@ module Opal
           'rspec/support/spec/prevent_load_time_warnings',
           'timeout',
           'yaml',
+          'support/capybara',
         ].each { |f| ::Opal::Config.stubbed_files << f }
       end
 
