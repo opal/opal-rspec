@@ -19,7 +19,12 @@ require 'rspec/support/ruby_features'
 require 'fixes/missing_constants'
 require 'fixes/shared_examples'
 require 'rspec/support/spec'
-require 'opal/rspec/upstream-specs-support/support/config'
 require 'opal/fixes/deprecation_helpers'
 require 'opal/fixes/rspec_helpers'
-require 'opal/rspec/upstream-specs-support/support/filters'
+require 'filters'
+
+RSpec.configure do |c|
+  #c.full_description = 'uses the default color for the shared example backtrace line'
+  c.add_formatter RSpec::Core::Formatters::JsonFormatter, '/tmp/spec_results.json'
+  c.add_formatter RSpec::Core::Formatters::ProgressFormatter, $stdout
+end
