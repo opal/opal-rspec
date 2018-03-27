@@ -2,7 +2,7 @@
 	path = rspec/upstream
 	url = https://github.com/rspec/rspec.git
 [submodule "rspec-support"]
-	path = rspec-support
+	path = rspec-support/upstream
 	url = https://github.com/rspec/rspec-support.git
 [submodule "rspec-core"]
 	path = rspec-core
