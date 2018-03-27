@@ -1,5 +1,5 @@
 [submodule "rspec"]
-	path = rspec
+	path = rspec/upstream
 	url = https://github.com/rspec/rspec.git
 [submodule "rspec-support"]
 	path = rspec-support
