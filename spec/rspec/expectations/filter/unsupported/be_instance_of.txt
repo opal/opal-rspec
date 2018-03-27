@@ -1,3 +1,0 @@
-# Fixnum/Numeric
-expect\(actual\).to be_an_instance_of\(expected\) provides a description
-expect\(actual\).to be_instance_of\(expected\) provides a description

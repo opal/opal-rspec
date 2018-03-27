@@ -1,3 +1,0 @@
-# these tests are using symbols but in Opal symbols are strings
-RSpec::Expectations::Syntax when passing a message to an expectation expect\(...\).to prints a warning when the message object isn't a String
-RSpec::Expectations::Syntax when passing a message to an expectation expect\(...\).not_to prints a warning when the message object isn't a String

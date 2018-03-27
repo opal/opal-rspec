@@ -3,7 +3,11 @@ class ::RSpec::Core::Ordering::Random
   HIDE_RANDOM_WARNINGS = true
 end
 
-`Opal.loaded(['support/capybara'])`
+class Proc
+  def source_location
+    ['(dummy)', 0]
+  end
+end
 
 require 'corelib/marshal'
 require 'rspec/core'
@@ -19,5 +23,10 @@ require 'fixes/shared_examples'
 require 'support/matchers'
 require 'support/shared_examples'
 require 'spec_helper'
-require_relative 'config'
-require_relative 'filters'
+require 'filters'
+
+RSpec.configure do |c|
+  #c.full_description = 'uses the default color for the shared example backtrace line'
+  c.add_formatter RSpec::Core::Formatters::JsonFormatter, '/tmp/spec_results.json'
+  c.add_formatter RSpec::Core::Formatters::ProgressFormatter, $stdout
+end

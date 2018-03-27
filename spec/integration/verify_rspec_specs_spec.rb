@@ -34,8 +34,8 @@ RSpec.describe 'RSpec specs:' do
     end
   end
 
-  xcontext 'Expectations' do
-    it 'runs correctly', gem_name: 'expectations' do
+  context 'Expectations' do
+    it 'runs correctly', gem_name: 'rspec-expectations' do
       expect_results_to_be('1775 examples, 0 failures, 172 pending')
     end
   end

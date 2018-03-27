@@ -1,2 +1,0 @@
-# Depends on the DelegateClass working properly (and Opal's doesn't work right with respond_to?)
-arbitrary predicate with DelegateClass accesses methods defined in the delegating class.*

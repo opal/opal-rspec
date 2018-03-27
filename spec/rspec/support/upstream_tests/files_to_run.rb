@@ -10,7 +10,7 @@ class Opal::RSpec::UpstreamTests::FilesToRun
   private
 
   def submodule_root
-    File.expand_path("../../../../#{@gem_name}", __FILE__)
+    File.expand_path("../../../../../#{@gem_name}", __FILE__)
   end
 
   def gem_root
