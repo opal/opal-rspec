@@ -1,3 +1,0 @@
-# line numbers
-RSpec::Core::World#preceding_declaration_line \(again\) with one example returns line number of an example that immediately precedes the argument line
-RSpec::Core::World#preceding_declaration_line \(again\) with one example returns the argument line number if an example starts on that line

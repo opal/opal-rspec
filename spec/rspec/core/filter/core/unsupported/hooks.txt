@@ -1,2 +1,0 @@
-# line number / back trace
-RSpec::Core::Hooks#around when it does not run the example indicates which around hook did not run the example in the pending message

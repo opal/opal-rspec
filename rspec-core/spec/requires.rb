@@ -21,7 +21,21 @@ require 'fixes/sandboxing'
 require 'fixes/missing_constants'
 require 'fixes/shared_examples'
 require 'rspec/support/spec'
-require 'opal/rspec/upstream-specs-support/core/config'
 require 'opal/fixes/deprecation_helpers'
 require 'opal/fixes/rspec_helpers'
-require 'opal/rspec/upstream-specs-support/core/filters'
+require 'filters'
+
+module StubWriteFile
+  def write_file(filename, content)
+    # noop
+  end
+end
+
+RSpec.configure do |config|
+  #c.full_description = 'uses the default color for the shared example backtrace line'
+  config.add_formatter RSpec::Core::Formatters::JsonFormatter, '/tmp/spec_results.json'
+  config.add_formatter RSpec::Core::Formatters::ProgressFormatter, $stdout
+  config.include StubWriteFile
+  config.filter_run_excluding type: :drb
+  config.filter_run_excluding isolated_directory: true
+end

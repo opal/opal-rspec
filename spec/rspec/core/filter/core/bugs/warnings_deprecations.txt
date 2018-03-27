@@ -1,3 +1,0 @@
-# https://github.com/opal/opal/issues/568 - long standing issue that hasn't been fixed
-rspec warnings and deprecations #warn_with when :use_spec_location_as_call_site => true is passed adds the source location of spec
-rspec warnings and deprecations #warn_with when :use_spec_location_as_call_site => true is passed appends a period to the supplied message if one is not present
