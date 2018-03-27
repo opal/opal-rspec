@@ -1,2 +1,0 @@
-# Something with raise_error not working here
-RSpec::Support::StdErrSplitter will fail an example which generates a warning

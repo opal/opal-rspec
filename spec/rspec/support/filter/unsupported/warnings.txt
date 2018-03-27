@@ -1,6 +1,0 @@
-# can't run ruby in isolation to test this
-rspec warnings and deprecations works when required in isolation
-
-# backtrace / line numbers
-rspec warnings and deprecations #warning it should behave like warning helper sets the calling line
-rspec warnings and deprecations #warn_with message, options it should behave like warning helper sets the calling line
