@@ -22,8 +22,8 @@ RSpec.describe 'RSpec specs:' do
     puts "============================================="
   end
 
-  xcontext 'Core' do
-    it 'runs correctly', gem_name: 'core' do
+  context 'Core' do
+    it 'runs correctly', gem_name: 'rspec-core' do
       expect_results_to_be('976 examples, 0 failures, 186 pending')
     end
   end

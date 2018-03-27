@@ -8,6 +8,8 @@ class Opal::RSpec::UpstreamTests::Runner
     @config.stubs.each { |f| ::Opal::Config.stubbed_files << f }
 
     output, exit_status = StdoutCapturingRunner.run { opal_rspec_runner.run }
+    # opal_rspec_runner.run
+    # exit(1)
 
     Opal::RSpec::UpstreamTests::Result.new(
       exit_status,
@@ -42,7 +44,7 @@ class Opal::RSpec::UpstreamTests::Runner
       # task.timeout = 80000
 
       task.files = @config.files_to_run
-      task.default_path = "rspec-#{@gem_name}/spec"
+      task.default_path = "#{@gem_name}/upstream/spec"
 
       @config.load_paths.each do |path|
         server.append_path(path)
