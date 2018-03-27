@@ -5,7 +5,7 @@
 	path = rspec-support/upstream
 	url = https://github.com/rspec/rspec-support.git
 [submodule "rspec-core"]
-	path = rspec-core
+	path = rspec-core/upstream
 	url = https://github.com/rspec/rspec-core.git
 [submodule "rspec-mocks"]
 	path = rspec-mocks
