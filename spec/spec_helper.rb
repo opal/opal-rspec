@@ -89,6 +89,7 @@ end
 
 require 'rspec'
 require 'support/capybara'
+require 'support/upstream_tests'
 require 'opal'
 require 'opal/rspec'
 Opal.raise_on_deprecation = true

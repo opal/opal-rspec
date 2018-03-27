@@ -2,7 +2,7 @@ require 'pathname'
 require 'rake'
 # require the bundled RSpec's file and don't rely on the load path in case opal-rspec is included in a project's
 # Gemfile without rspec also being in the Gemfile
-require_relative '../../../rspec-core/lib/rspec/core/ruby_project'
+require_relative '../../../rspec-core/upstream/lib/rspec/core/ruby_project'
 
 module Opal
   module RSpec
