@@ -1,4 +1,4 @@
-require 'opal/rspec/upstream-specs-support/opal_filters'
+require 'opal_filters'
 
 OpalFilters.group('Bugs') do
   fails "#have_attributes matcher expect(...).to have_attributes(with_multiple_attributes) fails if target does not responds to any of the attributes"

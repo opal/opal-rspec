@@ -1,4 +1,4 @@
-require 'opal/rspec/upstream-specs-support/opal_filters'
+require 'opal_filters'
 
 OpalFilters.group('Bugs') do
   fails "RSpec::Support::StdErrSplitter will fail an example which generates a warning",  "expected Exception with message matching /Warnings were generated:/ but nothing was raised"

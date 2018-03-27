@@ -1,4 +1,4 @@
-require 'opal/rspec/upstream-specs-support/opal_filters'
+require 'opal_filters'
 
 OpalFilters.group("Bugs: Backtrace") do
   fails "RSpec::Core::World#preceding_declaration_line (again) with one example returns the argument line number if an example starts on that line",  "expected: 1"

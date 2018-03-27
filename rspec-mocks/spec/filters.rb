@@ -1,4 +1,4 @@
-require 'opal/rspec/upstream-specs-support/opal_filters'
+require 'opal_filters'
 
 OpalFilters.group("Bugs") do
   fails "#any_instance setting a message expectation does not set the expectation on every instance"
