@@ -1,2 +1,0 @@
-# class_double issues
-After a test double has been torn down for a class_double.*

@@ -1,2 +1,0 @@
-# no timeout in opal
-expect\(array\).to contain_exactly\(\*other_array\) fails a match of 11 items with duplicates in a reasonable amount of time

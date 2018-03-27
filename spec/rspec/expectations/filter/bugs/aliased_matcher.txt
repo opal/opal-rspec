@@ -1,2 +1,0 @@
-# something w/ inheritance is wrong here
-RSpec::Matchers::AliasedMatcher can get a method object for delegated methods

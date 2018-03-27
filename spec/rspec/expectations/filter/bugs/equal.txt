@@ -1,3 +1,0 @@
-# Long standing issue with doing defined?(@instance_var) - See https://github.com/opal/opal/blob/master/lib/opal/nodes/defined.rb, compile_ivar method
-# RSpec::Matchers::BuiltIn::BaseMatcher#description does one of these and when @expected is nil, it will not appear defined but it should be
-equal when the expected object is falsey in conditinal semantics describes itself with the expected object

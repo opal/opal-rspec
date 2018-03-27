@@ -1,5 +1,0 @@
-# issues with any_instance on Opal
-Using the legacy should syntax #any_instance.*
-
-# stubbing a class method
-Using the legacy should syntax #unstub restores the correct implementations when stubbed and unstubbed on a parent and child class

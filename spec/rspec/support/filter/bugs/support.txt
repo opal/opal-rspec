@@ -1,2 +1,0 @@
-# can't deal with anonymous classes that inherit from BasicObject in Opal right now, but this is probably an edge case for now (see sandbox/basic_object.rb)
-RSpec::Support.method_handle_for\(object, method_name\) for a BasicObject subclass.*

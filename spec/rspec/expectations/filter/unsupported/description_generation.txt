@@ -1,6 +1,0 @@
-# Symbols are strings
-Matchers should be able to generate their own descriptions expect\(...\).to have_key
-Matchers should be able to generate their own descriptions expect\(...\).not_to eql
-
-# throw not in Opal
-Matchers should be able to generate their own descriptions expect\(...\).to throw symbol.*

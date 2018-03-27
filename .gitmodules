@@ -1,15 +1,15 @@
 [submodule "rspec"]
-	path = rspec
+	path = rspec/upstream
 	url = https://github.com/rspec/rspec.git
 [submodule "rspec-support"]
-	path = rspec-support
+	path = rspec-support/upstream
 	url = https://github.com/rspec/rspec-support.git
 [submodule "rspec-core"]
-	path = rspec-core
+	path = rspec-core/upstream
 	url = https://github.com/rspec/rspec-core.git
 [submodule "rspec-mocks"]
-	path = rspec-mocks
+	path = rspec-mocks/upstream
 	url = https://github.com/rspec/rspec-mocks.git
 [submodule "rspec-expectations"]
-	path = rspec-expectations
+	path = rspec-expectations/upstream
 	url = https://github.com/rspec/rspec-expectations.git

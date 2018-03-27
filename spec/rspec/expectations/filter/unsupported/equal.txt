@@ -1,3 +1,0 @@
-# == and .equal? on Opal are still largely the same
-equal suggests the `eq` matcher on failure
-equal does not match when \!actual.equal\?\(expected\)

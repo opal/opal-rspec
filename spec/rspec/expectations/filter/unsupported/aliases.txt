@@ -1,5 +1,0 @@
-# opal symbols are strings
-RSpec::Matchers should have an alias for "have attributes \{\\"age\\" => 32\}" with description: "an object having attributes \{:age => 32\}"
-RSpec::Matchers should have an alias for "include \{\\"a\\" => 5\}" with description: "a hash including \{:a => 5\}"
-RSpec::Matchers should have an alias for "throw foo" with description: "a block throwing :foo"
-RSpec::Matchers should have an alias for "throw foo" with description: "throwing :foo"

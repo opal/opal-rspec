@@ -1,5 +1,0 @@
-# in opal, currently can't undefine methods in a module when that module has been included in other classes (in this case, the example group) - see sandbox/undef.rb
-RSpec::Expectations::Configuration configuring rspec-expectations directly behaves like configuring the expectation syntax can limit the syntax to :should
-RSpec::Expectations::Configuration configuring rspec-expectations directly behaves like configuring the expectation syntax can limit the syntax to :expect
-RSpec::Expectations::Configuration configuring using the rspec-core config API behaves like configuring the expectation syntax can limit the syntax to :should
-RSpec::Expectations::Configuration configuring using the rspec-core config API behaves like configuring the expectation syntax can limit the syntax to :expect

@@ -1,1 +1,0 @@
-Using the legacy should syntax #should_receive with an options hash reports the file and line submitted with :expected_from
