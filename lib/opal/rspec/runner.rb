@@ -95,12 +95,6 @@ module Opal
           '::RSpec::Core::Runner.autorun',
         ].join(';')
 
-        # File.open('run', 'w') do |f|
-        #   f.puts("opal \\")
-        #   options.each { |o| f.puts("  #{o} \\") }
-        #   f.puts "  -e '#{bootstrap_code}'"
-        # end
-
         @args = "#{options.map(&:shellescape).join ' '} -e #{bootstrap_code.shellescape}"
       end
 
