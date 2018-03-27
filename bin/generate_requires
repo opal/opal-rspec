@@ -1,11 +1,11 @@
 #!/usr/bin/env ruby
 
 ROOT = "#{__dir__}/.."
-$LOAD_PATH.unshift "#{ROOT}/rspec/lib"
-$LOAD_PATH.unshift "#{ROOT}/rspec-core/lib"
-$LOAD_PATH.unshift "#{ROOT}/rspec-expectations/lib"
-$LOAD_PATH.unshift "#{ROOT}/rspec-mocks/lib"
-$LOAD_PATH.unshift "#{ROOT}/rspec-support/lib"
+$LOAD_PATH.unshift "#{ROOT}/rspec/upstream/lib"
+$LOAD_PATH.unshift "#{ROOT}/rspec-core/upstream/lib"
+$LOAD_PATH.unshift "#{ROOT}/rspec-expectations/upstream/lib"
+$LOAD_PATH.unshift "#{ROOT}/rspec-mocks/upstream/lib"
+$LOAD_PATH.unshift "#{ROOT}/rspec-support/upstream/lib"
 
 require 'json'
 require 'pathname'
@@ -16,8 +16,8 @@ Object.send(:remove_const, :Random)
 # These scripts allow a leaner top level spec (like noted here)
 BASE_FILES = %w{rspec rspec/mocks rspec/expectations rspec/core rspec/core/mocking_adapters/rspec}
 FORMATTERS = %w{base_formatter base_text_formatter progress_formatter documentation_formatter html_printer json_formatter}.map {|f| "rspec/core/formatters/#{f}"}
-MATCHERS = Dir.glob('rspec-expectations/lib/rspec/matchers/built_in/**/*.rb').map do |each_file|
-  path = Pathname.new(each_file).relative_path_from(Pathname.new('rspec-expectations/lib')).to_s
+MATCHERS = Dir.glob('rspec-expectations/upstream/lib/rspec/matchers/built_in/**/*.rb').map do |each_file|
+  path = Pathname.new(each_file).relative_path_from(Pathname.new('rspec-expectations/upstream/lib')).to_s
   path.sub File.extname(path), ''
 end
 MOCK_STUFF = %w{matchers/expectation_customization any_instance}.map { |f| "rspec/mocks/#{f}" }
@@ -25,7 +25,7 @@ REQUIRES = BASE_FILES + FORMATTERS + MATCHERS + MOCK_STUFF
 
 # Should not need to edit below this
 
-ROOTS = Dir[__dir__+'/../rspec{,-{core,expectations,mocks,support}}/lib'].map {|root| File.expand_path(root)}
+ROOTS = Dir[__dir__+'/../rspec{,-{core,expectations,mocks,support}}/upstream/lib'].map {|root| File.expand_path(root)}
 ROOTS_REGEXP = /\A(#{ROOTS.map {|r| Regexp.escape r}.join('|')})\//
 
 module Kernel
