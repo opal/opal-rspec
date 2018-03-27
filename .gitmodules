@@ -11,5 +11,5 @@
 	path = rspec-mocks/upstream
 	url = https://github.com/rspec/rspec-mocks.git
 [submodule "rspec-expectations"]
-	path = rspec-expectations
+	path = rspec-expectations/upstream
 	url = https://github.com/rspec/rspec-expectations.git
