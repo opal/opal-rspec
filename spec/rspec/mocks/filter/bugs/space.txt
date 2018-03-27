@@ -1,2 +1,0 @@
-# any_instance
-RSpec::Mocks::Space#any_instance_recorder_for returns the recorder for the given class

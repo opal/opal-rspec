@@ -1,2 +1,0 @@
-# symbols == strings
-RSpec::Mocks::Matchers::HaveReceived expect\(...\).to have_received ordered when used on individually allowed messages fails when the messages are received out of order

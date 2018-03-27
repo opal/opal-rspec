@@ -1,2 +1,0 @@
-# some sort of inheritance problem, not sure what
-RSpec::Mocks::InstanceMethodStasher only stashes methods directly defined on the given class, not its ancestors
