@@ -40,7 +40,7 @@ RSpec.describe 'RSpec specs:' do
     end
   end
 
-  xcontext 'Mocks' do
+  context 'Mocks' do
     it 'runs correctly', gem_name: 'rspec-mocks' do
       expect_results_to_be('1306 examples, 0 failures, 102 pending')
     end
