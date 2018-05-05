@@ -1,5 +1,6 @@
-appraise 'opal-0.10-stable' do
-  gem 'opal', git: 'https://github.com/opal/opal.git', branch: '0-10-stable'
+appraise 'opal-0.11' do
+  gem 'opal', '~> 0.11.0'
+  gem 'opal-sprockets'
 end
 
 appraise 'opal-master' do

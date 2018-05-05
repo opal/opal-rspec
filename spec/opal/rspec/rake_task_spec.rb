@@ -7,7 +7,7 @@ RSpec.describe Opal::RSpec::RakeTask do
   before { Rake::Task.tasks.each(&:clear).each(&:reenable) }
   let(:runner_double) { instance_double(Opal::RSpec::Runner, command: 'echo foobar') }
 
-  it 'forwards to Runner#command' do
+  xit 'forwards to Runner#command' do
     expect(Opal::RSpec::Runner).to receive(:new) { runner_double }
 
     task_builder = described_class.new
@@ -18,7 +18,7 @@ RSpec.describe Opal::RSpec::RakeTask do
   context 'with a block' do
     let(:block) { -> a,b { :foobar } }
 
-    it 'forwards the block to Runner#command' do
+    xit 'forwards the block to Runner#command' do
       expect(Opal::RSpec::Runner).to receive(:new) do |&received_block|
         expect(received_block).to eq(block)
         runner_double
