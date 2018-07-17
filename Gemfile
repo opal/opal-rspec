@@ -5,17 +5,6 @@ unless Dir['rspec{,-{core,expectations,mocks,support}}/upstream'].any?
   raise 'Run: "git submodule update --init" to get RSpec sources'
 end
 
-# case (opal_version = ENV['OPAL_VERSION'] || 'master')
-# when 'master'
-#   gem 'opal', github: 'opal/opal', branch: 'master'
-# when nil
-#   gem 'opal' # let bundler pick a version
-# else
-#   gem 'opal', opal_version
-# end
-# gem 'opal', github: 'opal', branch: :master
-# gem 'opal-sprockets', github: 'opal/opal-sprockets'
-
 # These need to come from our local path in order for create_requires.rb to work properly
 gem 'rspec',              path: 'rspec/upstream'
 gem 'rspec-support',      path: 'rspec-support/upstream'
