@@ -202,4 +202,10 @@ OpalFilters.group("Bugs") do
   fails "RSpec::Core::Configuration#seed_used? returns false if neither ordering registry used the seed"
   fails "RSpec::Core::Configuration#seed_used? returns true if the ordering registry used the seed"
   fails "RSpec::Core::Configuration#warnings is loaded from config by #force"
+
+  require 'opal/version'
+  if Opal::VERSION == '0.11.1'
+    fails "RSpec::Core::Configuration assigns the example name as the filter on description"
+    fails "RSpec::Core::Configuration with full_description set is possible to access the full description regular expression"
+  end
 end

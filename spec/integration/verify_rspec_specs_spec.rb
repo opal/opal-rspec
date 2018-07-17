@@ -24,7 +24,7 @@ RSpec.describe 'RSpec specs:' do
 
   context 'Core' do
     it 'runs correctly', gem_name: 'rspec-core' do
-      expect_results_to_be('976 examples, 0 failures, 186 pending')
+      expect_results_to_be('976 examples, 0 failures, 188 pending')
     end
   end
 
@@ -36,7 +36,7 @@ RSpec.describe 'RSpec specs:' do
 
   context 'Expectations' do
     it 'runs correctly', gem_name: 'rspec-expectations' do
-      expect_results_to_be('1775 examples, 0 failures, 172 pending')
+      expect_results_to_be('1775 examples, 0 failures, 174 pending')
     end
   end
 
