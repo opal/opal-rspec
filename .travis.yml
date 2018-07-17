@@ -30,11 +30,11 @@ matrix:
     #   env: RUN=rspec
     #   gemfile: gemfiles/opal_0.10_stable.gemfile
 
-  # allow_failures:
-  #   - gemfile: gemfiles/opal_master.gemfile
+  allow_failures:
+    - gemfile: gemfiles/opal_master.gemfile
 
 gemfile:
-  # - gemfiles/opal_0.11.gemfile
+  - gemfiles/opal_0.11.gemfile
   - gemfiles/opal_master.gemfile
 
 before_install:
