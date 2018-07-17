@@ -33,7 +33,7 @@ end
 
 RSpec.configure do |config|
   #c.full_description = 'uses the default color for the shared example backtrace line'
-  config.add_formatter RSpec::Core::Formatters::JsonFormatter, '/tmp/spec_results.json'
+  config.add_formatter RSpec::Core::Formatters::JsonFormatter, '/tmp/rspec-core-results.json'
   config.add_formatter RSpec::Core::Formatters::ProgressFormatter, $stdout
   config.include StubWriteFile
   config.filter_run_excluding type: :drb

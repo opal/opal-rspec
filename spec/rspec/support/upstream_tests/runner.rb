@@ -12,7 +12,7 @@ class Opal::RSpec::UpstreamTests::Runner
     Opal::RSpec::UpstreamTests::Result.new(
       exit_status,
       output,
-      JSON.parse(File.read('/tmp/spec_results.json'), symbolize_names: true),
+      JSON.parse(File.read("/tmp/#{@gem_name}-results.json"), symbolize_names: true),
     )
   end
 
