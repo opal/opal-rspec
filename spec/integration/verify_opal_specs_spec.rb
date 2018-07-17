@@ -5,7 +5,9 @@ RSpec.describe 'Opal Specs' do
     it 'successfully runs' do
       output = "#{__dir__}/../../tmp/spec-opal-passing-#{$$}.txt"
       FileUtils.mkdir_p File.dirname(output)
-      expect(system("bundle exec exe/opal-rspec spec-opal-passing", [:out, :err]=>[output, "w"])).to eq(true)
+      result = system("bundle exec exe/opal-rspec spec-opal-passing", [:out, :err]=>[output, "w"])
+      expect(File.read(output)).to include("3 examples, 0 failures, 1 pending")
+      expect(result).to eq(true)
     end
   end
 
