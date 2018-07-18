@@ -58,4 +58,5 @@ before_install:
 #   - "firefox --version"
 
 script:
+  - "bundle exec exe/opal-rspec spec-opal-passing"
   - "bundle exec rspec"
