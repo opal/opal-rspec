@@ -14,10 +14,12 @@ Gem::Specification.new do |spec|
   spec.homepage      = 'https://github.com/opal/opal-rspec'
   spec.license       = "MIT"
 
-  spec.files         = Dir.chdir(__dir__){`git ls-files -z`}.split("\x0").reject do |f|
-  # spec.files         = `git ls-files -z`.split("\x0").reject do |f|
-    f.match(%r{^(test|spec|features)/})
+  spec.files         = Dir.chdir(__dir__){
+    `git ls-files --recurse-submodules -z`
+  }.split("\x0").reject do |f|
+    f.match(%r{^(spec|rspec(-\w+)?(/upstream)?/spec/)})
   end
+
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
