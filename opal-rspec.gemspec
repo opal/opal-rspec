@@ -6,7 +6,7 @@ Gem::Specification.new do |s|
   s.version = Opal::RSpec::VERSION
   s.author = 'Adam Beynon'
   s.email = 'adam.beynon@gmail.com'
-  s.homepage = 'http://opalrb.org'
+  s.homepage = 'https://github.com/opal-rspec'
   s.summary = 'RSpec for Opal'
   s.description = 'Opal compatible rspec library'
 
