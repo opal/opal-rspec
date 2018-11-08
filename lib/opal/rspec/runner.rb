@@ -78,7 +78,6 @@ module Opal
         options = []
         options << '--arity-check' if arity_checking?
         options += ['--runner', runner] unless runner.empty?
-        options << '-ropal/platform'
         options << '-ropal-rspec'
         options << '--missing-require=ignore'
         options += @legacy_server_proxy.to_cli_options

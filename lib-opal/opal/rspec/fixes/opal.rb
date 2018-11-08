@@ -1,3 +1,5 @@
+require 'opal/platform'
+
 class IO
   def closed?
     true
