@@ -1,3 +1,12 @@
+## 0.6.2 - 2018-11-09
+
+- Updated the homepage url
+
+- Only test against Opal v0.10, v0.11 will be supported in opal-rspec v0.7
+
+- Add support for multiple formats in `SPEC_OPTS` and allow both `--format` and `-f`
+
+
 ## 0.6.1 - 2017-05-25
 
 - Fixed compatibility with Rake 12
