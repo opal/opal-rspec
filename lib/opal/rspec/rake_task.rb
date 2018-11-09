@@ -31,34 +31,17 @@ module Opal
         ((via_env = ENV['RUNNER']) && via_env.to_sym) || @runner || :phantom
       end
 
-      def get_load_asset_code(server)
-        sprockets = server.sprockets
-        name = server.main
-        asset = sprockets[name]
-        raise "Cannot find asset: #{name}" if asset.nil?
-        Opal::Sprockets.load_asset name
-      end
+      def launch_node(sprockets, main)
+        asset = sprockets[main]
+        raise "Cannot find asset: #{main}" if asset.nil?
 
-      # TODO: Avoid the Rack server and compile directly
-      def launch_node(server)
-        compiled = Tempfile.new 'opal_rspec.js'
-        begin
-          require 'net/http'
-          uri = URI(URL)
-          Net::HTTP.start uri.hostname, uri.port do |http|
-            resp = http.get File.join('/assets', server.main)
-            compiled.write resp.body
-            load_asset_code = get_load_asset_code server
-            compiled.write load_asset_code
-            compiled.close
-          end
-          command_line = "node #{compiled.path} 2>&1"
-          puts "Running #{command_line}"
-          system command_line
+        Tempfile.create [main.to_s.gsub(/\W/, '.'), '.opal_rspec.js'] do |file|
+          File.write file.path, asset.to_s + Opal::Sprockets.load_asset(main)
+
+          command = "node #{file.path} 2>&1"
+          puts "~~> Running #{command}"
+          system command
           exit 1 unless $?.success?
-        ensure
-          compiled.close unless compiled.closed?
-          compiled.unlink
         end
       end
 
@@ -87,57 +70,62 @@ module Opal
       def initialize(name = 'opal:rspec', &block)
         desc 'Run opal specs in phantomjs/node'
         task name do
-          require 'rack'
-          require 'webrick'
-
           sprockets_env = Opal::RSpec::SprocketsEnvironment.new
-          app = Opal::Server.new(sprockets: sprockets_env) { |s|
-            s.main = 'opal/rspec/sprockets_runner'
-            s.debug = false
-
-            block.call s, self if block
-            sprockets_env.spec_pattern = self.pattern if self.pattern
-            sprockets_env.spec_exclude_pattern = self.exclude_pattern
-            sprockets_env.spec_files = self.files
-            sprockets_env.default_path = self.default_path if self.default_path
-            raise 'Cannot supply both a pattern and files!' if self.files and self.pattern
-            sprockets_env.add_spec_paths_to_sprockets
+          main = 'opal/rspec/sprockets_runner'
+          app = Opal::Server.new(sprockets: sprockets_env) { |server|
+            server.main = main
+            server.debug = false
+            block.call server, self if block
           }
+
+          sprockets_env.spec_pattern = self.pattern if self.pattern
+          sprockets_env.spec_exclude_pattern = self.exclude_pattern
+          sprockets_env.spec_files = self.files
+          sprockets_env.default_path = self.default_path if self.default_path
+          raise 'Cannot supply both a pattern and files!' if self.files and self.pattern
+          sprockets_env.add_spec_paths_to_sprockets
 
           Opal::Config.arity_check_enabled = arity_checking?
 
-          # TODO: Once Opal 0.9 compatibility is established, if we're running node, add in the node stdlib requires in so RSpec can use them, also add NODE_PATH to the runner command above
+          case runner
+          when :node
+            launch_node(sprockets_env, main)
 
-          server = Thread.new do
-            Thread.current.abort_on_exception = true
-            Rack::Server.start(
-              :app => app,
-              :Port => PORT,
-              :AccessLog => [],
-              :Logger => WEBrick::Log.new("/dev/null"),
-            )
-          end
+          when :phantom
+            server = Thread.new do
+              require 'rack'
+              require 'webrick'
+              Thread.current.abort_on_exception = true
+              Rack::Server.start(
+                :app => app,
+                :Port => PORT,
+                :AccessLog => [],
+                :Logger => WEBrick::Log.new("/dev/null"),
+              )
+            end
 
-          wait_for_server
-          is_phantom = runner == :phantom
-          if is_phantom
+            wait_for_server
+
             version_output = begin
               `phantomjs -v`.strip
             rescue
               warn 'Could not find phantomjs command on path!'
               exit 1
             end
+
             if version_output.to_f < 2
               warn "PhantomJS >= 2.0 is required but version #{version_output} is installed!"
               exit 1
             end
+
+            begin
+              launch_phantom(timeout)
+            ensure
+              server.kill
+            end
+          else raise "unknown runner type: #{runner.inspect}"
           end
 
-          begin
-            is_phantom ? launch_phantom(timeout) : launch_node(app)
-          ensure
-            server.kill
-          end
         end
       end
     end
