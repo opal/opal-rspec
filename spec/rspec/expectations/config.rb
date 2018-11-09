@@ -1,4 +1,4 @@
-require 'opal/progress_json_formatter' # verify case uses this
+require 'opal/separator_formatter' # verify case uses this
 
 # Only doing this because this spec causes the runner itself to break
 CAUSES_SPECS_TO_CRASH = [

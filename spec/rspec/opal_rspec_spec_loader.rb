@@ -212,7 +212,7 @@ module Opal
       def execute_specs(name)
         require 'tempfile'
         file = Tempfile.new([name.to_s, '.json'])
-        command = "SPEC_OPTS=\"--format Opal::RSpec::ProgressJsonFormatter\" rake #{name} > #{file.path}"
+        command = "SPEC_OPTS=\"--no-color --format progress --format Opal::RSpec::SeparatorFormatter --format json\" rake #{name} --trace > #{file.path}"
         puts
         puts "Running #{command}"
 
@@ -224,7 +224,7 @@ module Opal
         file.rewind
         ouput = file.read
         ouput.force_encoding 'UTF-8'
-        progress, example_info = ouput.split('BEGIN JSON', 2)
+        progress, example_info = ouput.split('~~~SEPARATOR~~~', 2)
 
         {
           example_info: [example_info],
