@@ -210,40 +210,36 @@ module Opal
       end
 
       def execute_specs(name)
-        command_line = "SPEC_OPTS=\"--format Opal::RSpec::ProgressJsonFormatter\" rake #{name}"
-        puts "Running #{command_line}"
-        pinger = Thread.new {
-          while true
-            sleep 60
-            puts 'still alive' # travis/keep alive
-          end
-        }
-        example_info = []
-        state = :progress
-        IO.popen(command_line).each do |line|
-          line.force_encoding 'UTF-8'
-          case state
-            when :progress
-              puts line
-            when :example_info
-              example_info << line
-          end
-          state = case line
-                    when /BEGIN JSON/
-                      :example_info
-                    else
-                      state
-                  end
-        end.close
+        require 'tempfile'
+        file = Tempfile.new([name.to_s, '.json'])
+        command = "SPEC_OPTS=\"--format Opal::RSpec::ProgressJsonFormatter\" rake #{name} > #{file.path}"
+        puts
+        puts "Running #{command}"
+
+        # travis/keep alive
+        pinger = Thread.new { loop { sleep 60; print '.' } }
+        success = system(command)
         pinger.exit
+
+        file.rewind
+        ouput = file.read
+        ouput.force_encoding 'UTF-8'
+        progress, example_info = ouput.split('BEGIN JSON', 2)
+
         {
-          example_info: example_info,
-          success: $?.success?
+          example_info: [example_info],
+          success: success
         }
       end
 
       def parse_results(results)
         JSON.parse results[:example_info].join("\n")
+      rescue
+        warn "JSON PARSING FAILED"
+        warn "-------------------"
+        warn results[:example_info].join("\n")
+        warn "-------------------"
+        raise
       end
 
       def rake_tasks_for(name)
