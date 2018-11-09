@@ -76,7 +76,7 @@ task :verify_rspec_specs => [
 
 desc 'Verifies other_spec_dir task ran correctly'
 task :verify_other_specs do
-  test_output = `rake other_specs`
+  test_output = `rake other_specs --trace`
   unless /1 example, 0 failures/.match(test_output)
     raise "Expected 1 passing example, but got output '#{test_output}'"
   end
@@ -94,7 +94,12 @@ task :verify_opal_specs do
   test_output.force_encoding 'UTF-8'
   raise "Expected test runner to fail due to failed tests, but got return code of #{$?.exitstatus}" if $?.success?
   count_match = /(\d+) examples, (\d+) failures, (\d+) pending/.match(test_output)
-  raise 'Expected a finished count of test failures/success/etc. but did not see it' unless count_match
+
+  unless count_match
+    raise "Expected a finished count of test failures/success/etc. but did not see it\n" +
+    "Expected /(\d+) examples, (\d+) failures, (\d+) pending/ to match:\n\n> #{test_output.gsub("\n", "\n> ")}"
+  end
+
   total, failed, pending = count_match.captures
 
   actual_failures = []

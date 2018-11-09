@@ -146,7 +146,7 @@ module Opal
           missing << path unless matching
           temp_filename
         end
-        raise "Expected to #{description} in #{fix_these_files} but we didn't find any expressions in #{missing}. Check if RSpec has been upgraded" if missing.any?
+        raise "~~> Expected to #{description} in #{fix_these_files} but we didn't find any expressions in #{missing}. Check if RSpec has been upgraded" if missing.any?
         files_we_left_alone = starting_file_set - fix_these_files
         files_we_left_alone + fixed_temp_files
       end
@@ -162,7 +162,7 @@ module Opal
                         .source
                         .gsub('/', '\/')
           replace = "/#{escaped}/m"
-          puts "Replacing multiline regex with #{replace} in new temp file #{temp_filename}"
+          puts "~~> Replacing multiline regex with #{replace} in new temp file #{temp_filename}"
           replace
         end
       end
@@ -204,7 +204,7 @@ module Opal
           missing << path unless found_blackslash
           temp_filename
         end
-        raise "Expected to fix blackslash continuation in #{fix_these_files} but we didn't find any backslashes in #{missing}. Check if RSpec has been upgraded (maybe those blackslashes are gone??)" if missing.any?
+        raise "~~> Expected to fix blackslash continuation in #{fix_these_files} but we didn't find any backslashes in #{missing}. Check if RSpec has been upgraded (maybe those blackslashes are gone??)" if missing.any?
         files_we_left_alone = files - fix_these_files
         files_we_left_alone + fixed_temp_files
       end
@@ -214,7 +214,7 @@ module Opal
         file = Tempfile.new([name.to_s, '.json'])
         command = "SPEC_OPTS=\"--no-color --format progress --format Opal::RSpec::SeparatorFormatter --format json\" rake #{name} --trace > #{file.path}"
         puts
-        puts "Running #{command}"
+        puts "~~> Running #{command}"
 
         # travis/keep alive
         pinger = Thread.new { loop { sleep 60; print '.' } }
@@ -308,23 +308,23 @@ module Opal
           passing = total - failed - pending
           percentage = ((passing.to_f / total) * 100).round(1)
           if reasons.empty?
-            puts 'Test successful!'
-            puts "#{total} total specs, #{failed} expected failures, #{pending} expected pending"
-            puts "Passing percentage: #{percentage}%"
+            puts '~~> Test successful!'
+            puts "~~> #{total} total specs, #{failed} expected failures, #{pending} expected pending"
+            puts "~~> Passing percentage: #{percentage}%"
           else
-            puts "Test FAILED for the following reasons:\n"
+            puts "~~> Test FAILED for the following reasons:\n"
             puts reasons.join "\n\n"
             if remaining_failures.any?
               puts
-              puts "Unexpected failures:\n\n#{remaining_failures.join("\n")}\n"
+              puts "~~> Unexpected failures:\n\n#{remaining_failures.join("\n")}\n"
             end
-            puts '-----------Summary-----------'
-            puts "Total passed count: #{passing}"
-            puts "Pending count #{pending}"
-            puts "Total 'failure' count: #{actual_failures.length}"
-            puts "Passing percentage: #{percentage}%"
-            puts "Unexpected failure count: #{remaining_failures.length}"
-            raise 'Test failed!'
+            puts '~~> -----------Summary-----------'
+            puts "~~> Total passed count: #{passing}"
+            puts "~~> Pending count #{pending}"
+            puts "~~> Total 'failure' count: #{actual_failures.length}"
+            puts "~~> Passing percentage: #{percentage}%"
+            puts "~~> Unexpected failure count: #{remaining_failures.length}"
+            raise '~~> Test failed!'
           end
         end
       end
