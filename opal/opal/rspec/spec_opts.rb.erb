@@ -19,10 +19,9 @@
 
 <%          end
         end
-        if (match = /--format (\S+)/.match(spec_opts))
-            formatter = match.captures[0]
+        if (match = spec_opts.scan(/(?:--format (\S+)|-f ?(\S+))/).flatten.compact).any?
 %>
-            config.formatter = "<%=formatter%>"
+            <%= match.inspect %>.each { |f| config.add_formatter f }
 <%      end %>
      end
 <% end %>
