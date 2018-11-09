@@ -6,14 +6,13 @@ require_relative 'temp_dir_helper'
 describe Opal::RSpec::RakeTask do
   include_context :temp_dir
   let(:captured_opal_server) { {} }
+  let(:runner) { :phantom }
+  before { ENV['RUNNER'] = runner.to_s }
 
-  RSpec::Matchers.define :invoke_runner do |expected, timeout_value=nil|
-    match do
-      invoked_runners == [{
-                            type: expected,
-                            timeout_value: timeout_value
-                          }]
-    end
+  RSpec::Matchers.define :invoke_runner do |expected|
+    expected_value = [expected]
+    match { expect(invoked_runners).to eq(expected_value) }
+    failure_message { {expected: expected_value, got: invoked_runners}.inspect }
   end
 
   RSpec::Matchers.define :enable_arity_checking do
@@ -24,7 +23,7 @@ describe Opal::RSpec::RakeTask do
 
   RSpec::Matchers.define :require_opal_specs do |matcher|
     def actual
-      captured_opal_server[:server].sprockets.cached.get_opal_spec_requires
+      captured_opal_server[:sprockets].cached.get_opal_spec_requires
     end
 
     match do
@@ -42,7 +41,7 @@ describe Opal::RSpec::RakeTask do
 
   RSpec::Matchers.define :append_opal_path do |expected_path|
     def actual
-      captured_opal_server[:server].sprockets.paths
+      captured_opal_server[:sprockets].paths
     end
 
     abs_expected = lambda { File.expand_path(expected_path) }
@@ -66,8 +65,8 @@ describe Opal::RSpec::RakeTask do
       task.clear
       task.reenable
     end
-    allow(Rack::Server).to receive(:start) do |config| # don't want to actually run specs
-      captured_opal_server[:server] = config[:app]
+    allow(Rack::Server).to receive(:start) do |config|
+      # don't want to actually run specs
     end
     thread_double = instance_double Thread
     allow(thread_double).to receive :kill
@@ -75,22 +74,25 @@ describe Opal::RSpec::RakeTask do
       block.call
       thread_double
     end
-    allow(task_definition).to receive(:launch_phantom) do |timeout_value|
-      invoked_runners << {
-        type: :phantom,
-        timeout_value: timeout_value
-      }
+
+    dummy_launch = -> (runner_name, sprockets, main, &config_block) {
+      config_block.call
+      captured_opal_server[:sprockets] = sprockets
+      captured_opal_server[:main] = main
+      invoked_runners << runner_name
       nil
+    }
+
+    allow(task_definition).to receive(:launch_phantom) do |*args, &block|
+      dummy_launch.call(:phantom, *args, &block)
     end
-    allow(task_definition).to receive(:launch_node) do
-      invoked_runners << {
-        type: :node,
-        timeout_value: nil
-      }
-      nil
+
+    allow(task_definition).to receive(:launch_node) do |*args, &block|
+      dummy_launch.call(:node, *args, &block)
     end
-    expect(task_definition).to receive(:wait_for_server) if expected_to_run
   end
+
+  after { raise "did not run" if invoked_runners.empty? if expected_to_run }
 
   let(:invoked_runners) { [] }
   let(:task_name) { :foobar }
@@ -112,6 +114,7 @@ describe Opal::RSpec::RakeTask do
     end
 
     around do |example|
+      expect(runner).to eq(:phantom)
       # in case we're running on travis, etc.
       current_env_runner = ENV['RUNNER']
       ENV['RUNNER'] = nil
@@ -195,9 +198,8 @@ describe Opal::RSpec::RakeTask do
     context 'ENV' do
       TEST_RUNNERS.each do |runner|
         context runner do
-          before do
-            ENV['RUNNER'] = runner.to_s
-          end
+          let(:runner) { runner }
+          before { ENV['RUNNER'] = runner.to_s }
 
           include_context :explicit, runner
         end
@@ -310,6 +312,9 @@ describe Opal::RSpec::RakeTask do
     it { is_expected.to have_attributes pattern: nil }
     it { is_expected.to append_opal_path 'spec' }
     it { is_expected.to require_opal_specs eq ['something/dummy_spec'] }
-    it { is_expected.to invoke_runner :phantom, timeout_value=40000 }
+    it { is_expected.to invoke_runner :phantom }
+    it 'has timeout set' do
+      expect(subject.timeout).to eq(40000)
+    end
   end
 end

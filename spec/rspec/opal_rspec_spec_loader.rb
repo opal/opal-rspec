@@ -250,7 +250,8 @@ module Opal
           task.files = sub_in_files
           task.default_path = default_path
           append_additional_load_paths server
-          server.debug = ENV['OPAL_DEBUG']
+
+          server.debug = ENV['OPAL_DEBUG'] if server.respond_to?(:debug=)
         end
 
         desc "Verifies that #{name} work correctly"

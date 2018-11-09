@@ -18,7 +18,7 @@ module Opal
         setting == :enabled
       end
 
-      def launch_phantom(sprockets_env, main, timeout_value, &config_block)
+      def launch_phantom(sprockets_env, main, &config_block)
         app = Opal::Server.new(sprockets: sprockets_env) { |server|
           server.main = main
           server.debug = false
@@ -52,7 +52,7 @@ module Opal
         end
 
         begin
-          command_line = %Q{phantomjs #{RUNNER} "#{URL}"#{timeout_value ? " #{timeout_value}" : ''}}
+          command_line = %Q{phantomjs #{RUNNER} "#{URL}"#{@timeout ? " #{@timeout}" : ''}}
           puts "Running #{command_line}"
           system command_line
           success = $?.success?
@@ -67,7 +67,7 @@ module Opal
         ((via_env = ENV['RUNNER']) && via_env.to_sym) || @runner || :phantom
       end
 
-      def launch_node(sprockets, main, _timeout_value, &config_block)
+      def launch_node(sprockets, main, &config_block)
         Opal.paths.each { |p| sprockets.append_path(p) } # Opal::Server does this
 
         config_block.call sprockets
@@ -115,7 +115,8 @@ module Opal
           current_task = self
 
           config_block = -> *args {
-            block.call *args, current_task if block
+            args.insert(1, current_task)
+            block.call *args if block
 
             sprockets_env.spec_pattern = current_task.pattern if current_task.pattern
             sprockets_env.spec_exclude_pattern = current_task.exclude_pattern
@@ -127,8 +128,8 @@ module Opal
           }
 
           case runner
-          when :node then launch_node(sprockets_env, main, timeout, &config_block)
-          when :phantom then launch_phantom(sprockets_env, main, timeout, &config_block)
+          when :node then launch_node(sprockets_env, main, &config_block)
+          when :phantom then launch_phantom(sprockets_env, main, &config_block)
           else raise "unknown runner type: #{runner.inspect}"
           end
         end
