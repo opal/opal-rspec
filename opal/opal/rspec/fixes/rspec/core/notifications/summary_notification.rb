@@ -2,11 +2,10 @@ module ::RSpec::Core::Notifications
   # SummaryNotification is a Struct
   SummaryNotification.class_eval do
     def totals_line
+      # string mutations
       summary = Formatters::Helpers.pluralize(example_count, "example")
-      # 2 string mutations
-      summary = summary + ", " + Formatters::Helpers.pluralize(failure_count, "failure")
-      # string mutation
-      summary = summary + ", #{pending_count} pending" if pending_count > 0
+      summary += ", " + Formatters::Helpers.pluralize(failure_count, "failure")
+      summary += ", #{pending_count} pending" if pending_count > 0
       summary
     end
 
