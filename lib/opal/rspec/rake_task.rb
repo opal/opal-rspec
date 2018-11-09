@@ -18,22 +18,62 @@ module Opal
         setting == :enabled
       end
 
-      def launch_phantom(timeout_value)
-        command_line = %Q{phantomjs #{RUNNER} "#{URL}"#{timeout_value ? " #{timeout_value}" : ''}}
-        puts "Running #{command_line}"
-        system command_line
-        success = $?.success?
+      def launch_phantom(sprockets_env, main, timeout_value, &config_block)
+        app = Opal::Server.new(sprockets: sprockets_env) { |server|
+          server.main = main
+          server.debug = false
+          config_block.call(server)
+        }
 
-        exit 1 unless success
+        server = Thread.new do
+          require 'rack'
+          require 'webrick'
+          Thread.current.abort_on_exception = true
+          Rack::Server.start(
+            :app => app,
+            :Port => PORT,
+            :AccessLog => [],
+            :Logger => WEBrick::Log.new("/dev/null"),
+          )
+        end
+
+        wait_for_server
+
+        version_output = begin
+          `phantomjs -v`.strip
+        rescue
+          warn 'Could not find phantomjs command on path!'
+          exit 1
+        end
+
+        if version_output.to_f < 2
+          warn "PhantomJS >= 2.0 is required but version #{version_output} is installed!"
+          exit 1
+        end
+
+        begin
+          command_line = %Q{phantomjs #{RUNNER} "#{URL}"#{timeout_value ? " #{timeout_value}" : ''}}
+          puts "Running #{command_line}"
+          system command_line
+          success = $?.success?
+
+          exit 1 unless success
+        ensure
+          server.kill
+        end
       end
 
       def runner
         ((via_env = ENV['RUNNER']) && via_env.to_sym) || @runner || :phantom
       end
 
-      def launch_node(sprockets, main)
+      def launch_node(sprockets, main, _timeout_value, &config_block)
+        Opal.paths.each { |p| sprockets.append_path(p) } # Opal::Server does this
+
+        config_block.call sprockets
+
         asset = sprockets[main]
-        raise "Cannot find asset: #{main}" if asset.nil?
+        raise "Cannot find asset: #{main} in #{sprockets.inspect}" if asset.nil?
 
         Tempfile.create [main.to_s.gsub(/\W/, '.'), '.opal_rspec.js'] do |file|
           File.write file.path, asset.to_s + Opal::Sprockets.load_asset(main)
@@ -72,60 +112,25 @@ module Opal
         task name do
           sprockets_env = Opal::RSpec::SprocketsEnvironment.new
           main = 'opal/rspec/sprockets_runner'
-          app = Opal::Server.new(sprockets: sprockets_env) { |server|
-            server.main = main
-            server.debug = false
-            block.call server, self if block
+          current_task = self
+
+          config_block = -> *args {
+            block.call *args, current_task if block
+
+            sprockets_env.spec_pattern = current_task.pattern if current_task.pattern
+            sprockets_env.spec_exclude_pattern = current_task.exclude_pattern
+            sprockets_env.spec_files = current_task.files
+            sprockets_env.default_path = current_task.default_path if current_task.default_path
+            raise 'Cannot supply both a pattern and files!' if current_task.files and current_task.pattern
+            sprockets_env.add_spec_paths_to_sprockets
+            Opal::Config.arity_check_enabled = arity_checking?
           }
 
-          sprockets_env.spec_pattern = self.pattern if self.pattern
-          sprockets_env.spec_exclude_pattern = self.exclude_pattern
-          sprockets_env.spec_files = self.files
-          sprockets_env.default_path = self.default_path if self.default_path
-          raise 'Cannot supply both a pattern and files!' if self.files and self.pattern
-          sprockets_env.add_spec_paths_to_sprockets
-
-          Opal::Config.arity_check_enabled = arity_checking?
-
           case runner
-          when :node
-            launch_node(sprockets_env, main)
-
-          when :phantom
-            server = Thread.new do
-              require 'rack'
-              require 'webrick'
-              Thread.current.abort_on_exception = true
-              Rack::Server.start(
-                :app => app,
-                :Port => PORT,
-                :AccessLog => [],
-                :Logger => WEBrick::Log.new("/dev/null"),
-              )
-            end
-
-            wait_for_server
-
-            version_output = begin
-              `phantomjs -v`.strip
-            rescue
-              warn 'Could not find phantomjs command on path!'
-              exit 1
-            end
-
-            if version_output.to_f < 2
-              warn "PhantomJS >= 2.0 is required but version #{version_output} is installed!"
-              exit 1
-            end
-
-            begin
-              launch_phantom(timeout)
-            ensure
-              server.kill
-            end
+          when :node then launch_node(sprockets_env, main, timeout, &config_block)
+          when :phantom then launch_phantom(sprockets_env, main, timeout, &config_block)
           else raise "unknown runner type: #{runner.inspect}"
           end
-
         end
       end
     end
