@@ -85,7 +85,12 @@ end
 
 desc 'Will run a spec suite (rake opal_specs) and check for expected combination of failures and successes'
 task :verify_opal_specs do
-  test_output = `rake opal_specs`
+  require 'tempfile'
+
+  test_output = Tempfile.create('opal_specs') do |f|
+    `bundle exec rake opal_specs --trace > #{f.path}`
+    File.read f.path
+  end
   test_output.force_encoding 'UTF-8'
   raise "Expected test runner to fail due to failed tests, but got return code of #{$?.exitstatus}" if $?.success?
   count_match = /(\d+) examples, (\d+) failures, (\d+) pending/.match(test_output)
