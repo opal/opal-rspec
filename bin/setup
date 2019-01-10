@@ -3,5 +3,5 @@ set -euo pipefail
 IFS=$'\n\t'
 set -vx
 
-bundle install
 git submodule update --init
+bundle install
