@@ -182,7 +182,7 @@ OpalFilters.group('Bugs') do
   fails "yield_successive_args matcher has a description"
 
   require 'opal/version'
-  if Opal::VERSION == '0.11.1'
+  if Opal::VERSION.start_with?('0.11.')
     fails "expect { ... }.to raise_error(NamedError) fails if another error is raised (NameError)",  "expected RSpec::Expectations::ExpectationNotMetError with message matching /expected NameError, got #"
   end
 end
