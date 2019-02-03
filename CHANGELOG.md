@@ -1,8 +1,10 @@
-## 0.7.0 - Unreleased
+## 0.7.0 - 2019-02-03
 
 - Drop support for the legacy async syntax
+
 - Complete internal overhaul
-- Support for Opal v0.11.1
+
+- Support for Opal v0.11
 
 
 ## 0.6.1 - 2017-05-25
