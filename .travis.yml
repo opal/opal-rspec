@@ -38,9 +38,6 @@ gemfile:
   - gemfiles/opal_master.gemfile
 
 before_install:
-  # Attempt to work around Travis issues and Ruby 2.3 - https://github.com/vcr/vcr/issues/582
-  - gem update --system
-  - gem install bundler
   - "mkdir -p phantom20"
   - "export PATH=`pwd`/phantom20:$PATH"
   - "echo $PATH"
