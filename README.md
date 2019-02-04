@@ -6,14 +6,32 @@
 
 An attempt at a compatibility layer of RSpec for Opal.
 
-#### For the README for the latest release, click [here](https://github.com/opal/opal-rspec/blob/releases/0-6-stable/README.md).
-
 ## Usage
 
 Add `opal-rspec` to your Gemfile:
 
 ```ruby
 gem 'opal-rspec'
+```
+
+*(since v0.7.1)*
+
+Then type `opal-rspec --init`, this command will create a `spec-opal/` folder for you with a minimal `spec_helper.rb` file. At this point you can write your first opal-spec!
+
+_spec-opal/simple_sum_spec.rb_
+
+```rb
+RSpec.describe 'a simple sum' do
+  it 'equals two!' do
+    expect(1 + 1).to eq(2)
+  end
+end
+```
+
+To run your specs, simply type:
+
+```bash
+bundle exec opal-rspec --color spec-opal/
 ```
 
 ## Requirements
