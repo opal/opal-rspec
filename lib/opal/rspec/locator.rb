@@ -9,7 +9,8 @@ module Opal
     class Locator
       include ::RSpec::Core::RubyProject
 
-      DEFAULT_PATTERN = 'spec-opal/**/*_spec{.js,}.{rb,opal}'
+      DEFAULT_GLOB = '**{,/*/**}/*_spec{.js,}.{rb,opal}'
+      DEFAULT_PATTERN = "spec-opal/#{DEFAULT_GLOB}"
       DEFAULT_DEFAULT_PATH = 'spec-opal'
 
       attr_accessor :spec_pattern, :spec_exclude_pattern, :spec_files, :default_path
