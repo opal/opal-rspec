@@ -62,6 +62,7 @@ runner = Opal::RSpec::Runner.new do |server, config|
   raise "can accept only one formatter at this time" if options[:formatters] && options[:formatters].size != 1
   spec_opts += ['--format', options[:formatters].flatten.first] if options[:formatters]
   raw_files = ARGV
+  raw_files = ['spec-opal'] if raw_files.empty?
 
   files = raw_files.flat_map do |file|
     if File.directory? file
