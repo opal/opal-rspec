@@ -23,17 +23,21 @@ OptionParser.new do |parser|
     options[:formatters] ||= []
     options[:formatters] << [o]
   end
+
   parser.on('-r', '--require PATH', 'Require a file.') do |path|
     options[:requires] ||= []
     options[:requires] << path
   end
+
   parser.on('-I PATH', 'Specify PATH to add to $LOAD_PATH (may be used more than once).') do |dir|
     options[:includes] ||= []
     options[:includes] << dir
   end
+
   parser.on('-P', '--pattern PATTERN', 'Load files matching pattern (default: "spec-opal/**/*_spec.rb").') do |o|
     options[:pattern] = o
   end
+
   parser.on('--default-path PATH', 'Set the default path where RSpec looks for examples (can',
             '  be a path to a file or a directory).') do |path|
     options[:default_path] = path
@@ -44,9 +48,7 @@ OptionParser.new do |parser|
   parser.on('-R', '--runner NAME', 'Use a different JS runner (default is nodejs)') do |name|
     options[:runner] = name
   end
-
 end.parse!
-# p options: options
 
 runner = Opal::RSpec::Runner.new do |server, config|
   spec_opts = []
@@ -55,7 +57,7 @@ runner = Opal::RSpec::Runner.new do |server, config|
   raise "can accept only one formatter at this time" if options[:formatters] && options[:formatters].size != 1
   spec_opts += ['--format', options[:formatters].flatten.first] if options[:formatters]
   raw_files = ARGV
-  # p raw_files: ARGV
+
   files = raw_files.flat_map do |file|
     if File.directory? file
       Dir[File.join(file, '**{,/*/**}/*_spec{.js,}.rb')]
@@ -65,7 +67,6 @@ runner = Opal::RSpec::Runner.new do |server, config|
       raise "Can't stat path: #{file}"
     end
   end
-  # p files: files
 
   options[:includes].each {|dir| server.append_path dir} if options[:includes]
   config.default_path = options[:default_path]           if options[:default_path]
@@ -73,6 +74,5 @@ runner = Opal::RSpec::Runner.new do |server, config|
   config.files        = files
 end
 
-# puts runner.command
 runner.run
 
