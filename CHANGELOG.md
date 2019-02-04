@@ -1,3 +1,10 @@
+# Opal-RSpec Changelog
+
+## 0.7.1 - unreleased
+
+- add a project initializer: `opal-rspec --init`
+
+
 ## 0.7.0 - 2019-02-03
 
 - Drop support for the legacy async syntax
