@@ -10,6 +10,11 @@ require 'optparse'
 
 options = {}
 OptionParser.new do |parser|
+  parser.on('--init', 'Initialize your project with Opal-RSpec.') do |_cmd|
+    Opal::RSpec::ProjectInitializer.new.run
+    exit
+  end
+
   parser.on('-c', '--[no-]color', '--[no-]colour', 'Enable color in the output.') do |o|
     options[:color] = o
   end

@@ -18,6 +18,8 @@ Opal::Config.dynamic_require_severity = :ignore
 
 module Opal
   module RSpec
+    autoload :ProjectInitializer, 'opal/rspec/project_initializer'
+
     def self.spec_opts_code(spec_opts)
       code = []
       if spec_opts && !spec_opts.empty?
