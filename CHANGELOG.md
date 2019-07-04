@@ -1,5 +1,10 @@
 # Opal-RSpec Changelog
 
+## 0.7.2 - 2019-05-25
+
+- Support Opal 1.0
+
+
 ## 0.7.1 - 2019-02-04
 
 - add a project initializer: `opal-rspec --init`

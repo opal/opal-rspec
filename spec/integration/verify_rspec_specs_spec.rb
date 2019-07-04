@@ -3,7 +3,8 @@ require 'spec_helper'
 RSpec.describe 'RSpec specs:' do
 
   def expect_results_to_be(expected_summary)
-    results = Opal::RSpec::UpstreamTests::Runner.new.run
+    runner = Opal::RSpec::UpstreamTests::Runner.new
+    results = runner.run
     failures = results.json[:examples].select { |ex| ex[:status] == 'failed' }
     print_results(results) unless failures.empty?
 
@@ -17,6 +18,7 @@ RSpec.describe 'RSpec specs:' do
 
   def print_results(results)
     return if results.nil?
+    puts "~~~ #{results.command} ~~~"
     puts "=========== Output of failed run ============"
     puts results.quoted_output
     puts "============================================="

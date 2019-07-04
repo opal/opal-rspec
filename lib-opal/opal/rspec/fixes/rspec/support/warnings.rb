@@ -12,5 +12,6 @@ module ::RSpec
       end
     end
   end
-  extend RSpec::Support::Warnings
+
+  extend ::RSpec::Support::Warnings
 end
