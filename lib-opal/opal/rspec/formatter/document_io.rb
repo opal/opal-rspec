@@ -4,7 +4,7 @@ module Opal
       include IO::Writable
 
       def initialize
-        `document.open();`
+        `document.open()`
       end
 
       def close

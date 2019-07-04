@@ -7,9 +7,11 @@ class Opal::RSpec::UpstreamTests::Runner
   def run
     @config.stubs.each { |f| ::Opal::Config.stubbed_files << f }
 
+    command = opal_rspec_runner.command
     output, exit_status = StdoutCapturingRunner.run { opal_rspec_runner.run }
 
     Opal::RSpec::UpstreamTests::Result.new(
+      command,
       exit_status,
       output,
       JSON.parse(File.read("/tmp/#{@gem_name}-results.json"), symbolize_names: true),
@@ -37,7 +39,7 @@ class Opal::RSpec::UpstreamTests::Runner
   private
 
   def opal_rspec_runner
-    ::Opal::RSpec::Runner.new do |server, task|
+    @opal_rspec_runner ||= ::Opal::RSpec::Runner.new do |server, task|
       # A lot of specs, can take longer on slower machines
       # task.timeout = 80000
 
