@@ -4,6 +4,10 @@
 
 - Support for Opal v1.0.0
 
+- Fix some x-srting semicolon warnings
+
+- Fix forwarding the exit code to the rake task
+
 
 ## 0.7.1 - 2019-02-04
 
