@@ -12,8 +12,7 @@ module Opal
         runner = ::Opal::RSpec::Runner.new(&block)
         desc 'Run Opal specs'
         @rake_task = task name do
-          # sh runner.command
-          runner.run
+          exit runner.run
         end
       end
     end
