@@ -14,9 +14,9 @@ module ::RSpec::Core
     #   end
     # NOW:
     def run_after_example
+      assign_generated_description if defined?(::RSpec::Matchers)
       @example_group_class.hooks.run(:after, :example, self).then do
         verify_mocks
-        assign_generated_description if RSpec.configuration.expecting_with_rspec?
       end.rescue do |e|
         set_exception(e, "in an `after(:example)` hook")
       end.ensure do
@@ -26,6 +26,8 @@ module ::RSpec::Core
 
     def run(example_group_instance, reporter)
       @example_group_instance = example_group_instance
+      @reporter = reporter
+      RSpec.configuration.configure_example(self, hooks)
       RSpec.current_example = self
 
       start(reporter)
@@ -76,7 +78,7 @@ module ::RSpec::Core
           if skipped?
             Pending.mark_pending! self, skip
           elsif !RSpec.configuration.dry_run?
-            with_around_example_hooks do
+            with_around_and_singleton_context_hooks do
               # WAS:
               #   with_around_example_hooks do
               #     begin
@@ -134,7 +136,7 @@ module ::RSpec::Core
                     end
                   end
                 end
-                .then do
+                .then do |result|
                   # ORIGINAL:
                   if pending?
                     Pending.mark_fixed! self
@@ -143,6 +145,7 @@ module ::RSpec::Core
                           'Expected example to fail since it is pending, but it passed.',
                           [location]
                   end
+                  result
                 end
               end.rescue do |e|
                 # WAS:
@@ -159,25 +162,29 @@ module ::RSpec::Core
                 when Pending::SkipDeclaredInExample
                   # no-op, required metadata has already been set by the `skip`
                   # method.
+                  true
                 when Exception
                   set_exception(e)
+                  false
                 end
-              end.ensure do
+              end.ensure do |result|
                 run_after_example
+                result
               end
             end
           end
         end.rescue do |e|
           set_exception(e)
-        end.ensure do
-          @example_group_instance.instance_variables.each do |ivar|
-            @example_group_instance.instance_variable_set(ivar, nil)
-          end
+          false
+        end.ensure do |result|
           @example_group_instance = nil
+          result
         end
-      end.then do
+      end.then do |result|
         finish(reporter)
+        result
       end.ensure do |result|
+        execution_result.ensure_timing_set(clock)
         RSpec.current_example = nil
         # promise always/ensure do not behave exactly like ensure, need to be explicit about value being returned
         result

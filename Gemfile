@@ -13,5 +13,8 @@ gem 'rspec-mocks',        path: 'rspec-mocks/upstream'
 gem 'rspec-expectations', path: 'rspec-expectations/upstream'
 
 gem 'opal', ENV['OPAL_VERSION'] if ENV['OPAL_VERSION']
+gem 'opal', path: '../opal' if ENV['OPAL_LOCAL']
+
+gem 'webrick'
 
 gem 'pry'

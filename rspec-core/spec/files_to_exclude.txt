@@ -8,5 +8,4 @@
 **/runner_spec.rb
 **/backtrace_formatter_spec.rb
 **/ordering_spec.rb
-**/random_spec.rb
 **/project_initializer_spec.rb

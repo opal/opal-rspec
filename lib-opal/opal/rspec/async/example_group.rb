@@ -33,13 +33,11 @@ class ::RSpec::Core::ExampleGroup
   end
 
   # Promise oriented version
-  def self.run(reporter)
-    if RSpec.world.wants_to_quit
-      RSpec.world.clear_remaining_example_groups if top_level?
-      return
-    end
-
+  def self.run(reporter=RSpec::Core::NullReporter)
+    return if RSpec.world.wants_to_quit
     reporter.example_group_started(self)
+
+    should_run_context_hooks = descendant_filtered_examples.any?
     Promise.value(true).then do
       run_before_context_hooks(new)
     end.then do
@@ -47,16 +45,17 @@ class ::RSpec::Core::ExampleGroup
     end.then do |our_examples_result|
       process_descendants(our_examples_result, reporter)
     end.rescue do |ex|
-      result = if ex.is_a? Pending::SkipDeclaredInExample
+      if ex.is_a? SkipDeclaredInExample
         for_filtered_examples(reporter) { |example| example.skip_with_exception(reporter, ex) }
       else
-        RSpec.world.wants_to_quit = true if fail_fast?
         for_filtered_examples(reporter) { |example| example.fail_with_exception(reporter, ex) }
+        RSpec.world.wants_to_quit = true if reporter.fail_fast_limit_met?
       end
-      result
+      false
     end.always do |result|
-      run_after_context_hooks(new)
-      before_context_ivars.clear
+      run_after_context_hooks(new('after(:context) hook')) if should_run_context_hooks
+      result
+    end.then do |result|
       reporter.example_group_finished(self)
       # promise always do not behave exactly like ensure, need to be explicit about value being returned
       result
@@ -70,7 +69,7 @@ class ::RSpec::Core::ExampleGroup
 
     example_promise = lambda do |example|
       next Promise.value(nil) if RSpec.world.wants_to_quit
-      instance = new
+      instance = new(example.inspect_output)
       set_ivars(instance, before_context_ivars)
       # Always returns a promise since we modified the Example class
       example.run(instance, reporter)
@@ -81,14 +80,14 @@ class ::RSpec::Core::ExampleGroup
     seed = Promise.value(true)
     latest_promise = examples.inject(seed) do |previous_promise, next_example|
       previous_promise.then do |succeeded|
-        RSpec.world.wants_to_quit = true if fail_fast? && !succeeded
+        RSpec.world.wants_to_quit = true if !succeeded && reporter.fail_fast_limit_met?
         results << succeeded
         example_promise[next_example]
       end
     end
 
     latest_promise.then do |succeeded|
-      RSpec.world.wants_to_quit = true if fail_fast? && !succeeded
+      RSpec.world.wants_to_quit = true if !succeeded && reporter.fail_fast_limit_met?
       results << succeeded
       results.all?
     end

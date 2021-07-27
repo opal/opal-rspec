@@ -8,6 +8,21 @@ class ::RSpec::Core::Configuration
   def requires=(paths)
     # can't change requires @ this stage, this method calls RubyProject which will crash on Opal
   end
+
+  # No parent groups?
+  def parent_groups
+    []
+  end
+
+  # @private
+  def in_project_source_dir_regex
+    regexes = project_source_dirs.map do |dir|
+      #v- WAS: \A,                             vvvvvvvv- WAS: \/
+      /^#{Regexp.escape(File.expand_path(dir))}(?:\/|-)/
+    end
+
+    Regexp.union(regexes)
+  end
 end
 
 class ::RSpec::Core::ConfigurationOptions

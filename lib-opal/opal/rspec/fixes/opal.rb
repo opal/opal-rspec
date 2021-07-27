@@ -18,6 +18,20 @@ require 'nodejs' if OPAL_PLATFORM == 'nodejs'
 module Kernel
   def trap(sig, &block)
   end
+
+  alias eval_before_rspec eval
+
+  def eval(*args)
+    case args
+    when ["o = Object.new; def o.m(a: 1); end;"\
+           " raise SyntaxError unless o.method(:m).parameters.include?([:key, :a])"],
+         ["o = Object.new; def o.m(a: ); end;"\
+           "raise SyntaxError unless o.method(:m).parameters.include?([:keyreq, :a])"]
+      nil
+    else
+      eval_before_rspec(*args)
+    end
+  end
 end
 
 # class File
@@ -33,6 +47,19 @@ require 'js'
 def JS.[](name)
   `Opal.global[#{name}]`
 end unless JS.respond_to? :[]
+
+# TODO: backport this to opal
+def ENV.fetch(key, default=nil, &block)
+  return self[key] if key?(key)
+  return yield key if block_given?
+  return default if default
+  raise KeyError, "key not found"
+end unless ENV.respond_to? :fetch
+
+# TODO: likewise
+class Encoding::UndefinedConversionError < StandardError; end
+class Encoding::InvalidByteSequenceError < StandardError; end
+class Encoding::ConverterNotFoundError < StandardError; end
 
 module Opal
   module RSpec

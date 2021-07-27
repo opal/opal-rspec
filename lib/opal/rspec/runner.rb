@@ -76,6 +76,7 @@ module Opal
         locator = ::Opal::RSpec::Locator.new pattern: self.pattern, exclude_pattern: self.exclude_pattern, files: self.files, default_path: self.default_path
 
         options = []
+        options << '--enable-source-location'
         options << '--arity-check' if arity_checking?
         options += ['--runner', runner] unless runner.empty?
         options << '-ropal-rspec'

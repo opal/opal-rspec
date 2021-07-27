@@ -16,7 +16,7 @@ module ::RSpec::Core
 
     def run_specs(example_groups)
       @configuration.reporter.report(@world.example_count(example_groups)) do |reporter|
-        hook_context = SuiteHookContext.new
+        hook_context = SuiteHookContext.new("a `before(:suite)` hook", reporter)
 
         Promise.value(true).then do
           @configuration.hooks.run(:before, :suite, hook_context)
@@ -34,6 +34,7 @@ module ::RSpec::Core
           end
 
         end.ensure do |result|
+          hook_context = SuiteHookContext.new("an `after(:suite)` hook", reporter)
           @configuration.hooks.run(:after, :suite, hook_context)
           result
         end
