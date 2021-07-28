@@ -2,7 +2,7 @@
 
 ## 0.8.0 - unreleased
 
-- Support for Opal v1.0.0
+- Support for Opal v1.x
 
 - Fix some x-srting semicolon warnings
 
