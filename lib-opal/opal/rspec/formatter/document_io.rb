@@ -1,7 +1,7 @@
 module Opal
   module RSpec
     class DocumentIO < IO
-      include IO::Writable
+      include IO::Writable if defined? IO::Writable
 
       def initialize
         `document.open()`
