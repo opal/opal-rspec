@@ -1,6 +1,6 @@
 # Opal-RSpec Changelog
 
-## 0.8.0 - unreleased
+## 0.8.0 - 2021-12-01
 
 - Support for Opal v1.x
 
