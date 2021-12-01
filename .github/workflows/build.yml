@@ -5,7 +5,7 @@ on:
     branches:
       - master
       - "*-stable"
-      - "*ci-check"
+      - "*/ci-check"
   pull_request:
     branches:
       - master
@@ -30,7 +30,7 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
       - name: Setup project
         run: bin/setup
-      - name: Run test
-        run:
-          - "bundle exec exe/opal-rspec spec-opal-passing"
-          - "bundle exec rspec"
+      - name: Run opal-rspec test
+        run: "bundle exec exe/opal-rspec spec-opal-passing"
+      - name: Run rspec test
+        run: bundle exec rspec
