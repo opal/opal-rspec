@@ -10,7 +10,7 @@ module ::RSpec::Core
       # NOW:
       run(ARGV, $stderr, $stdout).then do |status|
         status = status.to_i
-        exit(status) if status != 0
+        exit(status)
       end
     end
 
