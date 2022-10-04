@@ -1,5 +1,5 @@
-require_relative 'support/spec'
 require_relative 'support/encoded_string'
-require_relative 'support/recursive_const_methods'
-require_relative 'support/warnings'
 require_relative 'support/formatter_support'
+require_relative 'support/differ'
+require_relative 'support/ruby_features'
+require_relative 'support/source'

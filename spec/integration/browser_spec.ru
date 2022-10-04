@@ -1,4 +1,4 @@
-require 'opal/rspec'
+require 'opal/rspec/sprockets'
 require 'opal-sprockets'
 require 'opal/sprockets/server'
 

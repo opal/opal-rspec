@@ -1,4 +1,4 @@
-require 'opal/rspec'
+require 'opal/rspec/sprockets'
 require 'opal/sprockets'
 require 'opal/sprockets/server'
 
@@ -13,5 +13,5 @@ run Opal::Sprockets::Server.new(sprockets: sprockets) { |s|
   s.main = 'sprockets_runner_js_errors'
   # sprockets_runner_js_errors will not be in the opal load path by default
   # s.append_path 'spec/integration/rack'
-  s.debug = ENV['OPAL_DEBUG']
+  s.debug = true
 }

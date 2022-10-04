@@ -48,9 +48,13 @@ end
 #   t.pattern = 'spec/opal/rspec/**/*_spec.rb'
 # end
 #
-# Opal::RSpec::RakeTask.new(:color_on_by_default) do |_, task|
-#   task.pattern = 'spec-opal/other/color_on_by_default_spec.rb'
-# end
+Opal::RSpec::RakeTask.new(:other_specs) do |_, task|
+  task.pattern = 'spec-opal/other/dummy_spec.rb'
+end
+
+Opal::RSpec::RakeTask.new(:color_on_by_default) do |_, task|
+  task.pattern = 'spec-opal/other/color_on_by_default_spec.rb'
+end
 #
 # # Opal::RSpec::CoreSpecLoader.rake_tasks_for(:rspec_core_specs)
 # # Opal::RSpec::ExpectationSpecLoader.rake_tasks_for(:rspec_expectation_specs)

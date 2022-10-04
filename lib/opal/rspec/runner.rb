@@ -4,6 +4,7 @@ require 'tempfile'
 require 'socket'
 require 'opal/cli_options'
 require 'opal/cli'
+require 'opal/rspec/locator'
 
 module Opal
   module RSpec
@@ -17,6 +18,14 @@ module Opal
       def arity_checking?
         setting = @arity_checking || :enabled
         setting == :enabled
+      end
+
+      def source_location?
+        :enabled
+      end
+
+      def file_source_embed?
+        :enabled
       end
 
       def runner
@@ -77,6 +86,8 @@ module Opal
 
         options = []
         options << '--arity-check' if arity_checking?
+        options << '--enable-source-location' if source_location?
+        options << '--enable-file-source-embed' if file_source_embed?
         options += ['--runner', runner] unless runner.empty?
         options << '-ropal-rspec'
         options << '--missing-require=ignore'

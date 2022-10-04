@@ -1,3 +1,5 @@
+# await: *await*
+
 require 'spec_helper'
 
 describe 'subject' do
@@ -46,24 +48,24 @@ describe 'subject' do
       context 'explicit async' do
         it 'passes' do
           delay_with_promise 0 do
-            expect(subject).to eq 42
+            expect(subject.await).to eq 42
           end
         end
 
         it 'fails properly' do
           delay_with_promise 0 do
-            expect(subject).to eq 43
+            expect(subject.await).to eq 43
           end
         end
       end
 
       context 'implicit' do
         context 'passes' do
-          it { is_expected.to eq 42 }
+          it { expect(subject.await).to eq 42 }
         end
 
         context 'fails properly' do
-          it { is_expected.to eq 43 }
+          it { expect(subject.await).to eq 43 }
         end
       end
     end
@@ -76,12 +78,12 @@ describe 'subject' do
       end
 
       context 'implicit usage' do
-        it { is_expected.to eq 42 }
+        it { expect(subject.await).to eq 42 }
       end
 
       it 'explicit async' do
         delay_with_promise 0 do
-          expect(subject).to eq 42
+          expect(subject.await).to eq 42
         end
       end
     end

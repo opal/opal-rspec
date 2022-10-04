@@ -17,7 +17,6 @@ require 'support/helper_methods'
 require 'support/matchers'
 require 'support/formatter_support'
 require 'support/config_options_helper'
-require 'fixes/sandboxing'
 require 'fixes/missing_constants'
 require 'fixes/shared_examples'
 require 'rspec/support/spec'
@@ -33,7 +32,7 @@ end
 
 RSpec.configure do |config|
   #c.full_description = 'uses the default color for the shared example backtrace line'
-  config.add_formatter RSpec::Core::Formatters::JsonFormatter, '/tmp/rspec-core-results.json'
+  config.add_formatter RSpec::Core::Formatters::JsonFormatter, File.open('/tmp/rspec-core-results.json', 'w')
   config.add_formatter RSpec::Core::Formatters::ProgressFormatter, $stdout
   config.include StubWriteFile
   config.filter_run_excluding type: :drb

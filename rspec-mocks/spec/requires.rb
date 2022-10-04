@@ -11,12 +11,13 @@ require 'rspec/support/spec/formatting_support'
 require 'rspec/support/spec/with_isolated_directory'
 require 'opal-parser'
 require 'fixes/shared_examples'
+require 'fixes/no_const_hide'
 require 'corelib/marshal'
 require 'filters'
 
 RSpec.configure do |c|
   #c.full_description = 'uses the default color for the shared example backtrace line'
-  c.add_formatter RSpec::Core::Formatters::JsonFormatter, '/tmp/rspec-mocks-results.json'
+  c.add_formatter RSpec::Core::Formatters::JsonFormatter, File.open('/tmp/rspec-mocks-results.json', 'w')
   c.add_formatter RSpec::Core::Formatters::ProgressFormatter, $stdout
 end
 

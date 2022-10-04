@@ -1,5 +1,7 @@
+# await: *await*
+
 class ::RSpec::Core::Reporter
-  def report(expected_example_count)
+  def report_await(expected_example_count)
     # WAS:
     #   start(expected_example_count)
     #   begin
@@ -9,9 +11,10 @@ class ::RSpec::Core::Reporter
     #   end
     # NOW:
     start(expected_example_count)
-    yield(self).ensure do |result|
+    begin
+      yield(self).await
+    ensure
       finish
-      result
     end
   end
 end

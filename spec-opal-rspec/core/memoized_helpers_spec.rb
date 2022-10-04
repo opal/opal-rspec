@@ -1,3 +1,5 @@
+# await: *await*
+
 require 'spec_helper'
 
 module RSpec::Core
@@ -17,8 +19,8 @@ module RSpec::Core
         end
 
         #expect(group.run).to be true
-        expect(group.run).to be_a Promise
-        expect(group.run.value).to be_truthy
+        expect(group.run).to be_a PromiseV2
+        expect(group.run_await).to be_truthy
       end
 
       it 'supports a new expect-based syntax' do
@@ -28,8 +30,8 @@ module RSpec::Core
         end
 
         #expect(group.run).to be true
-        expect(group.run).to be_a Promise
-        expect(group.run.value).to be_truthy
+        expect(group.run).to be_a PromiseV2
+        expect(group.run_await).to be_truthy
       end
     end
   end

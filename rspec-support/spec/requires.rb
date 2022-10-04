@@ -25,6 +25,6 @@ require 'filters'
 
 RSpec.configure do |c|
   #c.full_description = 'uses the default color for the shared example backtrace line'
-  c.add_formatter RSpec::Core::Formatters::JsonFormatter, '/tmp/rspec-support-results.json'
+  c.add_formatter RSpec::Core::Formatters::JsonFormatter, File.open('/tmp/rspec-support-results.json', 'w')
   c.add_formatter RSpec::Core::Formatters::ProgressFormatter, $stdout
 end

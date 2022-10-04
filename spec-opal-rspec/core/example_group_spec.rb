@@ -1,4 +1,5 @@
 # encoding: utf-8
+# await: *await*
 require 'spec_helper'
 
 module RSpec::Core
@@ -33,8 +34,8 @@ module RSpec::Core
         group.before(:each) { raise "error in before each" }
         example = group.example("equality") { expect(1).to eq(2) }
         #expect(group.run).to be(false)
-        expect(group.run).to be_a Promise
-        expect(group.run.value).to be_falsey
+        expect(group.run).to be_a PromiseV2
+        expect(group.run_await).to be_falsey
 
         expect(example.execution_result.exception.message).to eq("error in before each")
       end
@@ -44,8 +45,8 @@ module RSpec::Core
         group.before(:all) { raise "error in before all" }
         example = group.example("equality") { expect(1).to eq(2) }
         #expect(group.run).to be_falsey
-        expect(group.run).to be_a Promise
-        expect(group.run.value).to be_falsey
+        expect(group.run).to be_a PromiseV2
+        expect(group.run_await).to be_falsey
 
         expect(example.metadata).not_to be_nil
         expect(example.execution_result.exception).not_to be_nil
