@@ -5,7 +5,7 @@ RSpec.configure do |config|
 end
 
 # Trigger #at_exit callbacks once the DOM is ready
-kernel_exit = -> _ { Kernel.exit }
+kernel_exit = -> _ { Kernel.exit unless defined? RSpec::OpalAsync }
 if JS[:document].JS[:readyState] == :complete
   JS[:setTimeOut].call(kernel_exit, 1)
 else

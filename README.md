@@ -163,11 +163,13 @@ to navigate to where an exception occurred.
 `opal-rspec` adds support for async specs to rspec. These specs can be defined using 2 approaches:
 
 1. Promises returned from subject or the `#it` block (preferred)
-1. `#async` instead of `#it` (in use with opal-rspec <= 0.4.3)
+1. `#async` instead of `#it` (in use with 0.4.3 <= opal-rspec < 0.8.0)
 
 ### Promise approach
 
 ```ruby
+require 'opal/rspec/async'
+
 describe MyClass do
   # normal example
   it 'does something' do
@@ -233,7 +235,7 @@ Limitations (apply to both async approaches):
 
 ### Async/it approach
 
-This is the approach that was supported in opal-rspec <= 0.4.3 and it still works.
+This is the approach that was supported in 0.4.3 <= opal-rspec < 0.8.0
 
 ```ruby
 describe MyClass2 do
