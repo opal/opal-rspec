@@ -75,7 +75,7 @@ RSpec.describe Opal::RSpec::Runner do
       end
     end
 
-    TEST_RUNNERS = [:phantom, :node]
+    TEST_RUNNERS = [:chrome, :node, :server]
 
     context 'setting runner via ENV' do
       TEST_RUNNERS.each do |runner|

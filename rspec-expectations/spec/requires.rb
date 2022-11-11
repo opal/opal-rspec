@@ -21,12 +21,11 @@ require 'rspec/support/spec'
 require 'rspec/core/formatters/helpers'
 require 'fixes/shared_examples'
 require 'support/matchers'
-require 'support/shared_examples'
 require 'spec_helper'
 require 'filters'
 
 RSpec.configure do |c|
   #c.full_description = 'uses the default color for the shared example backtrace line'
-  c.add_formatter RSpec::Core::Formatters::JsonFormatter, '/tmp/rspec-expectations-results.json'
+  c.add_formatter RSpec::Core::Formatters::JsonFormatter, File.open('/tmp/rspec-expectations-results.json', 'w')
   c.add_formatter RSpec::Core::Formatters::ProgressFormatter, $stdout
 end

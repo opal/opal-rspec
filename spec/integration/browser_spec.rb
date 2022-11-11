@@ -17,8 +17,8 @@ RSpec.describe 'browser formatter', type: :feature do
     puts "Javascript errors: #{js_errors}" if js_errors.any?
   end
 
-  xit 'matches test results' do
+  it 'matches test results' do
     expect(page.find('h1')).to have_content 'RSpec Code Examples'
-    expect(page.find('#totals')).to have_content '142 examples, 40 failures, 12 pending'
+    expect(page.find('#totals')).to have_content '136 examples, 37 failures, 13 pending'
   end
 end

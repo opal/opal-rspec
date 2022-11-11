@@ -21,14 +21,16 @@ module MathnIntegrationSupport
   end
 end
 
-class Shellwords
-  def self.split(string)
-    string.split(/\s+/)
-  end
+module Open3
 end
 
-class OptionParser
-  InvalidOption = Class.new(StandardError)
-  def parse!(_opts)
+module DRb
+  class DRbServerNotFound < StandardError; end unless defined? DRbServerNotFound
+
+  def self.current_server
+    raise DRbServerNotFound
+  end
+
+  def self.stop_service
   end
 end

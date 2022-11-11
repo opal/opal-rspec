@@ -6,7 +6,7 @@ RSpec.describe 'spec_opts' do
   subject(:output) { `SPEC_OPTS="#{spec_opts}" rake #{rake_task}` }
 
   RSpec.shared_context :color_test do |expected_pass|
-    xit {
+    it {
       matcher = match Regexp.new Regexp.escape("\e[32m1 example, 0 failures\e[0m")
       exp = is_expected
       expected_pass ? exp.to(matcher) : exp.to_not(matcher)
@@ -23,7 +23,7 @@ RSpec.describe 'spec_opts' do
     let(:spec_opts) { '--no-color' }
     let(:rake_task) { 'color_on_by_default' }
 
-    xit { is_expected.to match /1 example, 0 failures/ }
+    it { is_expected.to match /1 example, 0 failures/ }
 
     include_context :color_test, false
   end
@@ -35,34 +35,39 @@ RSpec.describe 'spec_opts' do
           'examples' =>
               [
                   {
-                      'description' => 'should eq 42',
-                      'full_description' => 'foobar should eq 42',
+                      'description' => 'is expected to eq 42',
+                      'full_description' => 'foobar is expected to eq 42',
                       'status' => 'passed',
-                      'file_path' => '',
-                      'line_number' => be_a(Fixnum),
-                      'run_time' => be_a(Float)}
+                      'file_path' => be_a(String),
+                      'id' => be_a(String),
+                      'line_number' => be_a(Integer),
+                      'run_time' => be_a(Float),
+                      'pending_message' => nil,
+                  }    
               ],
           'summary' => {
               'duration' => be_a(Float),
+              'errors_outside_of_examples_count' => 0,
               'example_count' => 1,
               'failure_count' => 0,
               'pending_count' => 0
           },
-          'summary_line' => '1 example, 0 failures'
+          'summary_line' => '1 example, 0 failures',
+          'version' => be_a(String)
       }
     end
 
     subject { JSON.parse(/(\{.*)/.match(output).captures[0]) }
 
-    xit { is_expected.to include expected_json_hash }
+    it { is_expected.to include expected_json_hash }
   end
 
   context 'empty' do
     let(:spec_opts) { '' }
 
-    xit { is_expected.to match /1 example, 0 failures/ }
+    it { is_expected.to match /1 example, 0 failures/ }
 
-    include_context :color_test, false
+    include_context :color_test, true
   end
 
   context 'requires and format' do
@@ -74,8 +79,8 @@ RSpec.describe 'spec_opts' do
   context 'default' do
     subject { `rake other_specs` }
 
-    xit { is_expected.to match /1 example, 0 failures/ }
+    it { is_expected.to match /1 example, 0 failures/ }
 
-    include_context :color_test, false
+    include_context :color_test, true
   end
 end

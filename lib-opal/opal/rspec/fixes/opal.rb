@@ -1,4 +1,8 @@
 require 'opal/platform'
+require 'opal-parser'
+require 'thread'
+require 'corelib/marshal'
+require 'ruby2_keywords'
 
 class IO
   def closed?
@@ -9,30 +13,13 @@ end
 Errno::ENOTDIR = Class.new(SystemCallError)
 
 require 'nodejs' if OPAL_PLATFORM == 'nodejs'
-# class Dir
-#   def self.mkdir(path)
-#
-#   end
-# end
 
 module Kernel
   def trap(sig, &block)
   end
 end
 
-# class File
-#   def self.directory? path
-#     return false unless exist? path
-#     `return executeIOAction(function(){return !!__fs__.lstatSync(__fs__.realPathSync(path)).isDirectory()})`
-#   end
-# end
-
 require 'js'
-
-# TODO: backport this to opal
-def JS.[](name)
-  `Opal.global[#{name}]`
-end unless JS.respond_to? :[]
 
 module Opal
   module RSpec

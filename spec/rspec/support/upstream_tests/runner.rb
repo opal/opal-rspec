@@ -7,7 +7,11 @@ class Opal::RSpec::UpstreamTests::Runner
   def run
     @config.stubs.each { |f| ::Opal::Config.stubbed_files << f }
 
-    output, exit_status = StdoutCapturingRunner.run { opal_rspec_runner.run }
+    if ENV['OPAL_RAW_RUN']
+      opal_rspec_runner.run
+    else
+      output, exit_status = StdoutCapturingRunner.run { opal_rspec_runner.run }
+    end
 
     Opal::RSpec::UpstreamTests::Result.new(
       exit_status,

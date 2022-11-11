@@ -1,3 +1,5 @@
+# await: *await*
+
 require 'spec_helper'
 
 describe 'hooks' do
@@ -56,7 +58,7 @@ describe 'hooks' do
         end
 
         context 'both succeed' do
-          it { is_expected.to eq @test_value }
+          it { expect(subject.await).to eq @test_value }
         end
 
         context 'both subject and before(:each) fail properly' do
@@ -69,7 +71,7 @@ describe 'hooks' do
         end
 
         context 'before :each succeeds, assertion fails properly' do
-          it { is_expected.to_not eq @test_value }
+          it { expect(subject.await).to_not eq @test_value }
         end
 
         context 'before :each fails properly' do
@@ -91,13 +93,13 @@ describe 'hooks' do
         context 'async match' do
           it 'succeeds' do
             delay_with_promise 0 do
-              expect(subject).to eq @test_value
+              expect(subject.await).to eq @test_value
             end
           end
 
           it 'fails properly' do
             delay_with_promise 0 do
-              expect(subject).to_not eq @test_value
+              expect(subject.await).to_not eq @test_value
             end
           end
         end
@@ -111,11 +113,11 @@ describe 'hooks' do
         context 'context' do
           context 'success' do
             before :context do
-              @@before_context_both_sync = 22
+              $before_context_both_sync = 22
             end
 
             before do
-              raise "@@before_context_both_sync should already be 22!" unless @@before_context_both_sync == 22
+              raise "$before_context_both_sync should already be 22!" unless $before_context_both_sync == 22
               @test_value = 42
             end
 
@@ -125,11 +127,11 @@ describe 'hooks' do
           context 'fails properly' do
             before :context do
               raise 'it failed in the before context!'
-              @@before_context_both_sync = 55
+              $before_context_both_sync = 55
             end
 
             before do
-              raise "we reached before:each and we should not have!" if @@before_context_both_sync == 55
+              raise "we reached before:each and we should not have!" if $before_context_both_sync == 55
             end
 
             it 'should not reach the example' do

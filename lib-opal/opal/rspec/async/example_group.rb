@@ -1,96 +1,86 @@
-require 'promise'
+# await: *await*
 
-class ::RSpec::Core::ExampleGroup
-  # @param duration [Integer, Float] time in seconds to wait
-  def delay(duration, &block)
-    `setTimeout(block, duration * 1000)`
-    self
-  end
-
-  def delay_with_promise(duration, &block)
-    result = Promise.new
-    delay(duration) { result.resolve }
-    result.then(&block)
-  end
-
-  def self.process_descendants(our_examples_result, reporter)
-    descendants = ordering_strategy.order(children)
-    return Promise.value(our_examples_result) if descendants.empty?
-
-    results_for_descendants = []
-    # Can use true for this because we're AND'ing everything anyways
-    seed = Promise.value(true)
-    latest_descendant = descendants.inject(seed) do |previous_promise, next_descendant|
-      previous_promise.then do |result|
-        results_for_descendants << result
-        next_descendant.run reporter
+module ::RSpec
+  module Core
+    class ExampleGroup
+      # @param duration [Integer, Float] time in seconds to wait
+      def delay(duration, &block)
+        `setTimeout(block, duration * 1000)`
+        self
       end
-    end
-    latest_descendant.then do |result|
-      results_for_descendants << result
-      our_examples_result && results_for_descendants.all?
-    end
-  end
 
-  # Promise oriented version
-  def self.run(reporter)
-    if RSpec.world.wants_to_quit
-      RSpec.world.clear_remaining_example_groups if top_level?
-      return
-    end
-
-    reporter.example_group_started(self)
-    Promise.value(true).then do
-      run_before_context_hooks(new)
-    end.then do
-      run_examples(reporter)
-    end.then do |our_examples_result|
-      process_descendants(our_examples_result, reporter)
-    end.rescue do |ex|
-      result = if ex.is_a? Pending::SkipDeclaredInExample
-        for_filtered_examples(reporter) { |example| example.skip_with_exception(reporter, ex) }
-      else
-        RSpec.world.wants_to_quit = true if fail_fast?
-        for_filtered_examples(reporter) { |example| example.fail_with_exception(reporter, ex) }
+      def delay_with_promise(duration, &block)
+        result = PromiseV2.new
+        delay(duration) { result.resolve }
+        result.then(&block)
       end
-      result
-    end.always do |result|
-      run_after_context_hooks(new)
-      before_context_ivars.clear
-      reporter.example_group_finished(self)
-      # promise always do not behave exactly like ensure, need to be explicit about value being returned
-      result
-    end
-  end
 
-  # Promise oriented version
-  def self.run_examples(reporter)
-    examples = ordering_strategy.order(filtered_examples)
-    return Promise.value(true) if examples.empty?
+      def self.run_await(reporter=RSpec::Core::NullReporter)
+        # added awaits
+        return if RSpec.world.wants_to_quit
+        reporter.example_group_started(self)
 
-    example_promise = lambda do |example|
-      next Promise.value(nil) if RSpec.world.wants_to_quit
-      instance = new
-      set_ivars(instance, before_context_ivars)
-      # Always returns a promise since we modified the Example class
-      example.run(instance, reporter)
-    end
-
-    results = []
-    # Can use true for this because we're AND'ing everything anyways
-    seed = Promise.value(true)
-    latest_promise = examples.inject(seed) do |previous_promise, next_example|
-      previous_promise.then do |succeeded|
-        RSpec.world.wants_to_quit = true if fail_fast? && !succeeded
-        results << succeeded
-        example_promise[next_example]
+        should_run_context_hooks = descendant_filtered_examples.any?
+        begin
+          RSpec.current_scope = :before_context_hook
+          run_before_context_hooks_await(new('before(:context) hook')) if should_run_context_hooks
+          result_for_this_group = run_examples_await(reporter)
+          results_for_descendants = ordering_strategy.order(children).map_await { |child| child.run_await(reporter) }.all?
+          result_for_this_group && results_for_descendants
+        rescue Pending::SkipDeclaredInExample => ex
+          for_filtered_examples(reporter) { |example| example.skip_with_exception(reporter, ex) }
+          true
+        rescue Support::AllExceptionsExceptOnesWeMustNotRescue => ex
+          for_filtered_examples(reporter) { |example| example.fail_with_exception(reporter, ex) }
+          RSpec.world.wants_to_quit = true if reporter.fail_fast_limit_met?
+          false
+        ensure
+          RSpec.current_scope = :after_context_hook
+          run_after_context_hooks_await(new('after(:context) hook')) if should_run_context_hooks
+          reporter.example_group_finished(self)
+        end
       end
-    end
 
-    latest_promise.then do |succeeded|
-      RSpec.world.wants_to_quit = true if fail_fast? && !succeeded
-      results << succeeded
-      results.all?
+      def self.run_examples_await(reporter)
+        # added awaits
+        ordering_strategy.order(filtered_examples).map_await do |example|
+          next if RSpec.world.wants_to_quit
+          instance = new(example.inspect_output)
+          set_ivars(instance, before_context_ivars)
+          succeeded = example.run_await(instance, reporter)
+          if !succeeded && reporter.fail_fast_limit_met?
+            RSpec.world.wants_to_quit = true
+          end
+          succeeded
+        end.all?
+      end
+
+      # @private
+      def self.run_before_context_hooks_await(example_group_instance)
+        set_ivars(example_group_instance, superclass_before_context_ivars)
+
+        @currently_executing_a_context_hook = true
+        
+        ContextHookMemoized::Before.isolate_for_context_hook_await(example_group_instance) do
+          hooks.run_await(:before, :context, example_group_instance)
+        end
+      ensure
+        store_before_context_ivars(example_group_instance)
+        @currently_executing_a_context_hook = false
+      end
+
+      def self.run_after_context_hooks_await(example_group_instance)
+        set_ivars(example_group_instance, before_context_ivars)
+
+        @currently_executing_a_context_hook = true
+
+        ContextHookMemoized::After.isolate_for_context_hook_await(example_group_instance) do
+          hooks.run_await(:after, :context, example_group_instance)
+        end
+      ensure
+        before_context_ivars.clear
+        @currently_executing_a_context_hook = false
+      end
     end
   end
 end

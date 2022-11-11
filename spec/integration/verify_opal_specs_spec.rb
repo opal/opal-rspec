@@ -20,68 +20,32 @@ RSpec.describe 'Opal Specs' do
     end
 
     before :all do
-      @test_output = remove_colors(`rake spec:opal 1> /dev/stdout 2> /dev/null`.force_encoding('UTF-8'))
+      `rake spec:opal >/tmp/spec-opal-output`
       @test_status = $?
+      @test_output = remove_colors(File.read('/tmp/spec-opal-output'))
     end
 
-    xit "exists with status != 0 due to failed tests" do
+    it "exists with status != 0 due to failed tests" do
       expect(test_status).not_to be_success
     end
 
-    xit 'has a summary line' do
-      expect(test_output).to match(/(\d+) examples, (\d+) failures, (\d+) pending/)
-      examples, failures, pending = test_output.scan(/(\d+) examples, (\d+) failures, (\d+) pending/).first
-      expect(examples).to eq('158')
-      expect(failures).to eq('13')
-      expect(pending ).to eq('9')
+    context 'has a summary line' do
+      subject { test_output }
+
+      it { is_expected.to match(/(\d+) examples, (\d+) failures, (\d+) pending/) }
+
+      it 'with correct values' do
+        examples, failures, pending = subject.scan(/(\d+) examples, (\d+) failures, (\d+) pending/).first
+        expect([examples, failures, pending]).to eq(['142', '38', '14'])
+      end
     end
 
-    xit 'has the expected failures' do
-      # subject sync unnamed assertion fails properly should eq 43
-      # subject sync unnamed fails properly during subject create
-      # subject async assertion implicit fails properly should eq 43
-      # subject async fails properly during creation explicit async
-      # subject async fails properly during creation implicit usage
-      # subject async assertion explicit async fails properly
-      # hooks around sync fails after example should equal 42
-      # hooks around sync fails before example
-      # hooks before async with async subject async match fails properly
-      # hooks before async with async subject before :each fails properly should not reach the example
-      # hooks before async with async subject before :each succeeds, assertion fails properly should not eq 42
-      # hooks before async with async subject before :each succeeds, subject fails properly should not reach the example
-      # hooks before async with async subject both subject and before(:each) fail properly should not reach the example
-      # hooks before async with sync subject async match fails properly
-      # hooks before async with sync subject before :each fails properly should not reach the example
-      # hooks before async with sync subject match fails properly should not eq 42
-      # hooks before sync with sync subject context fails properly should not reach the example
-      # hooks before sync with sync subject before :each fails properly should not reach the example
-      # hooks before sync with sync subject match fails properly should not eq 42
-      # hooks before sync with sync subject first before :each in chain triggers failure inner context should not reach the example
-      # hooks after sync after fails should eq 42
-      # hooks after sync before fails should not reach the example
-      # hooks after sync match fails async match
-      # hooks after sync match fails sync match should eq 43
-      # hooks after async after(:each) fails properly
-      # hooks after async before(:each) fails properly
-      # hooks after async match fails properly async match
-      # hooks after async match fails properly sync match should eq 43
-      expected_failures = %[
-        promise should make example fail properly before async block reached
-        promise matcher fails properly
-        promise non-assertion failure in promise no args
-        promise non-assertion failure in promise string arg
-        promise non-assertion failure in promise exception arg
-        pending in example no promise would not fail otherwise, thus fails properly FIXED
-        async/sync mix fails properly if a sync test is among async tests
-        async/sync mix can finish running after a long delay and fail properly
-        be_truthy fails properly with truthy values
-        exception handling should fail properly if an exception is raised
-        exception handling should ignore an exception after a failed assertion
-      ].strip.split("\n").map(&:strip).sort
+    it 'has the expected failures' do
+      actual_failures = test_output.scan(/^rspec .*?:[0-9]+ # (.*)$/).map(&:first).sort
 
-      actual_failures = test_output.scan(/\d+\) (.*)/).map(&:first).sort
+      unexpected_failures = actual_failures.grep_v(/fail/)
 
-      expect(actual_failures).to include(expected_failures)
+      expect(unexpected_failures).to be_empty
     end
 
     # it 'has some expected errors' do

@@ -13,3 +13,9 @@
 [submodule "rspec-expectations"]
 	path = rspec-expectations/upstream
 	url = https://github.com/rspec/rspec-expectations.git
+[submodule "diff-lcs/diff-lcs/upstream"]
+	path = diff-lcs/diff-lcs/upstream
+	url = https://github.com/halostatue/diff-lcs
+[submodule "diff-lcs/upstream"]
+	path = diff-lcs/upstream
+	url = https://github.com/halostatue/diff-lcs

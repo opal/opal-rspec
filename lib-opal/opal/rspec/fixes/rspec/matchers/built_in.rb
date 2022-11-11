@@ -1,4 +1,2 @@
-require_relative 'built_in/yield'
+require_relative 'built_in/base_matcher'
 require_relative 'built_in/start_and_end_with'
-require_relative 'built_in/compound'
-require_relative 'built_in/all'

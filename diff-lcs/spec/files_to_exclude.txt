@@ -1,0 +1,1 @@
+**/ldiff_spec.rb

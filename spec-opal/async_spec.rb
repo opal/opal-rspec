@@ -18,15 +18,16 @@ describe 'promise' do
 
   context 'non-assertion failure in promise' do
     it 'no args' do
-      promise = Promise.new
+      promise = PromiseV2.new
       delay 0 do
         promise.reject
       end
       promise
     end
 
-    it 'string arg' do
-      promise = Promise.new
+    # We deliberately remove this feature, as this makes RSpec go bonkers...
+    xit 'string arg' do
+      promise = PromiseV2.new
       delay 0 do
         promise.reject 'string failure reason here'
       end

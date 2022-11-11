@@ -15,7 +15,7 @@ RSpec.describe 'Opal::RSpec::BrowserFormatter', type: :feature, js: true do
     Capybara.default_max_wait_time = 40
   end
 
-  xit 'matches test results' do
+  it 'matches test results' do
     expect(page).to have_content '3 examples, 1 failure, 1 pending'
     expect(page).to have_content 'group'
     expect(page).to have_content 'a skipped example'

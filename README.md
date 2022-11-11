@@ -37,20 +37,21 @@ bundle exec opal-rspec --color spec-opal/
 ## Requirements
 
 Besides what's already reflected in the GEM dependencies:
-* PhantomJS 2.0 or 2.1 for Rake task testing
 * Browser if you want to run and debug tests that way
 
-### Run specs in phantomjs
+### Run specs in Headless Chromium
 
 To run specs, a rake task can be added which will load all spec files from
-`spec/`:
+`spec-opal/`:
 
 ```ruby
 require 'opal/rspec/rake_task'
-Opal::RSpec::RakeTask.new(:default)
+Opal::RSpec::RakeTask.new(:default) do |server, task|
+  task.runner = :chrome
+end
 ```
 
-Then, to run your specs inside phantomjs (the default runner), just run the rake task:
+Then, to run your specs inside headless chrome (the default runner), just run the rake task:
 
 ```
 bundle exec rake
@@ -83,6 +84,7 @@ You can also customize the pattern of specs used similiar to how RSpec's rake ta
 
 ```ruby
 Opal::RSpec::RakeTask.new(:default) do |server, task|
+  task.runner = :chrome
   # server is an instance of Opal::Server in case you want to add to the load path, customize, etc.
   task.pattern = 'spec_alternate/**/*_spec.rb' # can also supply an array of patterns
   # NOTE: opal-rspec, like rspec, only adds 'spec' to the Opal load path unless you set default_path
@@ -94,6 +96,8 @@ Excluding patterns can be setup this way:
 
 ```ruby
 Opal::RSpec::RakeTask.new(:default) do |server, task|
+  task.runner = :chrome
+
   task.exclude_pattern = 'spec_alternate/**/*_spec.rb' # can also supply an array of patterns
 end
 ```
@@ -102,14 +106,18 @@ FileLists (as in Rake FileLists) can also be supplied:
 
 ```ruby
 Opal::RSpec::RakeTask.new(:default) do |server, task|
+  task.runner = :chrome
+
   task.files = FileList['spec/**/something_spec.rb']
 end
 ```
 
-PhantomJS will timeout by default after 60 seconds. If you need to lengthen the timeout value, set it like this:
+Headless Chromium will timeout by default after 60 seconds. If you need to lengthen the timeout value, set it like this:
 
 ```ruby
 Opal::RSpec::RakeTask.new(:default) do |server, task|
+  task.runner = :chrome
+
   task.files = FileList['spec/**/something_spec.rb']
   task.timeout = 80000 # 80 seconds, unit needs to be milliseconds
 end
@@ -119,13 +127,18 @@ Arity checking is enabled by default. Opal allows you to disable arity checking 
 
 ```ruby
 Opal::RSpec::RakeTask.new(:default) do |server, task|
+  task.runner = :chrome
+
   task.arity_checking = :disabled
 end
 ```
 
-### Run specs in nodejs
+If you don't specify a runner using `task.runner`, a default one is Node. In this case you can also use `RUNNER=chrome` to run a particular test with Headless Chromium.
 
-Same options as above, you can use the `RUNNER=node` environment variable or use the Rake task like so:
+### Run specs in Node.js
+
+Same options as above, you can use the `RUNNER=node` environment variable
+(which is the default) or use the Rake task like so:
 
 ```ruby
 Opal::RSpec::RakeTask.new(:default) do |server, task|
@@ -133,21 +146,30 @@ Opal::RSpec::RakeTask.new(:default) do |server, task|
 end
 ```
 
-NOTE: nodejs runner does not yet work with source maps or debug mode
-
 ### Run specs in a browser
+
+Same options as above, you can use the `RUNNER=server` environment variable
+(which is the default) or use the Rake task like so:
+
+```ruby
+Opal::RSpec::RakeTask.new(:default) do |server, task|
+  task.runner = :server
+end
+```
+
+### Run specs in a browser (Sprockets, deprecated)
 
 `opal-rspec` can use sprockets to build and serve specs over a simple rack
 server. Add the following to a `config.ru` file (see config.ru in this GEM):
 
 ```ruby
-require 'opal/rspec'
+require 'opal/rspec/sprockets'
 # or use Opal::RSpec::SprocketsEnvironment.new(spec_pattern='spec-opal/**/*_spec.{rb,opal}') to customize the pattern
 sprockets_env = Opal::RSpec::SprocketsEnvironment.new
 run Opal::Server.new(sprockets: sprockets_env) { |s|
   s.main = 'opal/rspec/sprockets_runner'
   sprockets_env.add_spec_paths_to_sprockets
-  s.debug = false
+  s.debug = true
 }
 ```
 
@@ -160,14 +182,11 @@ to navigate to where an exception occurred.
 
 ## Async examples
 
-`opal-rspec` adds support for async specs to rspec. These specs can be defined using 2 approaches:
-
-1. Promises returned from subject or the `#it` block (preferred)
-1. `#async` instead of `#it` (in use with 0.4.3 <= opal-rspec < 0.8.0)
-
-### Promise approach
+`opal-rspec` adds support for async specs to rspec.
 
 ```ruby
+# await: *await*
+
 require 'opal/rspec/async'
 
 describe MyClass do
@@ -178,7 +197,7 @@ describe MyClass do
 
   # async example
   it 'does something else, too' do
-    promise = Promise.new
+    promise = PromiseV2.new
     delay 1 do
       expect(:foo).to eq(:foo)
       promise.resolve
@@ -199,7 +218,7 @@ describe MyClass2 do
   # will wait for the before promise to complete before proceeding
   before do
     delay_with_promise 0 do
-      puts 'async before 'action
+      puts 'async before action'
     end
   end
 
@@ -210,12 +229,12 @@ describe MyClass2 do
     end
   end
 
-  it { is_expected.to eq 42 }
+  it { expect(subject.await).to eq 42 }
 
   # If you use an around block and have async specs, you must use this approach
   around do |example|
     puts 'do stuff before'
-    example.run.then do
+    example.run_await.then do
       puts 'do stuff after example'
     end
   end
@@ -224,42 +243,18 @@ end
 
 Advantages:
 
-* Assuming your subject under test (or matchers) return/use promises, the syntax is the same for sync or async specs
+* Assuming your subject under test (or matchers) return/use promises, or uses `await` syntax, the syntax is the same for sync or async specs
 
-Limitations (apply to both async approaches):
+Limitations:
 
-* Right now, async `before(:context)` and `after(:context)` hooks cannot be async
-* You cannot use an around hooks on any example where before(:each)/after(:each) hooks are async or with an async implicit subject
-* `let` dependencies cannot be async, only subject
 * Opal-rspec will not timeout while waiting for your async code to finish
 
-### Async/it approach
+Changes since 0.9:
 
-This is the approach that was supported in 0.4.3 <= opal-rspec < 0.8.0
-
-```ruby
-describe MyClass2 do
-  async 'HTTP requests should work' do
-    HTTP.get('/users/1.json') do |res|
-      async {
-        expect(res).to be_ok
-      }
-    end
-  end
-end
-```
-
-The block passed to the second `async` call informs the runner that this spec is finished
-so it can move on. Any failures/expectations run inside this block will be run
-in the context of the example.
-
-Advantages:
-
-* Hides promises from the specs
-
-Disadvantages:
-
-* Requires different syntax for async specs vs. sync specs
+* If you use async features, it's crucial to use a `# await: *await*` magic comment (this will cause any call to a method containing an `await` word to be compiled with an `await` ES8 keyword)
+* Both `let` and `subject` that return a promise (ie. are async; also if they) must be referenced with an `.await` method
+* In `around` blocks, you must call `example.run_await` instead of just `example.run`
+* Only `PromiseV2` is supported (`PromiseV1` may work, but you should migrate your application to use `PromiseV2` nevertheless, in Opal 2.0 it will become the default)
 
 ## Opal load path
 
@@ -279,9 +274,19 @@ Opal::RSpec::RakeTask.new do |server, task|
 end
 ```
 
+Since 0.8, the default spec location is `spec-opal` and the default source location is `lib-opal`. If your code aims to run the same specs and libraries for Ruby and Opal, you should use the following:
+
+```ruby
+Opal::RSpec::RakeTask.new do |server, task|
+  server.append_path 'lib'
+  task.default_path = 'spec'
+  task.files = FileList['spec/**/*_spec.rb']
+end
+```
+
 ## Other Limitations/Known Issues
 
-80%+ of the RSpec test suites pass so most items work but there are a few things that do not yet work.
+80%+ of the RSpec test suites pass so most items work but there are a few things that do not yet work. Do note that some of the items described here may actually work in the recent version.
 
 * Core Examples
   * Example groups included like this are currently not working:
@@ -303,15 +308,11 @@ end
 * Formatting/Reporting
   * Specs will not have file path/line number information on them unless they are supplied from user metadata or they fail, see [this issue](https://github.com/opal/opal-rspec/issues/36)
   * In Firefox w/ the browser runner, no backtraces show up with failed specs
-  * Diffs are not yet available when objects do not meet expectations (diff-lcs gem dependency has not been dealt with yet in Opal)
 * Configuration
   * Not all RSpec runner options are supported yet
   * At some point, using node + Phantom's ability to read environment variables could be combined with a opal friendly optparse implementation to allow full options to be supplied/parsed
   * Expect and should syntax are both enabled. They cannot be disabled due to past bugs with the `undef` keyword in Opal. Status of changing this via config has not been retested.
   * Random order does not work yet due to lack of [srand/Random support](https://github.com/opal/opal/issues/639) and RSpec's bundled Random implementation, `RSpec::Core::Backports::Random`, locks the browser/Phantom. If you specify random order, it will be ignored.
-* Nodejs runner
-  * debug mode + source map support not there yet (see source map support - https://github.com/evanw/node-source-map-support)
-  * currently running a lot slower than phantomjs, might need optimization
 * Matchers
   * predicate matchers (be_some_method_on_your_subject) do not currently work with delegate objects (Opal `DelegateClass` is incomplete)
   * equal and eq matchers function largely the same right now since `==` and `equal?` in Opal are largely the same
@@ -346,6 +347,7 @@ When updating the RSpec versions, after updating the submodule revisions, you ma
 
 (The MIT License)
 
+Copyright (C) 2022 by hmdne and the Opal contributors
 Copyright (C) 2015 by Brady Wied
 Copyright (C) 2013 by Adam Beynon
 

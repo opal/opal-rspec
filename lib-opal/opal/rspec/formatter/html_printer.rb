@@ -61,7 +61,7 @@ module Opal
         flush_output
       end
 
-      def print_example_failed(pending_fixed, description, run_time, failure_id, exception, extra_content, escape_backtrace=false)
+      def print_example_failed(pending_fixed, description, run_time, failure_id, exception, extra_content)
         super
         flush_output
         example_we_just_wrote = current_node.get_child_by_tag_name('dd', index=-1)

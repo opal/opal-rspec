@@ -24,8 +24,8 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency 'opal', ['>= 1.0.0', '< 2.0']
-  spec.add_dependency 'opal-sprockets', ['>= 1.0', '< 2.0']
+  spec.add_dependency 'opal', ['>= 1.6.0a', '< 2.0']
+  spec.add_dependency 'opal-sprockets', '< 2.0'
   spec.add_dependency 'rake', '>= 12.0'
 
   spec.add_development_dependency 'bundler'

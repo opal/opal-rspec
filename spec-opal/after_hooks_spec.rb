@@ -1,16 +1,18 @@
+# await: *await*
+
 require 'spec_helper'
 
 describe 'hooks' do
   describe 'after' do
     before :all do
-      @@total = 0
-      @@example_still_in_progress = nil
+      $AHtotal = 0
+      $AHexample_still_in_progress = nil
     end
 
     after :all do
       expected = 13
-      unless @@total == expected
-        msg = "Expected #{expected} after hits but got #{@@total}"
+      unless $AHtotal == expected
+        msg = "Expected #{expected} after hits but got #{$AHtotal}"
         `console.error(#{msg})`
       end
     end
@@ -19,22 +21,22 @@ describe 'hooks' do
 
     before do |example|
       if raise_before_error
-        @@example_still_in_progress = nil
+        $AHexample_still_in_progress = nil
         raise 'before problem'
       end
-      if @@example_still_in_progress
-        raise "Another spec (#{@@example_still_in_progress}) is still running, after block problem"
-        @@example_still_in_progress = nil
+      if $AHexample_still_in_progress
+        raise "Another spec (#{$AHexample_still_in_progress}) is still running, after block problem"
+        $AHexample_still_in_progress = nil
       end
-      @@example_still_in_progress = example.description
+      $AHexample_still_in_progress = example.description
     end
 
     let(:raise_after_error) { false }
 
     context 'sync' do
       after do
-        @@total += 1
-        @@example_still_in_progress = nil
+        $AHtotal += 1
+        $AHexample_still_in_progress = nil
         raise 'expected after problem' if raise_after_error
       end
 
@@ -90,8 +92,8 @@ describe 'hooks' do
     context 'async' do
       after do
         delay_with_promise 0 do
-          @@total += 1
-          @@example_still_in_progress = nil
+          $AHtotal += 1
+          $AHexample_still_in_progress = nil
           raise 'after problem' if raise_after_error
         end
       end
@@ -105,29 +107,29 @@ describe 'hooks' do
       context 'before(:each) fails properly' do
         let(:raise_before_error) { true }
 
-        it { is_expected.to eq 42 }
+        it { expect(subject.await).to eq 42 }
       end
 
       context 'match succeeds' do
         context 'sync match' do
-          it { is_expected.to eq 42 }
+          it { expect(subject.await).to eq 42 }
         end
 
         it 'async match' do
           delay_with_promise 0 do
-            expect(subject).to eq 42
+            expect(subject.await).to eq 42
           end
         end
       end
 
       context 'match fails properly' do
         context 'sync match' do
-          it { is_expected.to eq 43 }
+          it { expect(subject.await).to eq 43 }
         end
 
         it 'async match' do
           delay_with_promise 0 do
-            expect(subject).to eq 43
+            expect(subject.await).to eq 43
           end
         end
       end
@@ -135,7 +137,7 @@ describe 'hooks' do
       context 'after(:each) fails properly' do
         let(:raise_after_error) { true }
 
-        it { is_expected.to eq 42 }
+        it { expect(subject.await).to eq 42 }
       end
     end
   end

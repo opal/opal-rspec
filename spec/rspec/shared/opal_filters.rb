@@ -7,8 +7,12 @@ module OpalFilters
     def colorized_rerun_commands(colorizer=::RSpec::Core::Formatters::ConsoleCodes)
       "\nFilter failed examples:\n\n" +
       failed_examples.map do |example|
-        colorizer.wrap("fails #{example.full_description.inspect}, ", RSpec.configuration.failure_color) + " " +
-        colorizer.wrap("#{example.execution_result.exception.message.strip.split("\n").first[0..100].inspect}", RSpec.configuration.detail_color)
+        output = colorizer.wrap("fails #{example.full_description.inspect}, ", RSpec.configuration.failure_color) + " "
+        output += colorizer.wrap("#{example.execution_result.exception.message.strip.split("\n").first[0..100].inspect}", RSpec.configuration.detail_color)
+      rescue
+        # it's ok
+      ensure
+        output
       end.join("\n")
     end
   end
