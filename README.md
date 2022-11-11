@@ -1,8 +1,8 @@
 # opal-rspec
 
 [![Build Status](http://img.shields.io/travis/opal/opal-rspec/master.svg?style=flat)](http://travis-ci.org/opal/opal-rspec)
-[![Quality](http://img.shields.io/codeclimate/github/opal/opal-rspec.svg?style=flat-square)](https://codeclimate.com/github/opal/opal-rspec)
-[![Version](http://img.shields.io/gem/v/opal-rspec.svg?style=flat-square)](https://rubygems.org/gems/opal-rspec)
+[![Quality](https://img.shields.io/codeclimate/maintainability-percentage/opal/opal-rspec.svg?style=flat)](https://codeclimate.com/github/opal/opal-rspec)
+[![Version](http://img.shields.io/gem/v/opal-rspec.svg?style=flat)](https://rubygems.org/gems/opal-rspec)
 
 An attempt at a compatibility layer of RSpec for Opal.
 
@@ -249,7 +249,7 @@ Limitations:
 
 * Opal-rspec will not timeout while waiting for your async code to finish
 
-Changes since 0.9:
+Changes since 1.0:
 
 * If you use async features, it's crucial to use a `# await: *await*` magic comment (this will cause any call to a method containing an `await` word to be compiled with an `await` ES8 keyword)
 * Both `let` and `subject` that return a promise (ie. are async; also if they) must be referenced with an `.await` method
