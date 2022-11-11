@@ -1,5 +1,20 @@
 # Opal-RSpec Changelog
 
+## 1.0.0.alpha1 - 2022-11-11
+
+- Drop support for anything below Opal v1.6.alpha1
+
+- Update to the latest RSpec versions
+
+- Vendor-in `diff-lcs`
+
+- Rework the async logic to use the `await` feature of Opal
+  * If you use async features, it's crucial to use a `# await: *await*` magic comment (this will cause any call to a method containing an `await` word to be compiled with an `await` ES8 keyword)
+  * Both `let` and `subject` that return a promise (ie. are async) must be referenced with an `.await` method
+  * In `around` blocks, you must call `example.run_await` instead of just `example.run`
+  * Only `PromiseV2` is supported (`PromiseV1` may work, but you should migrate your application to use `PromiseV2` nevertheless, in Opal 2.0 it will become the default)
+
+
 ## 0.8.0 - 2021-12-01
 
 - Support for Opal v1.x

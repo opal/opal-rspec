@@ -252,7 +252,7 @@ Limitations:
 Changes since 1.0:
 
 * If you use async features, it's crucial to use a `# await: *await*` magic comment (this will cause any call to a method containing an `await` word to be compiled with an `await` ES8 keyword)
-* Both `let` and `subject` that return a promise (ie. are async; also if they) must be referenced with an `.await` method
+* Both `let` and `subject` that return a promise (ie. are async) must be referenced with an `.await` method
 * In `around` blocks, you must call `example.run_await` instead of just `example.run`
 * Only `PromiseV2` is supported (`PromiseV1` may work, but you should migrate your application to use `PromiseV2` nevertheless, in Opal 2.0 it will become the default)
 
