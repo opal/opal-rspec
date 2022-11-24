@@ -1,6 +1,6 @@
 # Opal-RSpec Changelog
 
-## 1.0.0.alpha1 - 2022-11-11
+## 1.0.0 - 2022-11-24
 
 - Drop support for anything below Opal v1.6.alpha1
 
@@ -13,6 +13,9 @@
   * Both `let` and `subject` that return a promise (ie. are async) must be referenced with an `.await` method
   * In `around` blocks, you must call `example.run_await` instead of just `example.run`
   * Only `PromiseV2` is supported (`PromiseV1` may work, but you should migrate your application to use `PromiseV2` nevertheless, in Opal 2.0 it will become the default)
+
+- Drop a requirement of `opal-sprockets`
+  * Sprockets support is still provided, but you need to manually `require "opal/rspec/sprockets"`
 
 
 ## 0.8.0 - 2021-12-01
