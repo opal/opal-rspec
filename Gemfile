@@ -26,3 +26,4 @@ end
 gem 'opal-sprockets', '>=1.0'
 
 gem 'puma'
+gem 'rack', '<3'
