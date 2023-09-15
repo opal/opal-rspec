@@ -30,7 +30,7 @@ RSpec.describe Opal::RSpec::Runner do
     expected_string = nil
     match do |actual|
       expected_paths.each do |expected_path|
-        expected_string = " -r#{expected_path}"
+        expected_string = " -p#{expected_path}"
         expect(actual.command).to include(expected_string)
       end
     end
@@ -137,9 +137,11 @@ RSpec.describe Opal::RSpec::Runner do
   end
 
   context 'pattern and files' do
+    before { create_dummy_spec_files 'spec-opal/spec_spec.rb' }
+
     let(:expected_to_run) { false }
-    let(:files) { FileList['spec-opal/other/**/*_spec.rb', 'util/**/*.rb'] }
-    let(:pattern) { 'spec-opal/**/*hooks_spec.rb' }
+    let(:files) { FileList['spec-opal/*_spec.rb'] }
+    let(:pattern) { 'spec-opal/**/*spec_spec.rb' }
     subject { described_class.new { |_, task| task.files = files; task.pattern = pattern } }
 
     it 'cannot accept both files and a pattern' do

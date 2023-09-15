@@ -1,3 +1,5 @@
+# backtick_javascript: true
+
 module Opal
   module RSpec
     class Element

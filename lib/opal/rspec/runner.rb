@@ -9,7 +9,24 @@ require 'opal/rspec/locator'
 module Opal
   module RSpec
     class Runner
-      attr_accessor :pattern, :requires, :exclude_pattern, :files, :default_path, :runner, :arity_checking, :spec_opts, :cli_options
+      attr_accessor :runner, :arity_checking, :spec_opts, :cli_options, :files
+
+      # Delegate property changes to spec_opts
+      def self.spec_opts_accessor(*names)
+        names.each do |name|
+          define_method name do
+            spec_opts[name]
+          end
+          define_method :"#{name}=" do |value|
+            spec_opts[name] = value
+          end
+        end
+      end
+
+      spec_opts_accessor :libs, :requires, :pattern, :exclude_pattern, :default_path, :files_or_directories_to_run
+
+      alias files files_or_directories_to_run
+      alias files= files_or_directories_to_run=
 
       def timeout= _
         warn "deprecated: setting timeout has no effect"
@@ -33,11 +50,11 @@ module Opal
       end
 
       def requires
-        @requires ||= []
+        spec_opts[:requires] ||= []
       end
 
       def spec_opts
-        @spec_opts ||= ENV['SPEC_OPTS']
+        @spec_opts = Opal::RSpec.convert_spec_opts(@spec_opts)
       end
 
       def get_load_asset_code(server)
@@ -80,9 +97,16 @@ module Opal
         @legacy_server_proxy = LegacyServerProxy.new
         block.call(@legacy_server_proxy, self) if block_given? # for compatibility
 
-        raise 'Cannot supply both a pattern and files!' if self.files and self.pattern
+        raise 'Cannot supply both a pattern and files!' if self.files \
+                                                        && !self.files.empty? \
+                                                        && self.pattern
 
-        locator = ::Opal::RSpec::Locator.new pattern: self.pattern, exclude_pattern: self.exclude_pattern, files: self.files, default_path: self.default_path
+        append_opts_from_config_file
+
+        locator = ::Opal::RSpec::Locator.new pattern: self.pattern,
+                                             exclude_pattern: self.exclude_pattern,
+                                             files: self.files,
+                                             default_path: self.default_path
 
         options = []
         options << '--arity-check' if arity_checking?
@@ -93,19 +117,53 @@ module Opal
         options << '--missing-require=ignore'
         options += @legacy_server_proxy.to_cli_options
 
-        Opal.paths.each                     { |p| options << "-I#{p}" }
-        locator.get_spec_load_paths.each    { |p| options << "-I#{p}" }
+        load_paths = [Opal.paths, locator.get_spec_load_paths, self.libs].compact.sum([]).uniq
+
+        load_paths.each                     { |p| options << "-I#{p}" }
         requires.each                       { |p| options << "-r#{p}" }
-        locator.get_opal_spec_requires.each { |p| options << "-r#{p}" }
+        locator.get_opal_spec_requires.each { |p| options << "-p#{p}" }
         ::Opal::Config.stubbed_files.each   { |p| options << "-s#{p}" }
 
         options += @cli_options if @cli_options
-        bootstrap_code = [
-          ::Opal::RSpec.spec_opts_code(spec_opts),
-          '::RSpec::Core::Runner.autorun',
-        ].join(';')
+
+        bootstrap_code = ::Opal::RSpec.spec_opts_code(spec_opts)
 
         @args = "#{options.map(&:shellescape).join ' '} -e #{bootstrap_code.shellescape}"
+      end
+
+      def append_opts_from_config_file
+        self.libs ||= []
+        self.requires ||= []
+
+        config_location = nil
+        path = self.default_path || "spec-opal"
+
+        # Locate config file
+        begin
+          loop do
+            if File.exist?(File.join(path, ".rspec-opal"))
+              path = File.join(path, ".rspec-opal")
+              break
+            else
+              new_path = File.expand_path("..", path)
+              return if new_path == path
+              path = new_path
+            end
+          end
+        rescue e
+          # we've gone too far beyond our permissions without finding a config file
+          return
+        end
+
+        if path
+          config_opts = Opal::RSpec.convert_spec_opts(File.read(path))
+        else
+          return
+        end
+
+        self.spec_opts = config_opts.merge(spec_opts) do |key, oldval, newval|
+          [:libs, :requires].include?(key) ? oldval + newval : newval
+        end
       end
 
       def options

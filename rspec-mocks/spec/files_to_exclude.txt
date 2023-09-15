@@ -9,3 +9,7 @@
 
 # YAML/marshal serialization
 **/serialization_spec.rb
+
+# Dropping errors
+**/verifying_doubles/naming_spec.rb
+**/mocks_spec.rb

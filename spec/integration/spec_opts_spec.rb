@@ -3,20 +3,38 @@ require 'json'
 
 RSpec.describe 'spec_opts' do
   let(:rake_task) { 'other_specs' }
+  let(:config_opts) { nil }
   subject(:output) { `SPEC_OPTS="#{spec_opts}" rake #{rake_task}` }
 
   RSpec.shared_context :color_test do |expected_pass|
-    it {
+    it do
+      File.write(".rspec-opal", config_opts) if config_opts
       matcher = match Regexp.new Regexp.escape("\e[32m1 example, 0 failures\e[0m")
       exp = is_expected
       expected_pass ? exp.to(matcher) : exp.to_not(matcher)
-    }
+    ensure
+      File.unlink(".rspec-opal") if config_opts
+    end
   end
 
   context 'color set' do
     let(:spec_opts) { '--color' }
 
     include_context :color_test, true
+  end
+
+  context 'color set via config file' do
+    let(:config_opts) { '--color' }
+    let(:spec_opts) { '' }
+
+    include_context :color_test, true
+  end
+
+  context 'color set via config file but unset via command line' do
+    let(:config_opts) { '--color' }
+    let(:spec_opts) { '--no-color' }
+
+    include_context :color_test, false
   end
 
   context 'no color explicitly set' do
@@ -71,9 +89,9 @@ RSpec.describe 'spec_opts' do
   end
 
   context 'requires and format' do
-    let(:spec_opts) { '--format TestFormatter --require formatter_dependency --require test_formatter' }
+    let(:spec_opts) { '-Ispec-opal/other --format TestFormatter --require formatter_dependency --require test_formatter' }
 
-    xit { is_expected.to match /{"examples".*test formatter ran!/m }
+    it { is_expected.to match /{.*"examples".*test formatter ran!/m }
   end
 
   context 'default' do

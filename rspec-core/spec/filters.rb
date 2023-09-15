@@ -388,4 +388,7 @@ OpalFilters.group("Bugs") do
   fails "RSpec::Core::Example#pending in the example allows post-example processing in around hooks (see https://github.com/rspec/rspec-core/issues/322)",  "undefined method `describe_successfully' for #<RSpec::ExampleGroups::RSpecCoreExample::Pending::InThe"
   fails "RSpec::Core::Example#pending in the example sets the example to pending",  "undefined method `describe_successfully' for #<RSpec::ExampleGroups::RSpecCoreExample::Pending::InThe"
   fails "RSpec::Core::Example reporting example_finished from a context hook fills in the execution result details before reporting a skipped example as finished",  "Expected example to fail since it is pending, but it passed."
+
+  fails "RSpec::Core::Configuration#load_spec_files loads files using load",  "(#<RSpec::Core::Configuration:0x1f3c6 @start_time=2023-09-07 07:47:17 +0200 @expectation_frameworks=["
+  fails "RSpec::Core::Configuration#load_spec_files loads each file once, even if duplicated in list",  "(#<RSpec::Core::Configuration:0x1ff64 @start_time=2023-09-07 07:47:17 +0200 @expectation_frameworks=["
 end

@@ -1,3 +1,5 @@
+# backtick_javascript: true
+
 # Random causes problems that can lock up a browser (see README)
 class ::RSpec::Core::Ordering::Random
   HIDE_RANDOM_WARNINGS = false

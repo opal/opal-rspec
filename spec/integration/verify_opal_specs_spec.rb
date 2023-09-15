@@ -1,14 +1,30 @@
 require 'spec_helper'
 
 RSpec.describe 'Opal Specs' do
-  describe 'spec-opal-passing/' do
-    it 'successfully runs' do
-      output = "#{__dir__}/../../tmp/spec-opal-passing-#{$$}.txt"
+  shared_examples 'run_opal_spec' do |path, expected_output|
+    it "successfully runs #{path}" do
+      output = "#{__dir__}/../../tmp/#{path.hash}-#{$$}.txt"
       FileUtils.mkdir_p File.dirname(output)
-      result = system("exe/opal-rspec", "spec-opal-passing", [:out, :err]=>[output, "w"])
-      expect(File.read(output)).to include("3 examples, 0 failures, 1 pending")
+      result = system("exe/opal-rspec", path, [:out, :err]=>[output, "w"])
+      expect(File.read(output)).to include(expected_output)
       expect(result).to eq(true)
     end
+  end
+
+  describe 'spec-opal-passing/' do
+    include_examples 'run_opal_spec', 'spec-opal-passing', "3 examples, 0 failures, 1 pending"
+  end
+
+  describe 'spec-opal-passing/tautology_spec.rb' do
+    include_examples 'run_opal_spec', 'spec-opal-passing/tautology_spec.rb', "3 examples, 0 failures, 1 pending"
+  end
+
+  describe 'spec-opal-passing/tautology_spec.rb:8' do
+    include_examples 'run_opal_spec', 'spec-opal-passing/tautology_spec.rb:8', "1 example, 0 failures"
+  end
+
+  describe 'spec-opal-passing/tautology_spec.rb[1:1]' do
+    include_examples 'run_opal_spec', 'spec-opal-passing/tautology_spec.rb[1:1]', "1 example, 0 failures"
   end
 
   context 'as a whole' do
@@ -36,7 +52,7 @@ RSpec.describe 'Opal Specs' do
 
       it 'with correct values' do
         examples, failures, pending = subject.scan(/(\d+) examples, (\d+) failures, (\d+) pending/).first
-        expect([examples, failures, pending]).to eq(['142', '38', '14'])
+        expect([examples, failures, pending]).to eq(["136", "26", "11"])
       end
     end
 

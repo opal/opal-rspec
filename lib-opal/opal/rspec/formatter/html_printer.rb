@@ -1,3 +1,5 @@
+# backtick_javascript: true
+
 require_relative 'noop_flush_string_io'
 require_relative 'element'
 

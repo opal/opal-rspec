@@ -19,6 +19,17 @@ module Opal
       end
 
       def run
+        puts <<~EOF
+          ** Do note, that Opal-RSpec defaults to the following paths:
+          ** - config file:    .rspec-opal
+          ** - spec directory: spec-opal
+          ** - program:        lib-opal
+          **
+          ** If you want to share Opal specs with Ruby specs, you will
+          ** need to put the following into your .rspec-opal:
+          **
+          ** -Ilib --default-path=spec
+        EOF
         copy_template DOT_RSPEC_FILE
         copy_template SPEC_HELPER_FILE
       end

@@ -1,5 +1,18 @@
 # Opal-RSpec Changelog
 
+## 1.1.0.alpha1 - 2023-09-16
+
+- Support Opal headless browser runners
+
+- (Almost) full support for `rspec` CLI util (which we run using `opal-rspec` command)
+  * Focus works, you can type `opal-rspec spec-opal-passing/tautology_spec.rb:8` to select a given test
+  * Most of other command line switches of `opal-rspec` work
+  * You can use a `.rspec-opal` configuration file akin to `.rspec` with the regular RSpec
+    * Just like with RSpec, switches set in this file propagate everywhere (eg. Rake task), so this is from now a prefered place to set up paths, etc.
+
+- Compatibility for upcoming Opal v1.8
+
+
 ## 1.0.0 - 2022-11-24
 
 - Drop support for anything below Opal v1.6.alpha1

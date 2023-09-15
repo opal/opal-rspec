@@ -44,22 +44,8 @@ RSpec.describe Opal::RSpec::Locator do
     end
 
     specify '#get_opal_spec_requires' do
-      expect(subject.get_opal_spec_requires.sort).to eq([
-        "#{root_path}/spec-opal/after_hooks_spec.rb",
-        "#{root_path}/spec-opal/around_hooks_spec.rb",
-        "#{root_path}/spec-opal/async_spec.rb",
-        "#{root_path}/spec-opal/before_hooks_spec.rb",
-        "#{root_path}/spec-opal/browser-formatter/opal_browser_formatter_spec.rb",
-        "#{root_path}/spec-opal/example_spec.rb",
-        "#{root_path}/spec-opal/matchers_spec.rb",
-        "#{root_path}/spec-opal/mock_spec.rb",
-        "#{root_path}/spec-opal/other/color_on_by_default_spec.rb",
-        "#{root_path}/spec-opal/other/dummy_spec.rb",
-        "#{root_path}/spec-opal/should_syntax_spec.rb",
-        "#{root_path}/spec-opal/skip_pending_spec.rb",
-        "#{root_path}/spec-opal/subject_spec.rb",
-        "#{root_path}/spec-opal/other/ignored_spec.opal",
-      ].sort)
+      # There are no spec files under lib/opal.
+      expect(subject.get_opal_spec_requires.sort).to eq([].sort)
     end
   end
 

@@ -24,7 +24,7 @@ RSpec.describe 'RSpec specs:' do
 
   context 'Core' do
     it 'runs correctly', gem_name: 'rspec-core' do
-      expect_results_to_be('1622 examples, 0 failures, 391 pending')
+      expect_results_to_be('1622 examples, 0 failures, 393 pending')
     end
   end
 
@@ -41,10 +41,8 @@ RSpec.describe 'RSpec specs:' do
   end
 
   context 'Mocks' do
-    # There are errors outside of examples which can't be filtered.
-    # Let's keep it skipped for now.
-    xit 'runs correctly', gem_name: 'rspec-mocks' do
-      expect_results_to_be('1683 examples, 9 failures, 485 pending')
+    it 'runs correctly', gem_name: 'rspec-mocks' do
+      expect_results_to_be('1645 examples, 0 failures, 475 pending')
     end
   end
 

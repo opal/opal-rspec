@@ -135,6 +135,10 @@ end
 
 If you don't specify a runner using `task.runner`, a default one is Node. In this case you can also use `RUNNER=chrome` to run a particular test with Headless Chromium.
 
+*(since v1.1.0)*
+
+You can also put default options into an `.rspec-opal` file, akin to how RSpec works. Those options will be propagated to Rake task, invocations of `Opal::RSpec::Runner` and also the `opal-rspec` command line tool.
+
 ### Run specs in Node.js
 
 Same options as above, you can use the `RUNNER=node` environment variable
@@ -156,6 +160,11 @@ Opal::RSpec::RakeTask.new(:default) do |server, task|
   task.runner = :server
 end
 ```
+
+*(since v1.1.0)*
+
+While `server` value runs a server, you can here supply also respectively
+`chrome`, `firefox` or `safari` to run the test using a headless browser.
 
 ### Run specs in a browser (Sprockets, deprecated)
 
@@ -347,7 +356,7 @@ When updating the RSpec versions, after updating the submodule revisions, you ma
 
 (The MIT License)
 
-Copyright (C) 2022 by hmdne and the Opal contributors
+Copyright (C) 2022-2023 by hmdne and the Opal contributors
 Copyright (C) 2015 by Brady Wied
 Copyright (C) 2013 by Adam Beynon
 

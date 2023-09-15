@@ -2,6 +2,7 @@ require 'opal'
 require 'opal-sprockets'
 require 'opal/rspec/version'
 require 'opal/rspec/runner'
+require 'opal/rspec/configuration_parser'
 
 # Just register our opal code path with opal build tools
 Opal.append_path File.expand_path('../../../lib-opal', __FILE__)
@@ -19,32 +20,31 @@ module Opal
   module RSpec
     autoload :ProjectInitializer, 'opal/rspec/project_initializer'
 
-    def self.spec_opts_code(spec_opts)
-      code = []
-      if spec_opts && !spec_opts.empty?
-        code << 'RSpec.configure do |config|'
+    def self.convert_spec_opts(opts)
+      opts ||= ENV['SPEC_OPTS'] || {}
 
-        if (match = /--(no-)?color\b/.match(spec_opts))
-          color_value = !match.captures[0]
-          # Have to use instance_variable_set because config.color= is designed to not allow overriding color once it's set, but
-          # we do not yet have true SPEC_OPTS parsing via RSpec config to get it initially set
-          code << "config.instance_variable_set(:@color, #{color_value})"
-        end
-
-        if (requires = spec_opts.scan(/(?:--require|-r) \S+/)).any?
-          requires.map {|r| /--require (.*)/.match(r).captures[0]}.each do |req|
-            code << %{require "#{req}"}
-          end
-        end
-
-        if (match = /--format (\S+)/.match(spec_opts))
-          formatter = match.captures[0]
-          code << %{config.formatter = "#{formatter}"}
-        end
-
-        code << 'end'
+      unless opts.is_a? Hash
+        opts = Shellwords.split(opts) if opts.is_a? String
+        opts = Opal::RSpec::Core::Parser.parse(opts || [])
       end
-      code.join('; ')
+
+      opts
+    end
+
+    def self.spec_opts_code(spec_opts)
+      spec_opts = convert_spec_opts(spec_opts)
+
+      code = []
+      code << '# await: true'
+
+      # New API - passthru options
+      spec_opts[:files_or_directories_to_run] ||= []
+
+      code << "$rspec_opts = #{spec_opts.inspect}"
+      code << "$0 = 'opal-rspec'"
+
+      code << '::RSpec::Core::Runner.invoke.__await__'
+      code.join("\n")
     end
   end
 end

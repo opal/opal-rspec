@@ -1,7 +1,7 @@
 source 'https://rubygems.org'
 gemspec
 
-unless Dir['rspec{,-{core,expectations,mocks,support}}/upstream'].any?
+unless Dir[__dir__ + '/rspec{,-{core,expectations,mocks,support}}/upstream'].any?
   raise 'Run: "git submodule update --init" to get RSpec sources'
 end
 
