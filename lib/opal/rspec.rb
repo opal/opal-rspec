@@ -1,5 +1,4 @@
 require 'opal'
-require 'opal-sprockets'
 require 'opal/rspec/version'
 require 'opal/rspec/runner'
 require 'opal/rspec/configuration_parser'

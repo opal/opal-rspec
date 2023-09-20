@@ -1,5 +1,14 @@
 # Opal-RSpec Changelog
 
+## 1.1.0.alpha2 - 2023-09-20
+
+- Drop advertised support for Opal v1.6
+
+- Fix support for Ruby 2.7+
+
+- Drop requirement of Opal-Sprockets
+
+
 ## 1.1.0.alpha1 - 2023-09-16
 
 - Support Opal headless browser runners

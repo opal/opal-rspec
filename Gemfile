@@ -18,7 +18,7 @@ case ENV['OPAL_VERSION']
 when 'local'
   gem 'opal', path: '../opal'
 when /^[0-9]/
-  gem 'opal', ENV['OPAL_VERSION']
+  gem 'opal', "~> #{ENV['OPAL_VERSION']}.0a"
 when String
   gem 'opal', git: 'https://github.com/opal/opal.git', branch: ENV['OPAL_VERSION']
 end
