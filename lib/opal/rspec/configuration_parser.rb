@@ -1,10 +1,11 @@
+require 'opal/rspec/util'
 require 'optparse'
 
 module Opal; module RSpec; module Core; end; end; end
 # Load necessary files under Opal's namespace, so as not to conflict with RSpec if it's being loaded too.
 # Later, we will monkey-patch those methods.
-load __dir__ + "/../../../rspec-core/upstream/lib/rspec/core/invocations.rb", ::Opal
-load __dir__ + "/../../../rspec-core/upstream/lib/rspec/core/option_parser.rb", ::Opal
+::Opal::RSpec.load_namespaced __dir__ + "/../../../rspec-core/upstream/lib/rspec/core/invocations.rb", ::Opal
+::Opal::RSpec.load_namespaced __dir__ + "/../../../rspec-core/upstream/lib/rspec/core/option_parser.rb", ::Opal
 
 class Opal::RSpec::Core::Parser
   alias parser_before_opal parser
