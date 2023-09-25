@@ -23,27 +23,49 @@ module ::RSpec; module Core; class Configuration
     str.gsub(/(?:\.js)?\.(?:rb|opal|\{rb,opal\})\z/, '')
   end
 
+  def glob_to_re_expand_alternatives(glob)
+    # If there are no braces, just return the string as an array
+    return [glob] unless glob =~ /(.*)\{([^\{\}]*?)\}(.*)/
+
+    prefix, contents, suffix = $1, $2, $3
+
+    alternatives = contents.split(',')
+
+    expanded_patterns = alternatives.map do |alternative|
+      "#{prefix}#{alternative}#{suffix}"
+    end
+
+    # Recursively expand for the rest of the pattern
+    return expanded_patterns.flat_map { |pattern| glob_to_re_expand_alternatives(pattern) }
+  end
+
   def glob_to_re(path, pattern)
     pattern = remove_ruby_ext(pattern)
-    path = "" if pattern.start_with?(path)
-    path += "/" unless path.end_with?("/")
-    re = Regexp.escape(pattern).gsub('\*\*', '.*?')
-                               .gsub('\*', '[^/]*?')
-                               .gsub('\?', '[^/]')
-                               .gsub(/\\{(.*?)\\}/) {
-                                 '(?:' + $1.gsub(",", "|") + ')'
-                               }
-    re = "(?:^|/)" + Regexp.escape(path) + re + "$"
-    # Strip the first `/` so it acts more like the intention of `**`
-    re = re.gsub("/.*?", ".*?")
+    if pattern.start_with?(path)
+      path = ""
+    else
+      path += "/" unless path.end_with?("/")
+    end
+    pattern = path + pattern
+    patterns = glob_to_re_expand_alternatives(pattern)
+    re = patterns.map { |i| Regexp.escape(i) }.join("|").then { |i| "(?:#{i})" }
+    re = re.gsub('\/\*\*\/', '(?:/|/.*?/)')
+           .gsub('\*', '[^/]*?')
+           .gsub('\?', '[^/]')
+    re = '(?:^|/)' + re + "$"
+    # Strip multiple '/'s
+    re = re.gsub(%r{(\\/|/)+}, '/')
     # Strip the `/./`
-    re = re.gsub("/\\.\\/", "\\/")
-    re = re.gsub("/)\\.\\/", "\\/)")
+    re = re.gsub('/\./', '/')
+    re = re.gsub('(?:^|/)\./', '(?:^|/)')
     Regexp.new(re)
   end
 
   # Only load from loaded files
   def get_matching_files(path, pattern)
+    if pattern.is_a?(Array)
+      return pattern.map { |pat| get_matching_files(path, pat) }.flatten.sort.uniq
+    end
     `Object.keys(Opal.modules)`.grep(glob_to_re(path, pattern)).sort
   end
 
