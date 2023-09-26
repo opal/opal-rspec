@@ -1,5 +1,14 @@
 # Opal-RSpec Changelog
 
+## 1.1.0.alpha3 - 2023-09-26
+
+- Refactor glob_to_re into a robust implementation
+
+- Add `--opal-opt` CLI option
+
+- Add `--rbrequire` CLI option
+
+
 ## 1.1.0.alpha2 - 2023-09-20
 
 - Drop advertised support for Opal v1.6
