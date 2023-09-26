@@ -52,7 +52,7 @@ RSpec.describe 'Opal Specs' do
 
       it 'with correct values' do
         examples, failures, pending = subject.scan(/(\d+) examples, (\d+) failures, (\d+) pending/).first
-        expect([examples, failures, pending]).to eq(["136", "26", "11"])
+        expect([examples, failures, pending]).to eq(["142", "27", "12"])
       end
     end
 

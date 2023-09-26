@@ -2,7 +2,7 @@ require 'opal/rspec/util'
 
 module Opal
   module RSpec
-    VERSION = '1.1.0.alpha2'
+    VERSION = '1.1.0.alpha3'
   end
 end
 

@@ -117,6 +117,10 @@ module Opal
         options << '--missing-require=ignore'
         options += @legacy_server_proxy.to_cli_options
 
+        spec_opts.delete(:opal_rbrequires) { [] }.each do |r|
+          require r
+        end
+
         load_paths = [Opal.paths, locator.get_spec_load_paths, self.libs].compact.sum([]).uniq
 
         load_paths.each                     { |p| options << "-I#{p}" }
@@ -125,6 +129,7 @@ module Opal
         ::Opal::Config.stubbed_files.each   { |p| options << "-s#{p}" }
 
         options += @cli_options if @cli_options
+        options += spec_opts.delete(:opal_options) { [] }
 
         bootstrap_code = ::Opal::RSpec.spec_opts_code(spec_opts)
 

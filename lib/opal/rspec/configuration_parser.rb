@@ -22,6 +22,16 @@ class Opal::RSpec::Core::Parser
         options[:runner] = name
       end
 
+      parser.on('-q', '--rbrequire FILE', 'Require a file in MRI context before running Opal') do |name|
+        options[:opal_rbrequires] ||= []
+        options[:opal_rbrequires] << name
+      end
+
+      parser.on('-O', '--opal-opt FLAG', 'Run Opal with additional options (separate by `,` or specify multiple times)') do |name|
+        options[:opal_options] ||= []
+        options[:opal_options] += name.split(",")
+      end
+
       parser.separator ''
       parser.separator '  **** Help ****'
       parser.separator ''
