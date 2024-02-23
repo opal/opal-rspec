@@ -1,6 +1,6 @@
 [submodule "rspec"]
 	path = rspec/upstream
-	url = https://github.com/rspec/rspec.git
+	url = https://github.com/rspec/rspec-metagem.git
 [submodule "rspec-support"]
 	path = rspec-support/upstream
 	url = https://github.com/rspec/rspec-support.git
@@ -13,9 +13,6 @@
 [submodule "rspec-expectations"]
 	path = rspec-expectations/upstream
 	url = https://github.com/rspec/rspec-expectations.git
-[submodule "diff-lcs/diff-lcs/upstream"]
-	path = diff-lcs/diff-lcs/upstream
-	url = https://github.com/halostatue/diff-lcs
 [submodule "diff-lcs/upstream"]
 	path = diff-lcs/upstream
 	url = https://github.com/halostatue/diff-lcs
